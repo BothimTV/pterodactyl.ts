@@ -8,6 +8,7 @@ const client = new ApplicationClient({
 
 describe("Test the Application API", () => {
   test("Try getting users", async () => {
+    // file deepcode ignore PromiseNotCaughtGeneral/test: These are the test, its "good" if they can fail
     await client.getUsers().then((users) => {
       console.log(users);
     });

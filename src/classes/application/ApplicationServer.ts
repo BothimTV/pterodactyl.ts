@@ -129,7 +129,8 @@ export class ApplicationServer {
     * @param force Should the server be force-deleted
     */
     public async delete(force: boolean = false): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + force ?? "/force");
+        // deepcode ignore AmbiguousConditional
+        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + force ? "/force" : "/");
         await this.client.axiosRequest({ url: endpoint.href, method: "DELETE" })
     }
 
