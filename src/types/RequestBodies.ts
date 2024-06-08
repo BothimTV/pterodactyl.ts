@@ -59,3 +59,63 @@ export type LocationUpdateProperties = {
   short?: string;
   long?: string;
 };
+
+export type ServerCreateProperties = {
+  name: string;
+  user: number;
+  egg: number;
+  docker_image: string;
+  startup: string;
+  environment: any;
+  limits: {
+    memory: number;
+    swap: number;
+    disk: number;
+    io: number;
+    cpu: number;
+  };
+  feature_limits: {
+    databases: number;
+    backups: number;
+    allocations: number;
+  };
+  allocation: {
+    default: number;
+  };
+};
+
+export type ServerUpdateProperties = {
+  name: string;
+  user: number;
+  external_id: string;
+  description: string;
+};
+
+export type ServerUpdateBuildProperties = {
+  allocation: number;
+  memory: number;
+  swap: number;
+  disk: number;
+  io: number;
+  cpu: number;
+  threads?: string;
+  feature_limits: {
+    databases?: number;
+    allocations?: number;
+    backups?: number;
+  };
+};
+
+export type ServerUpdateStartupProperties = {
+  startup: string;
+  environment: any;
+  egg: number;
+  image: string;
+  skip_scripts: boolean;
+};
+
+export type ServerDatabaseCreateProperties = {
+  database: string;
+  remote: "%" | string;
+  host: number;
+};
