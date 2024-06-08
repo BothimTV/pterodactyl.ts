@@ -1,10 +1,11 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { CreateUser, Location, LocationList, Node, NodeList, User, UserList } from "../../types/ApplicationApiResponse";
-import { LocationCreateProperties, NodeCreateProperties, UserCreateProperties } from "../../types/RequestBodies";
+import { CreateUser, Location, LocationList, Node, NodeList, Server, ServerList, User, UserList } from "../../types/ApplicationApiResponse";
+import { LocationCreateProperties, NodeCreateProperties, ServerCreateProperties, UserCreateProperties } from "../../types/RequestBodies";
 import { ClientOptions } from "../../types/Util";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
 import { PanelUser } from "./PanelUser";
+import { ApplicationServer } from "./ApplicationServer";
 
 export class ApplicationClient {
   protected apikey: string;
@@ -144,6 +145,43 @@ export class ApplicationClient {
     return new PanelLocation(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: locationProperties }) as Location)
   }
   
-  
+  /**
+  * Get servers for this panel
+  */
+  public async getServers(): Promise<Array<ApplicationServer>> {
+    const endpoint = new URL(this.panel + "/api/application/servers");
+    const data = await this.axiosRequest({ url: endpoint.href }) as ServerList
+    const res: Array<ApplicationServer> = [];
+    for (const server of data.data) {
+      res.push(new ApplicationServer(this, server));
+    }
+    return res; 
+  }
+
+  /**
+  * Get a server for this panel
+  * @param serverId The target server Id
+  */
+  public async getServer(serverId: number): Promise<ApplicationServer> {
+    const endpoint = new URL(this.panel + "/api/application/servers/" + serverId);
+    return new ApplicationServer(this, await this.axiosRequest({ url: endpoint.href }) as Server)
+  }
+
+  /**
+  * Get a server by their external id
+  * @prop externalId The target servers external id
+  */
+  public async getExternalServer(externalId: string): Promise<ApplicationServer> {
+    const endpoint = new URL(this.panel + "/api/application/servers/external/" + externalId);
+    return new ApplicationServer(this, await this.axiosRequest({ url: endpoint.href }) as Server)
+  }
+
+  /**
+  * Create a server
+  */
+  public async createServer(serverProperties: ServerCreateProperties): Promise<ApplicationServer> {
+    const endpoint = new URL(this.panel + "/api/application/servers");
+    return new ApplicationServer(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: serverProperties }) as Server)
+  }
 
 }

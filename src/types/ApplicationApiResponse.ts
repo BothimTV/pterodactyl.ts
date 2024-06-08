@@ -1,4 +1,4 @@
-import { Database, DatabaseList } from "./BaseApiResponse";
+import { DatabaseList } from "./BaseApiResponse";
 
 export type UserList = {
   object: "list";
@@ -274,9 +274,21 @@ export type ServerDatabase = {
   };
 };
 
-export type CreateDatabase = Database & {
+export type CreateDatabase = {
+  object: "server_database";
+  attributes: {
+    id: number;
+    server: number;
+    host: number;
+    database: string;
+    username: string
+    remote: "%" | string;
+    max_connections: null | number;
+    created_at: string; // FIXME: Is a timestamp
+    updated_at: string; // FIXME: Is a timestamp
+  };
   meta: {
-    resource: string;
+    resource: string
   };
 };
 
