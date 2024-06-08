@@ -5,7 +5,7 @@ import { NodeAllocation } from "./NodeAllocation";
 
 export class PanelNode {
 
-    private readonly client: ApplicationClient;
+    protected client: ApplicationClient;
     public readonly id: number;
     public readonly uuid: string;
     public readonly public: boolean;

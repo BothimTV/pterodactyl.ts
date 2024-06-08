@@ -2,10 +2,10 @@ import axios, { AxiosRequestConfig } from "axios";
 import { CreateUser, Location, LocationList, Node, NodeList, Server, ServerList, User, UserList } from "../../types/ApplicationApiResponse";
 import { LocationCreateProperties, NodeCreateProperties, ServerCreateProperties, UserCreateProperties } from "../../types/RequestBodies";
 import { ClientOptions } from "../../types/Util";
+import { ApplicationServer } from "./ApplicationServer";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
 import { PanelUser } from "./PanelUser";
-import { ApplicationServer } from "./ApplicationServer";
 
 export class ApplicationClient {
   protected apikey: string;
@@ -13,6 +13,12 @@ export class ApplicationClient {
   constructor(options: ClientOptions) {
     this.apikey = "Bearer " + options.apikey;
     this.panel = options.panel;
+
+    try {
+      new URL(this.panel);
+    } catch (error) {
+      throw new Error("Invalid panel url");
+    }
   }
 
   public async axiosRequest(config: AxiosRequestConfig): Promise<any> {
@@ -133,7 +139,7 @@ export class ApplicationClient {
   * Get a location of this panel
   */
   public async getLocation(locationId: number): Promise<PanelLocation> {
-    const endpoint = new URL(this.panel + "/api/application/locations/" + locationId );
+    const endpoint = new URL(this.panel + "/api/application/locations/" + locationId);
     return new PanelLocation(this, await this.axiosRequest({ url: endpoint.href }) as Location)
   }
 
@@ -144,7 +150,7 @@ export class ApplicationClient {
     const endpoint = new URL(this.panel + "/api/application/locations");
     return new PanelLocation(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: locationProperties }) as Location)
   }
-  
+
   /**
   * Get servers for this panel
   */
@@ -155,7 +161,7 @@ export class ApplicationClient {
     for (const server of data.data) {
       res.push(new ApplicationServer(this, server));
     }
-    return res; 
+    return res;
   }
 
   /**

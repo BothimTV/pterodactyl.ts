@@ -1,11 +1,11 @@
-import { CreateDatabase, FullDatabaseList, Server, ServerDatabase as ServerDb } from "../../types/ApplicationApiResponse";
+import { FullDatabaseList, Server, ServerDatabase as ServerDb } from "../../types/ApplicationApiResponse";
 import { ServerDatabaseCreateProperties, ServerUpdateBuildProperties, ServerUpdateProperties, ServerUpdateStartupProperties } from "../../types/RequestBodies";
 import { ApplicationClient } from "./ApplicationClient";
 import { ServerDatabase } from "./ServerDatabase";
 
 export class ApplicationServer {
 
-    private readonly client: ApplicationClient
+    protected client: ApplicationClient
     public id: number;
     public external_id: string;
     public uuid: string;

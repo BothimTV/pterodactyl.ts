@@ -3,7 +3,7 @@ import { ApplicationClient } from "./ApplicationClient";
 
 export class ServerDatabase {
 
-    private readonly client: ApplicationClient;
+    protected client: ApplicationClient;
     public readonly id: number;
     public server: number;
     public host: number;

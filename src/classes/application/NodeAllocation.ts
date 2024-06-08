@@ -3,8 +3,8 @@ import { ApplicationClient } from "./ApplicationClient";
 import { PanelNode } from "./PanelNode";
 
 export class NodeAllocation {
-    private readonly client: ApplicationClient;
-    private readonly node: PanelNode;
+    protected client: ApplicationClient;
+    protected node: PanelNode;
     public readonly id: number;
     public readonly ip: string;
     public readonly alias: null | string;

@@ -3,7 +3,7 @@ import { UserUpdateProperties } from "../../types/RequestBodies";
 import { ApplicationClient } from "./ApplicationClient";
 
 export class PanelUser {
-    private readonly client: ApplicationClient
+    protected client: ApplicationClient
     public readonly id: number;
     public external_id: null | string;
     public readonly uuid: string;

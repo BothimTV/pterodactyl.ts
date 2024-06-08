@@ -4,7 +4,7 @@ import { ApplicationClient } from "./ApplicationClient"
 
 export class PanelLocation {
 
-    private readonly client: ApplicationClient
+  protected client: ApplicationClient
     public readonly id: number
     public short: string
     public long: string
