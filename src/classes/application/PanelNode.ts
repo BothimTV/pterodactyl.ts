@@ -3,9 +3,9 @@ import { AllocationCreateProperties, NodeUpdateProperties } from "../../types/Re
 import { ApplicationClient } from "./ApplicationClient";
 import { NodeAllocation } from "./NodeAllocation";
 
+var client: ApplicationClient;
 export class PanelNode {
 
-    protected client: ApplicationClient;
     public readonly id: number;
     public readonly uuid: string;
     public readonly public: boolean;
@@ -29,8 +29,8 @@ export class PanelNode {
     public nodeConfiguration: undefined | NodeConfiguration;
     public allocations: undefined | Array<NodeAllocation>
 
-    constructor(client: ApplicationClient, nodePros: Node) {
-        this.client = client;
+    constructor(applicationClient: ApplicationClient, nodePros: Node) {
+        client = applicationClient;
         this.id = nodePros.attributes.id;
         this.uuid = nodePros.attributes.uuid;
         this.public = nodePros.attributes.public;
@@ -57,8 +57,8 @@ export class PanelNode {
     * Get the config of this node
     */
     public async getConfiguration(): Promise<NodeConfiguration> {
-        const endpoint = new URL(this.client.panel + "/api/application/nodes/" + this.id + "/configuration");
-        this.nodeConfiguration = await this.client.axiosRequest({ url: endpoint.href }) as NodeConfiguration
+        const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id + "/configuration");
+        this.nodeConfiguration = await client.axiosRequest({ url: endpoint.href }) as NodeConfiguration
         return this.nodeConfiguration
     }
 
@@ -67,8 +67,8 @@ export class PanelNode {
      * @param nodeProperties The properties to update this node
      */
     public async update(nodeProperties: NodeUpdateProperties): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/nodes" + this.id);
-        const data = await this.client.axiosRequest({ url: endpoint.href, method: "PATCH", data: nodeProperties }) as Node
+        const endpoint = new URL(client.panel + "/api/application/nodes" + this.id);
+        const data = await client.axiosRequest({ url: endpoint.href, method: "PATCH", data: nodeProperties }) as Node
         this.name = data.attributes.name;
         this.description = data.attributes.description;
         this.location_id = data.attributes.location_id;
@@ -90,19 +90,19 @@ export class PanelNode {
     * Delete this node
     */
     public async delete(): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/nodes/" + this.id);
-        await this.client.axiosRequest({ url: endpoint.href, method: "DELETE" })
+        const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
+        await client.axiosRequest({ url: endpoint.href, method: "DELETE" })
     }
 
     /**
      * Get the allocations of this node
      */
     public async getAllocations(): Promise<Array<NodeAllocation>> {
-        const endpoint = new URL(this.client.panel + "/api/application/nodes" + this.id + "/allocations");
-        const data = await this.client.axiosRequest({ url: endpoint.href }) as AllocationList
+        const endpoint = new URL(client.panel + "/api/application/nodes" + this.id + "/allocations");
+        const data = await client.axiosRequest({ url: endpoint.href }) as AllocationList
         const res: Array<NodeAllocation> = []
         for (const allocation of data.data) {
-            res.push(new NodeAllocation(this.client, allocation, this))
+            res.push(new NodeAllocation(client, allocation, this))
         }
         return res
     }
@@ -111,8 +111,8 @@ export class PanelNode {
     * Create a allocation for this node
     */
     public async createAllocation(allocationProperties: AllocationCreateProperties): Promise<void> {
-      const endpoint = new URL(this.client.panel + "/api/application/nodes/" + this.id + "/allocations");
-       await this.client.axiosRequest({ url: endpoint.href, data: allocationProperties })
+        const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id + "/allocations");
+        await client.axiosRequest({ url: endpoint.href, data: allocationProperties })
     }
 
 }

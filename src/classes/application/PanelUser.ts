@@ -2,8 +2,8 @@ import { User } from "../../types/ApplicationApiResponse";
 import { UserUpdateProperties } from "../../types/RequestBodies";
 import { ApplicationClient } from "./ApplicationClient";
 
+var client: ApplicationClient
 export class PanelUser {
-    protected client: ApplicationClient
     public readonly id: number;
     public external_id: null | string;
     public readonly uuid: string;
@@ -15,10 +15,10 @@ export class PanelUser {
     public root_admin: boolean;
     public readonly mfa: boolean;
     public readonly created_at: Date;
-    public updated_at: Date; 
+    public updated_at: Date;
 
-    constructor(client: ApplicationClient, userData: User) {
-        this.client = client;
+    constructor(applicationClient: ApplicationClient, userData: User) {
+        client = applicationClient;
         this.id = userData.attributes.id;
         this.external_id = userData.attributes.external_id;
         this.uuid = userData.attributes.uuid;
@@ -33,13 +33,13 @@ export class PanelUser {
         this.updated_at = new Date(userData.attributes.updated_at);
     }
 
-        
+
     /**
      * Delete this user from the panel
      */
     public async delete(): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/users/" + this.id);
-        await this.client.axiosRequest({ url: endpoint.href, method: "DELETE" });
+        const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+        await client.axiosRequest({ url: endpoint.href, method: "DELETE" });
     }
 
     /**
@@ -47,8 +47,8 @@ export class PanelUser {
      * @param userProperties The new properties of the user
      */
     public async update(userProperties: UserUpdateProperties): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/users/" + this.id);
-        const newData = await this.client.axiosRequest({ url: endpoint.href, method: "PATCH", data: userProperties }) as User
+        const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+        const newData = await client.axiosRequest({ url: endpoint.href, method: "PATCH", data: userProperties }) as User
         this.external_id = newData.attributes.external_id; // NOTE: Not tested - might change
 
         this.username = newData.attributes.username;

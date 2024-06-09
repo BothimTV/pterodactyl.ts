@@ -3,9 +3,9 @@ import { ServerDatabaseCreateProperties, ServerUpdateBuildProperties, ServerUpda
 import { ApplicationClient } from "./ApplicationClient";
 import { ServerDatabase } from "./ServerDatabase";
 
+var client: ApplicationClient
 export class ApplicationServer {
 
-    protected client: ApplicationClient
     public id: number;
     public external_id: string;
     public uuid: string;
@@ -41,8 +41,8 @@ export class ApplicationServer {
     public updated_at: Date
     public created_at: Date;
 
-    constructor(client: ApplicationClient, serverProperties: Server) {
-        this.client = client;
+    constructor(applicationClient: ApplicationClient, serverProperties: Server) {
+        client = applicationClient;
         this.id = serverProperties.attributes.id;
         this.external_id = serverProperties.attributes.external_id;
         this.uuid = serverProperties.attributes.uuid;
@@ -67,8 +67,8 @@ export class ApplicationServer {
     * Update this server
     */
     public async update(serverProperties: ServerUpdateProperties): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/details");
-        const data = await this.client.axiosRequest({ url: endpoint.href, method: "PATCH", data: serverProperties }) as Server
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/details");
+        const data = await client.axiosRequest({ url: endpoint.href, method: "PATCH", data: serverProperties }) as Server
         this.name = data.attributes.name;
         this.user = data.attributes.user;
         this.external_id = data.attributes.external_id;
@@ -80,8 +80,8 @@ export class ApplicationServer {
     * Update this server build details
     */
     public async updateBuild(serverProperties: ServerUpdateBuildProperties): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/build");
-        const data = await this.client.axiosRequest({ url: endpoint.href, method: "PATCH", data: serverProperties }) as Server
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/build");
+        const data = await client.axiosRequest({ url: endpoint.href, method: "PATCH", data: serverProperties }) as Server
         this.allocation = data.attributes.allocation
         this.limits = data.attributes.limits
         this.feature_limits = data.attributes.feature_limits
@@ -92,8 +92,8 @@ export class ApplicationServer {
      * Update this server startup details
      */
     public async updateStartup(serverProperties: ServerUpdateStartupProperties): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/startup");
-        const data = await this.client.axiosRequest({ url: endpoint.href, method: "PATCH", data: serverProperties }) as Server
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        const data = await client.axiosRequest({ url: endpoint.href, method: "PATCH", data: serverProperties }) as Server
         this.container = data.attributes.container
         this.egg = data.attributes.egg
         this.nest = data.attributes.nest
@@ -104,24 +104,24 @@ export class ApplicationServer {
     * Suspend this server
     */
     public async suspend(): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/suspend");
-        await this.client.axiosRequest({ url: endpoint.href, method: "POST" })
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/suspend");
+        await client.axiosRequest({ url: endpoint.href, method: "POST" })
     }
 
     /**
     * Unsuspend this server
     */
     public async unsuspend(): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/unsuspend");
-        await this.client.axiosRequest({ url: endpoint.href, method: "POST" })
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/unsuspend");
+        await client.axiosRequest({ url: endpoint.href, method: "POST" })
     }
 
     /**
     * Reinstall this server
     */
     public async reinstall(): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/reinstall");
-        await this.client.axiosRequest({ url: endpoint.href, method: "POST" })
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/reinstall");
+        await client.axiosRequest({ url: endpoint.href, method: "POST" })
     }
 
     /**
@@ -130,33 +130,33 @@ export class ApplicationServer {
     */
     public async delete(force: boolean = false): Promise<void> {
         // deepcode ignore AmbiguousConditional
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + force ? "/force" : "/");
-        await this.client.axiosRequest({ url: endpoint.href, method: "DELETE" })
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + force ? "/force" : "/");
+        await client.axiosRequest({ url: endpoint.href, method: "DELETE" })
     }
 
     /**
     * Get the databases for this server
     */
     public async getDatabases(): Promise<Array<ServerDatabase>> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/databases?include=password,host");
-        const res = await this.client.axiosRequest({ url: endpoint.href }) as FullDatabaseList
-        return res.data.map(db => new ServerDatabase(this.client, db))
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/databases?include=password,host");
+        const res = await client.axiosRequest({ url: endpoint.href }) as FullDatabaseList
+        return res.data.map(db => new ServerDatabase(client, db))
     }
 
     /**
     * Get a database for this server
     */
     public async getDatabase(databaseId: number): Promise<ServerDatabase> {
-        const endpoint = new URL(this.client.panel + "/api/application/servers/" + this.id + "/databases/" + databaseId + "?include=password,host");
-        return new ServerDatabase(this.client, await this.client.axiosRequest({ url: endpoint.href }) as ServerDb)
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/databases/" + databaseId + "?include=password,host");
+        return new ServerDatabase(client, await client.axiosRequest({ url: endpoint.href }) as ServerDb)
     }
 
     /**
     * Create a database for this server
     */
     public async createDatabase(databaseCreateProperties: ServerDatabaseCreateProperties): Promise<void> {
-      const endpoint = new URL(this.client.panel + "/api/application/endpoint");
-      await this.client.axiosRequest({ url: endpoint.href, data: databaseCreateProperties, method: "POST" })
+        const endpoint = new URL(client.panel + "/api/application/endpoint");
+        await client.axiosRequest({ url: endpoint.href, data: databaseCreateProperties, method: "POST" })
     }
 
 }

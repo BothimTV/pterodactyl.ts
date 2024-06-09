@@ -2,8 +2,8 @@ import { Allocation } from "../../types/ApplicationApiResponse";
 import { ApplicationClient } from "./ApplicationClient";
 import { PanelNode } from "./PanelNode";
 
+var client: ApplicationClient;
 export class NodeAllocation {
-    protected client: ApplicationClient;
     protected node: PanelNode;
     public readonly id: number;
     public readonly ip: string;
@@ -12,8 +12,8 @@ export class NodeAllocation {
     public readonly notes: null | string;
     public readonly assigned: boolean;
 
-    constructor(client: ApplicationClient, allocationPros: Allocation, node: PanelNode) {
-        this.client = client;
+    constructor(applicationClient: ApplicationClient, allocationPros: Allocation, node: PanelNode) {
+        client = applicationClient;
         this.node = node;
         this.id = allocationPros.attributes.id;
         this.ip = allocationPros.attributes.ip;
@@ -27,8 +27,8 @@ export class NodeAllocation {
      * Delete this allocation
      */
     public async delete(): Promise<void> {
-        const endpoint = new URL(this.client.panel + "/api/application/nodes/" + this.node.id + "/allocations/" + this.id);
-        await this.client.axiosRequest({ url: endpoint.href, method: "DELETE" })
+        const endpoint = new URL(client.panel + "/api/application/nodes/" + this.node.id + "/allocations/" + this.id);
+        await client.axiosRequest({ url: endpoint.href, method: "DELETE" })
     }
 
 
