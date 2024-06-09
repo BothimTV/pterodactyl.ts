@@ -46,7 +46,7 @@ export class PanelUser {
      * Update this user on the panel
      * @param userProperties The new properties of the user
      */
-    public async update(userProperties: UserUpdateProperties): Promise<void> {
+    public async update(userProperties: UserUpdateProperties): Promise<void> { // FIXME: Split the update props into multiple tiny functions
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
         const newData = await client.axiosRequest({ url: endpoint.href, method: "PATCH", data: userProperties }) as User
         this.external_id = newData.attributes.external_id; // NOTE: Not tested - might change

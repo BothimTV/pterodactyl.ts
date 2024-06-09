@@ -1,7 +1,9 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { CreateUser, Location, LocationList, Node, NodeList, Server, ServerList, User, UserList } from "../../types/ApplicationApiResponse";
-import { LocationCreateProperties, NodeCreateProperties, ServerCreateProperties, UserCreateProperties } from "../../types/RequestBodies";
+import { LocationCreateProperties, ServerCreateProperties } from "../../types/RequestBodies";
 import { ClientOptions } from "../../types/Util";
+import { PanelNodeBuilder } from "../builder/PanelNodeBuilder";
+import { PanelUserBuilder } from "../builder/PanelUserBuilder";
 import { ApplicationServer } from "./ApplicationServer";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
@@ -21,13 +23,21 @@ export class ApplicationClient {
     }
   }
 
-  public async axiosRequest(config: AxiosRequestConfig): Promise<any> {
+  public async axiosRequest(config: AxiosRequestConfig, errorSet?: Array<{ code: number; message: string; }>): Promise<any> {
     config.headers = config.headers ? config.headers : {};
     config.headers["Authorization"] = this.apikey;
     return await axios.request(config).then((res) => {
       return res.data;
-    }).catch(error => {
-      throw new Error(error);
+    }).catch((e) => {
+      const error = e as AxiosError;
+      const msg = errorSet?.find(e => e.code === error.response?.status)
+      if (msg) {
+        throw new Error(msg.message);
+      } else {
+        console.error(error.response?.data)
+        throw new Error(JSON.stringify(error.response?.data) || error.response?.status + " - " + error.response?.statusText || "An error occurred while communicating with the API")
+        //throw new Error("An error occurred while communicating with the API, code: " + error.response?.status + " - " + error.response?.statusText)
+      }
     });
   }
 
@@ -40,7 +50,7 @@ export class ApplicationClient {
    * Get all users associated to the panel
    * @param filter Filter users by email, uuid, username and/or externalId
    * @param sortBy Sort users by id oder uuid
-   * @param reverseSort Reverse the sort@requires sortBy
+   * @param reverseSort Reverse the sort @requires sortBy
    */
   public async getUsers(filter?: { email?: string; uuid?: string; username?: string; externalId?: string; }, sortBy?: "id" | "uuid", reverseSort?: boolean): Promise<Array<PanelUser>> {
     var endpoint = new URL(this.panel + "/api/application/users");
@@ -50,11 +60,7 @@ export class ApplicationClient {
     if (filter?.externalId) endpoint.searchParams.append("filter[external_id]", filter.externalId);
     if (sortBy) endpoint.searchParams.append("sort", `${reverseSort ? "-" : ""}${sortBy}`);
     const users = await this.axiosRequest({ url: endpoint.href, }) as UserList
-    const res: Array<PanelUser> = [];
-    for (const user of users.data) {
-      res.push(new PanelUser(this, user));
-    }
-    return res;
+    return users.data.map(user => new PanelUser(this, user));
   }
 
   /**
@@ -77,19 +83,12 @@ export class ApplicationClient {
 
   /**
    * Create a user
-   * @param userProperties The details for a user
+   * @param userProperties Construct a user via new PanelUserBuilder()
    */
-  public async createUser(userProperties: UserCreateProperties): Promise<PanelUser> {
+  public async createUser(userProperties: PanelUserBuilder): Promise<PanelUser> {
     const endpoint = new URL(this.panel + "/api/application/users");
-    return new PanelUser(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: userProperties }) as CreateUser);
+    return new PanelUser(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: userProperties }, [{ code: 422, message: "There is already a user with this email and/or username" }]) as CreateUser);
   }
-
-  /**
-   *
-   * Node management
-   *
-   */
-
 
   /**
    * Get all nodes of a panel
@@ -117,7 +116,7 @@ export class ApplicationClient {
   * Create a node
   * @param nodeProperties The properties for the new node
   */
-  public async createNode(nodeProperties: NodeCreateProperties): Promise<PanelNode> {
+  public async createNode(nodeProperties: PanelNodeBuilder): Promise<PanelNode> {
     const endpoint = new URL(this.panel + "/api/application/nodes");
     return new PanelNode(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: nodeProperties }) as Node)
   }
