@@ -15,6 +15,7 @@ export class ApplicationClient {
   constructor(options: ClientOptions) {
     this.apikey = "Bearer " + options.apikey;
     this.panel = options.panel;
+    
 
     try {
       new URL(this.panel);
@@ -23,7 +24,7 @@ export class ApplicationClient {
     }
   }
 
-  public async axiosRequest(config: AxiosRequestConfig, errorSet?: Array<{ code: number; message: string; }>): Promise<any> {
+  public async axiosRequest(config: AxiosRequestConfig, errorSet?: Array<{ code: number; message: string; }>, ignoredErrors?: Array<string>): Promise<any> {
     config.headers = config.headers ? config.headers : {};
     config.headers["Authorization"] = this.apikey;
     return await axios.request(config).then((res) => {
@@ -34,8 +35,22 @@ export class ApplicationClient {
       if (msg) {
         throw new Error(msg.message);
       } else {
+        if (error.response?.data) {
+          const msg = error.response?.data as {errors: Array<{code: string, status: string, detail: string}>}
+          if (ignoredErrors) {
+            for (const ignoredError of ignoredErrors) {
+              if (msg.errors.some(e => e.code === ignoredError)) {
+                return null
+              }
+            }
+          }
+          for (const err of msg.errors) {
+            throw new Error(err.code + ": " + err.detail)
+          }
+        } else {
+          throw new Error(error.response?.status + " - " + error.response?.statusText || "An error occurred while communicating with the API")
+        }
         console.error(error.response?.data)
-        throw new Error(JSON.stringify(error.response?.data) || error.response?.status + " - " + error.response?.statusText || "An error occurred while communicating with the API")
         //throw new Error("An error occurred while communicating with the API, code: " + error.response?.status + " - " + error.response?.statusText)
       }
     });

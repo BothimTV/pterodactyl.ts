@@ -85,11 +85,93 @@ describe("Test the Application API", () => {
       const allocations = await node.getAllocations()
       console.log(allocations)
 
+      const oldNodeData = await client.getNode(testNodeId)
+      await node.setName("test2")
+      node = await client.getNode(testNodeId)
+      expect(node.name).toBe("test2")
+      expect(oldNodeData.name).not.toBe("test2")
+
+      await node.setDescription("test2")
+      node = await client.getNode(testNodeId)
+      expect(node.description).toBe("test2")
+      expect(oldNodeData.description).not.toBe("test2")
+
+      // This is currently untestable as we don't create 2 locations
+      // await node.setLocation(1)
+      // expect(node.location_id).toBe(1)
+      // expect(oldNodeData.location_id).not.toBe(1)
+
+      await node.setPublic(false)
+      node = await client.getNode(testNodeId)
+      expect(node.public).toBe(false)
+      expect(oldNodeData.public).toBe(true)
+
+      await node.setFqdn("test2.de")
+      node = await client.getNode(testNodeId)
+      expect(node.fqdn).toBe("test2.de")
+      expect(oldNodeData.fqdn).not.toBe("test2.de")
+
+      await node.setScheme("http")
+      node = await client.getNode(testNodeId)
+      expect(node.scheme).toBe("http")
+      expect(oldNodeData.scheme).not.toBe("http")
+
+      await node.setBehindProxy(true)
+      node = await client.getNode(testNodeId)
+      expect(node.behind_proxy).toBe(true)
+      expect(oldNodeData.behind_proxy).toBe(false)
+
+      await node.setMaintenance(true)
+      node = await client.getNode(testNodeId)
+      expect(node.maintenance_mode).toBe(true)
+      expect(oldNodeData.maintenance_mode).toBe(false)
+
+      // Disable the maintenance mode to be able to use this node for later tests
+      await node.setMaintenance(false)
+
+      await node.setMemory(2048)
+      node = await client.getNode(testNodeId)
+      expect(node.memory).toBe(2048)
+      expect(oldNodeData.memory).not.toBe(2048)
+
+      await node.setMemoryOverAllocation(-1)
+      node = await client.getNode(testNodeId)
+      expect(node.memory_overallocate).toBe(-1)
+      expect(oldNodeData.memory_overallocate).not.toBe(-1)
+
+      await node.setDisk(2048)
+      node = await client.getNode(testNodeId)
+      expect(node.disk).toBe(2048)
+      expect(oldNodeData.disk).not.toBe(2048)
+
+      await node.setDiskOverAllocation(-1)
+      node = await client.getNode(testNodeId)
+      expect(node.disk_overallocate).toBe(-1)
+      expect(oldNodeData.disk_overallocate).not.toBe(-1)
+
+      await node.setUploadSizeLimit(200)
+      node = await client.getNode(testNodeId)
+      expect(node.upload_size).toBe(200)
+      expect(oldNodeData.upload_size).not.toBe(200)
+
+      await node.setDaemonPort(8443)
+      node = await client.getNode(testNodeId)
+      expect(node.daemon_listen).toBe(8443)
+      expect(oldNodeData.daemon_listen).not.toBe(8443)
+
+      await node.setDaemonSftpPort(2023)
+      node = await client.getNode(testNodeId)
+      expect(node.daemon_sftp).toBe(2023)
+      expect(oldNodeData.daemon_sftp).not.toBe(2023)
+
+      await node.resetDaemonMasterKey()
+        
+      console.log(node)
     })
-  })
+  }, 60000)
 
   afterAll(async () => {
     await (await client.getUser(testUserId)).delete()
-    await (await client.getNode(testNodeId)).delete()
+    //await (await client.getNode(testNodeId)).delete()
   })
 });

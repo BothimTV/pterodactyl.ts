@@ -168,7 +168,7 @@ export class PanelNodeBuilder {
      * @default daemon_sftpPort 2022
      * @optional
      */
-    public setdaemon_sftp(daemon_sftpPort: number) {
+    public setdaemonSftp(daemon_sftpPort: number) {
         this.daemon_sftp = daemon_sftpPort
         return this
     }

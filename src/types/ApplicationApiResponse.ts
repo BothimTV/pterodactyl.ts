@@ -64,7 +64,7 @@ export type Node = {
     description: string;
     location_id: number;
     fqdn: string;
-    scheme: string;
+    scheme: "http" | "https";
     behind_proxy: boolean;
     maintenance_mode: boolean;
     memory: number;
@@ -77,6 +77,10 @@ export type Node = {
     daemon_base: string;
     created_at: string; // FIXME: Is a timestamp
     updated_at: string; // FIXME: Is a timestamp
+    allocated_resources: {
+      memory: number;
+      disk: number;
+    };
   };
 };
 
