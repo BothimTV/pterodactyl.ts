@@ -67,7 +67,7 @@ export class PanelUser {
      * Update this user's email address on the panel
      * @param email The new email address
      */
-    public async updateEmail(email: string): Promise<void> {
+    public async setEmail(email: string): Promise<void> {
         var data = this.updateProps();
         data.email = email;
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
@@ -78,7 +78,7 @@ export class PanelUser {
      * Update this user's username on the panel
      * @param username The new username
      */
-    public async updateUsername(username: string): Promise<void> {
+    public async setUsername(username: string): Promise<void> {
         var data = this.updateProps();
         data.username = username;
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
@@ -89,7 +89,7 @@ export class PanelUser {
      * Update this user's first name on the panel
      * @param firstName The new first name
      */
-    public async updateFirstName(firstName: string): Promise<void> {
+    public async setFirstName(firstName: string): Promise<void> {
         var data = this.updateProps();
         data.first_name = firstName;
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
@@ -100,7 +100,7 @@ export class PanelUser {
      * Update this user's last name on the panel
      * @param lastName The new last name
      */
-    public async updateLastName(lastName: string): Promise<void> {
+    public async setLastName(lastName: string): Promise<void> {
         var data = this.updateProps();
         data.last_name = lastName;
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
@@ -112,7 +112,7 @@ export class PanelUser {
      * @param language The new language
      * @default language en
      */
-    public async updateLanguage(language: string): Promise<void> {
+    public async setLanguage(language: string): Promise<void> {
         var data = this.updateProps();
         data.language = language;
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
@@ -123,7 +123,7 @@ export class PanelUser {
      * Update this user's password on the panel
      * @param password The new password
      */
-    public async updatePassword(password: string): Promise<void> {
+    public async setPassword(password: string): Promise<void> {
         var data = this.updateProps();
         data.password = password;
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
@@ -135,7 +135,7 @@ export class PanelUser {
      * @param panelAdmin Should the user be an admin
      * @default panelAdmin false
      */
-    public async updatePanelAdmin(panelAdmin: boolean): Promise<void> {
+    public async setPanelAdmin(panelAdmin: boolean): Promise<void> {
         var data = this.updateProps();
         data.root_admin = panelAdmin ? 1 : 0;
         const endpoint = new URL(client.panel + "/api/application/users/" + this.id);

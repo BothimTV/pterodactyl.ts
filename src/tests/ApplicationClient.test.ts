@@ -47,30 +47,30 @@ describe("Test the Application API", () => {
     await client.getUser(testUserId).then(async (user) => {
       console.log(user)
       const oldUsrData = await client.getUser(testUserId);
-      await user.updateEmail("test2@test.de").then(() => { })
+      await user.setEmail("test2@test.de").then(() => { })
       expect(user.email).toBe("test2@test.de");
       expect(oldUsrData.email).not.toBe("test2@test.de");
 
-      await user.updateUsername("test2")
+      await user.setUsername("test2")
       expect(user.username).toBe("test2");
       expect(oldUsrData.username).not.toBe("test2");
 
-      await user.updateFirstName("test2")
+      await user.setFirstName("test2")
       expect(user.first_name).toBe("test2");
       expect(oldUsrData.first_name).not.toBe("test2");
 
-      await user.updateLastName("test2")
+      await user.setLastName("test2")
       expect(user.last_name).toBe("test2");
       expect(oldUsrData.last_name).not.toBe("test2");
 
       // NOT TESTABLE - There is no other language than en installed by default
-      //await user.updateLanguage("de")
+      //await user.setLanguage("de")
       //expect(user.language).toBe("de");
       //expect(oldUsrData.language).not.toBe("de")
 
-      await user.updatePassword("test2")
+      await user.setPassword("test2")
 
-      await user.updatePanelAdmin(true)
+      await user.setPanelAdmin(true)
       expect(user.root_admin).toBe(true);
       expect(oldUsrData.root_admin).toBe(false);
       console.log(user)
