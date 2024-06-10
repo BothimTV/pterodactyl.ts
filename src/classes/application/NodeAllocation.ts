@@ -12,15 +12,15 @@ export class NodeAllocation {
     public readonly notes: null | string;
     public readonly assigned: boolean;
 
-    constructor(applicationClient: ApplicationClient, allocationPros: Allocation, node: PanelNode) {
+    constructor(applicationClient: ApplicationClient, allocationProps: Allocation, node: PanelNode) {
         client = applicationClient;
         this.node = node;
-        this.id = allocationPros.attributes.id;
-        this.ip = allocationPros.attributes.ip;
-        this.alias = allocationPros.attributes.alias;
-        this.port = allocationPros.attributes.port;
-        this.notes = allocationPros.attributes.notes;
-        this.assigned = allocationPros.attributes.assigned;
+        this.id = allocationProps.attributes.id;
+        this.ip = allocationProps.attributes.ip;
+        this.alias = allocationProps.attributes.alias;
+        this.port = allocationProps.attributes.port;
+        this.notes = allocationProps.attributes.notes;
+        this.assigned = allocationProps.attributes.assigned;
     }
 
     /**

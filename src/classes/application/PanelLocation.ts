@@ -22,6 +22,7 @@ export class PanelLocation {
 
   /**
   * Update this location
+  * FIXME: @deprecated
   */
   public async update(updateProperties: LocationUpdateProperties): Promise<void> {
     const endpoint = new URL(client.panel + "/api/application/locations/" + this.id);

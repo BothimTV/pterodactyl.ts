@@ -65,6 +65,7 @@ export class ApplicationServer {
 
     /**
     * Update this server
+    * FIXME: @deprecated
     */
     public async update(serverProperties: ServerUpdateProperties): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/details");

@@ -1,5 +1,6 @@
 import { AllocationList, Node, NodeConfiguration } from "../../types/ApplicationApiResponse";
-import { AllocationCreateProperties, NodeUpdateProperties } from "../../types/RequestBodies";
+import { NodeUpdateProperties } from "../../types/RequestBodies";
+import { NodeAllocationBuilder } from "../builder/NodeAllocationBuilder";
 import { ApplicationClient } from "./ApplicationClient";
 import { NodeAllocation } from "./NodeAllocation";
 
@@ -65,6 +66,7 @@ export class PanelNode {
     /**
      * Update this node
      * @param nodeProperties The properties to update this node
+     * FIXME: @deprecated
      */
     public async update(nodeProperties: NodeUpdateProperties): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/nodes" + this.id);
@@ -98,21 +100,22 @@ export class PanelNode {
      * Get the allocations of this node
      */
     public async getAllocations(): Promise<Array<NodeAllocation>> {
-        const endpoint = new URL(client.panel + "/api/application/nodes" + this.id + "/allocations");
+        const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id + "/allocations");
         const data = await client.axiosRequest({ url: endpoint.href }) as AllocationList
         const res: Array<NodeAllocation> = []
         for (const allocation of data.data) {
             res.push(new NodeAllocation(client, allocation, this))
         }
+        this.allocations = res
         return res
     }
 
     /**
     * Create a allocation for this node
     */
-    public async createAllocation(allocationProperties: AllocationCreateProperties): Promise<void> {
+    public async createAllocation(allocationProperties: NodeAllocationBuilder): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id + "/allocations");
-        await client.axiosRequest({ url: endpoint.href, data: allocationProperties })
+        await client.axiosRequest({ url: endpoint.href, data: allocationProperties, method: "POST" })
     }
 
 }
