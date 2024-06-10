@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, test } from "@jest/globals";
+import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { ApplicationClient } from "../classes/application/ApplicationClient";
 import { PanelNodeBuilder } from "../classes/builder/PanelNodeBuilder";
 import { PanelUserBuilder } from "../classes/builder/PanelUserBuilder";
@@ -38,7 +38,36 @@ describe("Test the Application API", () => {
 
     await client.getUser(testUserId).then(async (user) => {
       console.log(user)
-    });
+      const oldUsrData = await client.getUser(testUserId);
+      await user.updateEmail("test2@test.de").then(() => {})
+      expect(user.email).toBe("test2@test.de");
+      expect(oldUsrData.email).not.toBe("test2@test.de");
+
+      await user.updateUsername("test2")
+      expect(user.username).toBe("test2");
+      expect(oldUsrData.username).not.toBe("test2");
+      
+      await user.updateFirstName("test2")
+      expect(user.first_name).toBe("test2");
+      expect(oldUsrData.first_name).not.toBe("test2");
+      
+      await user.updateLastName("test2")
+      expect(user.last_name).toBe("test2");
+      expect(oldUsrData.last_name).not.toBe("test2");
+      
+      // NOT TESTABLE - There is no other language than en installed by default
+      //await user.updateLanguage("de")
+      //expect(user.language).toBe("de");
+      //expect(oldUsrData.language).not.toBe("de")
+
+      await user.updatePassword("test2")
+      
+      await user.updatePanelAdmin(true)
+      expect(user.root_admin).toBe(true);
+      expect(oldUsrData.root_admin).toBe(false);      
+      console.log(user)
+
+     });
 
     await client.getNode(testNodeId).then(async (node) => {
       console.log(node)
@@ -46,9 +75,7 @@ describe("Test the Application API", () => {
 
     
 
-    /*await client.getUsers().then((users) => {
-      console.log(users);
-    });
+    /*
     await client.getLocations().then((locations) => {
       console.log(locations);
     });
