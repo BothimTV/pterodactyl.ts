@@ -1,9 +1,10 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { CreateUser, Location, LocationList, Node, NodeList, Server, ServerList, User, UserList } from "../../types/ApplicationApiResponse";
-import { LocationCreateProperties, ServerCreateProperties } from "../../types/RequestBodies";
+import { LocationCreateProperties } from "../../types/RequestBodies";
 import { ClientOptions } from "../../types/Util";
 import { PanelNodeBuilder } from "../builder/PanelNodeBuilder";
 import { PanelUserBuilder } from "../builder/PanelUserBuilder";
+import { ServerBuilder } from "../builder/ServerBuilder";
 import { ApplicationServer } from "./ApplicationServer";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
@@ -44,9 +45,13 @@ export class ApplicationClient {
               }
             }
           }
-          for (const err of msg.errors) {
-            throw new Error(err.code + ": " + err.detail)
-          }
+          msg.errors.forEach((err, i) => {
+            if (msg.errors.length - 1 == i) {
+              throw new Error(err.code + ": " + err.detail)
+            } else {
+              console.error(err.code + ": " + err.detail)
+            }
+          })
         } else {
           throw new Error(error.response?.status + " - " + error.response?.statusText || "An error occurred while communicating with the API")
         }
@@ -199,7 +204,7 @@ export class ApplicationClient {
   /**
   * Create a server
   */
-  public async createServer(serverProperties: ServerCreateProperties): Promise<ApplicationServer> {
+  public async createServer(serverProperties: ServerBuilder): Promise<ApplicationServer> {
     const endpoint = new URL(this.panel + "/api/application/servers");
     return new ApplicationServer(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: serverProperties }) as Server)
   }

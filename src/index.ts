@@ -1,8 +1,10 @@
 import { ApplicationClient } from "./classes/application/ApplicationClient";
+import { NodeAllocationBuilder } from "./classes/builder/NodeAllocationBuilder";
+import { PanelNodeBuilder } from "./classes/builder/PanelNodeBuilder";
+import { PanelUserBuilder } from "./classes/builder/PanelUserBuilder";
+import { ServerBuilder } from "./classes/builder/ServerBuilder";
 import { UserClient } from "./classes/user/UserClient";
 import * as HelperFunctions from "./functions/util";
-import * as ApplicationApiResponse from "./types/ApplicationApiResponse";
-import * as ClientApiResponse from "./types/ClientApiResponse";
 
-export { ApplicationApiResponse, ApplicationClient, ClientApiResponse, HelperFunctions, UserClient };
+export { ApplicationClient, HelperFunctions, NodeAllocationBuilder, PanelNodeBuilder, PanelUserBuilder, ServerBuilder, UserClient };
 
