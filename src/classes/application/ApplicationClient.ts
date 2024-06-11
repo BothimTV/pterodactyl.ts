@@ -73,7 +73,7 @@ export class ApplicationClient {
    * @param reverseSort Reverse the sort @requires sortBy
    */
   public async getUsers(filter?: { email?: string; uuid?: string; username?: string; externalId?: string; }, sortBy?: "id" | "uuid", reverseSort?: boolean): Promise<Array<PanelUser>> {
-    var endpoint = new URL(this.panel + "/api/application/users");
+    var endpoint = new URL(this.panel + "/api/application/users?include=servers"); // FIXME: Include servers in data
     if (filter?.email) endpoint.searchParams.append("filter[email]", filter.email);
     if (filter?.username) endpoint.searchParams.append("filter[username]", filter.username);
     if (filter?.uuid) endpoint.searchParams.append("filter[uuid]", filter.uuid);
@@ -88,7 +88,7 @@ export class ApplicationClient {
    * @param userId The id of a user
    */
   public async getUser(userId: number): Promise<PanelUser> {
-    const endpoint = new URL(this.panel + "/api/application/users/" + userId);
+    const endpoint = new URL(this.panel + "/api/application/users/" + userId + "?include=servers"); // FIXME: Include servers in data
     return new PanelUser(this, await this.axiosRequest({ url: endpoint.href }) as User);
   }
 
@@ -97,7 +97,7 @@ export class ApplicationClient {
   * @param externalId The external id of a user
   */
   public async getExternalUser(externalId: string): Promise<PanelUser> {
-    const endpoint = new URL(this.panel + "/api/application/users/external/" + externalId);
+    const endpoint = new URL(this.panel + "/api/application/users/external/" + externalId + "?include=servers");  // FIXME: Include servers in data
     return new PanelUser(this, await this.axiosRequest({ url: endpoint.href }) as User)
   }
 
@@ -114,7 +114,7 @@ export class ApplicationClient {
    * Get all nodes of a panel
    */
   public async getNodes(): Promise<Array<PanelNode>> {
-    const endpoint = new URL(this.panel + "/api/application/nodes");
+    const endpoint = new URL(this.panel + "/api/application/nodes?include=allocations,locations,servers");  // FIXME: Include include data
     const data = await this.axiosRequest({ url: endpoint.href }) as NodeList
     const res: Array<PanelNode> = [];
     for (const node of data.data) {
@@ -128,7 +128,7 @@ export class ApplicationClient {
    * @param nodeId The id of the specific node
    */
   public async getNode(nodeId: number): Promise<PanelNode> {
-    const endpoint = new URL(this.panel + "/api/application/nodes/" + nodeId);
+    const endpoint = new URL(this.panel + "/api/application/nodes/" + nodeId + "?include=allocations,locations,servers"); // FIXME: Include include data
     return new PanelNode(this, await this.axiosRequest({ url: endpoint.href }) as Node)
   }
 
@@ -145,7 +145,7 @@ export class ApplicationClient {
   * Get the locations of this panel
   */
   public async getLocations(): Promise<Array<PanelLocation>> {
-    const endpoint = new URL(this.panel + "/api/application/locations");
+    const endpoint = new URL(this.panel + "/api/application/locations?include=nodes,servers"); // FIXME: Include include data
     const data = await this.axiosRequest({ url: endpoint.href }) as LocationList
     const res: Array<PanelLocation> = [];
     for (const location of data.data) {
@@ -158,7 +158,7 @@ export class ApplicationClient {
   * Get a location of this panel
   */
   public async getLocation(locationId: number): Promise<PanelLocation> {
-    const endpoint = new URL(this.panel + "/api/application/locations/" + locationId);
+    const endpoint = new URL(this.panel + "/api/application/locations/" + locationId + "?include=nodes,servers");
     return new PanelLocation(this, await this.axiosRequest({ url: endpoint.href }) as Location)
   }
 
@@ -188,7 +188,7 @@ export class ApplicationClient {
   * @param serverId The target server Id
   */
   public async getServer(serverId: number): Promise<ApplicationServer> {
-    const endpoint = new URL(this.panel + "/api/application/servers/" + serverId);
+    const endpoint = new URL(this.panel + "/api/application/servers/" + serverId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases"); // FIXME: Include include data
     return new ApplicationServer(this, await this.axiosRequest({ url: endpoint.href }) as Server)
   }
 
@@ -197,7 +197,7 @@ export class ApplicationClient {
   * @prop externalId The target servers external id
   */
   public async getExternalServer(externalId: string): Promise<ApplicationServer> {
-    const endpoint = new URL(this.panel + "/api/application/servers/external/" + externalId);
+    const endpoint = new URL(this.panel + "/api/application/servers/external/" + externalId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases"); // FIXME: Include include data
     return new ApplicationServer(this, await this.axiosRequest({ url: endpoint.href }) as Server)
   }
 
@@ -208,5 +208,42 @@ export class ApplicationClient {
     const endpoint = new URL(this.panel + "/api/application/servers");
     return new ApplicationServer(this, await this.axiosRequest({ url: endpoint.href, method: "POST", data: serverProperties }) as Server)
   }
+
+  /**
+   * Get the nests of this panel
+   */
+  public async getNests(): Promise<Array<any>> {
+    const endpoint = new URL(this.panel + "/api/application/nests?include=eggs,servers"); // FIXME: Include include data
+    throw new Error("Not implemented yet");
+  }
+
+  /**
+   * Get a nest by id of this panel
+   * @param nestId The id of the nest you want to get
+   */
+  public async getNest(nestId: number): Promise<any> {
+    const endpoint = new URL(this.panel + "/api/application/nests/" + nestId + "?include=eggs,servers"); // FIXME: Include include data
+    throw new Error("Not implemented yet"); 
+  }
+
+  /**
+   * Get the eggs of this panel
+   * @param nestId The if of the nest you want to get the eggs from 
+   */
+  public async getEggs(nestId: number): Promise<Array<any>> {
+    const endpoint = new URL(this.panel + "/api/application/nests/" + nestId + "/eggs?include=nest,servers,config,script,variables"); // FIXME: Include include data
+    throw new Error("Not implemented yet"); 
+  }
+
+  /**
+   * Get a specific egg of this panel
+   * @param nestId The if of the nest you want to get the egg from
+   * @param eggId The egg you want to get 
+   */
+  public async getEgg(nestId: number, eggId: number): Promise<any> {
+    const endpoint = new URL(this.panel + "/api/application/nests/" + nestId + "/eggs/" + eggId + "?include=nest,servers,config,script,variables"); // FIXME: Include include data
+    throw new Error("Not implemented yet"); 
+  }
+
 
 }
