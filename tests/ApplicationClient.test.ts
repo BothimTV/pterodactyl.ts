@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
-import { ApplicationClient } from "../classes/application/ApplicationClient";
-import { NodeAllocationBuilder } from "../classes/builder/NodeAllocationBuilder";
-import { PanelNodeBuilder } from "../classes/builder/PanelNodeBuilder";
-import { PanelUserBuilder } from "../classes/builder/PanelUserBuilder";
+import { ApplicationClient } from "../src/classes/application/ApplicationClient";
+import { NodeAllocationBuilder } from "../src/classes/builder/NodeAllocationBuilder";
+import { PanelNodeBuilder } from "../src/classes/builder/PanelNodeBuilder";
+import { PanelUserBuilder } from "../src/classes/builder/PanelUserBuilder";
 
 const client = new ApplicationClient({
   apikey: process.env.API_KEY || "",
