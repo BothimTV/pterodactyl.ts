@@ -1,2 +1,7 @@
 node_modules
 dist
+src/tests/testData/locations.json
+src/tests/testData/nests.json
+src/tests/testData/nodes.json
+src/tests/testData/servers.json
+src/tests/testData/users.json
