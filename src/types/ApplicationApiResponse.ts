@@ -1,4 +1,5 @@
 import { DatabaseList } from "./BaseApiResponse";
+import { SubUserList } from "./ClientApiResponse";
 
 export type UserList = {
   object: "list";
@@ -30,6 +31,12 @@ export type User = {
     "2fa": boolean;
     created_at: string; // FIXME: Is a timestamp
     updated_at: string; // FIXME: Is a timestamp
+    relationships?: {
+      servers: {
+        object: "list";
+        data: Array<Server>;
+      };
+    };
   };
 };
 
@@ -80,6 +87,17 @@ export type Node = {
     allocated_resources: {
       memory: number;
       disk: number;
+    };
+    relationships?: {
+      allocations: {
+        object: "list";
+        data: Array<Allocation>;
+      };
+      location: Location;
+      servers: {
+        object: "list";
+        data: Array<Server>;
+      };
     };
   };
 };
@@ -170,6 +188,16 @@ export type Location = {
     long: string;
     updated_at: string; // FIXME: Is a timestamp
     created_at: string; // FIXME: Is a timestamp
+    relationships?: {
+      nodes: {
+        object: "list";
+        data: Array<Location>;
+      };
+      servers: {
+        object: "list";
+        data: Array<Server>;
+      };
+    };
   };
 };
 
@@ -231,8 +259,62 @@ export type Server = {
     };
     updated_at: string; // FIXME: Is a timestamp
     created_at: string; // FIXME: Is a timestamp
-    relationships: {
-      databases: DatabaseList;
+  };
+};
+
+export type FullServer = Server & {
+  attributes: {
+    relationships?: {
+      allocations: {
+        object: "list";
+        data: Array<Allocation>;
+      };
+      user: User
+      subusers: SubUserList;
+      nest: Nest
+      egg: Egg
+      variables: {
+        object: "list";
+        data: [
+          {
+            object: "server_variable";
+            attributes: {
+              id: 100;
+              egg_id: 22;
+              name: "Geyser JAR";
+              description: "Server Jarfile, by default this is set to 'geyser.jar'.\r\nSet it to otherwise if you wish to have a different jarfile name.";
+              env_variable: "SERVER_JARFILE";
+              default_value: "geyser.jar";
+              user_viewable: true;
+              user_editable: true;
+              rules: "required|regex:/^([\\w\\d._-]+)(\\.jar)$/";
+              created_at: "2024-05-29T15:06:02.000000Z";
+              updated_at: "2024-05-29T15:06:02.000000Z";
+              server_value: "geyser.jar";
+            };
+          },
+          {
+            object: "server_variable";
+            attributes: {
+              id: 101;
+              egg_id: 22;
+              name: "Geyser Auto Update";
+              description: "Should Geyser attempt an auto-update on startup.";
+              env_variable: "AUTO_UPDATE";
+              default_value: "1";
+              user_viewable: true;
+              user_editable: true;
+              rules: "required|boolean|numeric";
+              created_at: "2024-05-29T15:06:02.000000Z";
+              updated_at: "2024-05-29T15:06:02.000000Z";
+              server_value: "1";
+            };
+          }
+        ];
+      };
+      location: Location
+      node: Node
+      databases: DatabaseList
     };
   };
 };
@@ -254,7 +336,7 @@ export type ServerDatabase = {
     max_connections: number;
     created_at: string; // FIXME: Is a timestamp
     updated_at: string; // FIXME: Is a timestamp
-    relationships: {
+    relationships?: {
       password: {
         object: "database_password";
         attributes: {
@@ -285,14 +367,14 @@ export type CreateDatabase = {
     server: number;
     host: number;
     database: string;
-    username: string
+    username: string;
     remote: "%" | string;
     max_connections: null | number;
     created_at: string; // FIXME: Is a timestamp
     updated_at: string; // FIXME: Is a timestamp
   };
   meta: {
-    resource: string
+    resource: string;
   };
 };
 
@@ -363,7 +445,7 @@ export type Egg = {
   };
   created_at: string; // FIXME: Is a timestamp
   updated_at: string; // FIXME: Is a timestamp
-  relationships: {
+  relationships?: {
     nest: Nest;
     servers: ServerList;
   };
