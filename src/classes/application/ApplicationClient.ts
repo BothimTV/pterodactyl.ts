@@ -114,7 +114,7 @@ export class ApplicationClient {
    * Get all nodes of a panel
    */
   public async getNodes(): Promise<Array<PanelNode>> {
-    const endpoint = new URL(this.panel + "/api/application/nodes?include=allocations,locations,servers");  // FIXME: Include include data
+    const endpoint = new URL(this.panel + "/api/application/nodes?include=allocations,location,servers");  // FIXME: Include include data
     const data = await this.axiosRequest({ url: endpoint.href }) as NodeList
     const res: Array<PanelNode> = [];
     for (const node of data.data) {
@@ -128,7 +128,7 @@ export class ApplicationClient {
    * @param nodeId The id of the specific node
    */
   public async getNode(nodeId: number): Promise<PanelNode> {
-    const endpoint = new URL(this.panel + "/api/application/nodes/" + nodeId + "?include=allocations,locations,servers"); // FIXME: Include include data
+    const endpoint = new URL(this.panel + "/api/application/nodes/" + nodeId + "?include=allocations,location,servers"); // FIXME: Include include data
     return new PanelNode(this, await this.axiosRequest({ url: endpoint.href }) as Node)
   }
 
