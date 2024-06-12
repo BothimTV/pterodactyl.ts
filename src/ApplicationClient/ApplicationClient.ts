@@ -1,12 +1,14 @@
 import { AxiosRequestConfig } from "axios";
-import { CreateUser, Location, LocationList, Node, NodeList, Server, ServerList, User } from "../../types/ApplicationApiResponse";
 import { LocationCreateProperties } from "../../types/RequestBodies";
 import { ClientOptions } from "../../types/Util";
 import { PanelNodeBuilder } from "../builder/PanelNodeBuilder";
 import { PanelUserBuilder } from "../builder/PanelUserBuilder";
 import { ServerBuilder } from "../builder/ServerBuilder";
 import { ApiRequestHandler } from "../functions/axois";
-import { RawPanelUserList } from "../types/PanelUser";
+import { RawLocation, RawLocationList } from "../types/Location";
+import { RawPanelNode, RawPanelNodeList } from "../types/PanelNode";
+import { RawPanelUser, RawPanelUserList } from "../types/PanelUser";
+import { RawServer, RawServerList } from "../types/Server";
 import { ApplicationServer } from "./ApplicationServer";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
@@ -55,7 +57,7 @@ export class ApplicationClient {
    */
   public async getUser(userId: number): Promise<PanelUser> {
     const endpoint = new URL(this.panel + "/api/application/users/" + userId + "?include=servers"); // FIXME: Include servers in data
-    return new PanelUser(this, await this.api({ url: endpoint.href }) as User);
+    return new PanelUser(this, await this.api({ url: endpoint.href }) as RawPanelUser);
   }
 
   /**
@@ -64,7 +66,7 @@ export class ApplicationClient {
   */
   public async getExternalUser(externalId: string): Promise<PanelUser> {
     const endpoint = new URL(this.panel + "/api/application/users/external/" + externalId + "?include=servers");  // FIXME: Include servers in data
-    return new PanelUser(this, await this.api({ url: endpoint.href }) as User)
+    return new PanelUser(this, await this.api({ url: endpoint.href }) as RawPanelUser)
   }
 
   /**
@@ -81,7 +83,7 @@ export class ApplicationClient {
    */
   public async getNodes(): Promise<Array<PanelNode>> {
     const endpoint = new URL(this.panel + "/api/application/nodes?include=allocations,location,servers");  // FIXME: Include include data
-    const data = await this.api({ url: endpoint.href }) as NodeList
+    const data = await this.api({ url: endpoint.href }) as RawPanelNodeList
     const res: Array<PanelNode> = [];
     for (const node of data.data) {
       res.push(new PanelNode(this, node));
@@ -95,7 +97,7 @@ export class ApplicationClient {
    */
   public async getNode(nodeId: number): Promise<PanelNode> {
     const endpoint = new URL(this.panel + "/api/application/nodes/" + nodeId + "?include=allocations,location,servers"); // FIXME: Include include data
-    return new PanelNode(this, await this.api({ url: endpoint.href }) as Node)
+    return new PanelNode(this, await this.api({ url: endpoint.href }) as RawPanelNode)
   }
 
   /**
@@ -112,7 +114,7 @@ export class ApplicationClient {
   */
   public async getLocations(): Promise<Array<PanelLocation>> {
     const endpoint = new URL(this.panel + "/api/application/locations?include=nodes,servers"); // FIXME: Include include data
-    const data = await this.api({ url: endpoint.href }) as LocationList
+    const data = await this.api({ url: endpoint.href }) as RawLocationList
     const res: Array<PanelLocation> = [];
     for (const location of data.data) {
       res.push(new PanelLocation(this, location));
@@ -125,7 +127,7 @@ export class ApplicationClient {
   */
   public async getLocation(locationId: number): Promise<PanelLocation> {
     const endpoint = new URL(this.panel + "/api/application/locations/" + locationId + "?include=nodes,servers");
-    return new PanelLocation(this, await this.api({ url: endpoint.href }) as Location)
+    return new PanelLocation(this, await this.api({ url: endpoint.href }) as RawLocation)
   }
 
   /**
@@ -133,7 +135,7 @@ export class ApplicationClient {
   */
   public async createLocation(locationProperties: LocationCreateProperties): Promise<PanelLocation> {
     const endpoint = new URL(this.panel + "/api/application/locations");
-    return new PanelLocation(this, await this.api({ url: endpoint.href, method: "POST", data: locationProperties }) as Location)
+    return new PanelLocation(this, await this.api({ url: endpoint.href, method: "POST", data: locationProperties }) as RawLocation)
   }
 
   /**
@@ -141,7 +143,7 @@ export class ApplicationClient {
   */
   public async getServers(): Promise<Array<ApplicationServer>> {
     const endpoint = new URL(this.panel + "/api/application/servers");
-    const data = await this.api({ url: endpoint.href }) as ServerList
+    const data = await this.api({ url: endpoint.href }) as RawServerList
     const res: Array<ApplicationServer> = [];
     for (const server of data.data) {
       res.push(new ApplicationServer(this, server));
@@ -155,7 +157,7 @@ export class ApplicationClient {
   */
   public async getServer(serverId: number): Promise<ApplicationServer> {
     const endpoint = new URL(this.panel + "/api/application/servers/" + serverId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases"); // FIXME: Include include data
-    return new ApplicationServer(this, await this.api({ url: endpoint.href }) as Server)
+    return new ApplicationServer(this, await this.api({ url: endpoint.href }) as RawServer)
   }
 
   /**
@@ -164,7 +166,7 @@ export class ApplicationClient {
   */
   public async getExternalServer(externalId: string): Promise<ApplicationServer> {
     const endpoint = new URL(this.panel + "/api/application/servers/external/" + externalId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases"); // FIXME: Include include data
-    return new ApplicationServer(this, await this.api({ url: endpoint.href }) as Server)
+    return new ApplicationServer(this, await this.api({ url: endpoint.href }) as RawServer)
   }
 
   /**
@@ -172,7 +174,7 @@ export class ApplicationClient {
   */
   public async createServer(serverProperties: ServerBuilder): Promise<ApplicationServer> {
     const endpoint = new URL(this.panel + "/api/application/servers");
-    return new ApplicationServer(this, await this.api({ url: endpoint.href, method: "POST", data: serverProperties }) as Server)
+    return new ApplicationServer(this, await this.api({ url: endpoint.href, method: "POST", data: serverProperties }) as RawServer)
   }
 
   /**
