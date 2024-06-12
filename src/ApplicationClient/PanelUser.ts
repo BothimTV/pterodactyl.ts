@@ -1,5 +1,5 @@
-import { PanelUserAttributes, RawPanelUser } from "../types/PanelUser";
-import { RawServer } from "../types/Server";
+import { PanelUserAttributes, RawPanelUser } from "../types/panelUser";
+import { RawServer } from "../types/server";
 import { ApplicationClient } from "./ApplicationClient";
 import { Server } from "./Server";
 

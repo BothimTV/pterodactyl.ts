@@ -1,4 +1,4 @@
-import { RawServerList } from "./Server";
+import { RawServerList } from "./server";
 
 export interface RawPanelUserList {
   object: "list";

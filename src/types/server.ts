@@ -1,12 +1,13 @@
-import { RawServerDatabaseList } from "./Database";
-import { RawLocation } from "./Location";
-import { RawNodeAllocationList } from "./NodeAllocation";
-import { RawPanelEgg } from "./PanelEgg";
-import { RawPanelNest } from "./PanelNest";
-import { RawPanelNode } from "./PanelNode";
-import { RawPanelUser } from "./PanelUser";
-import { RawServerSubUserList } from "./ServerSubUser";
-import { RawServerVariableList } from "./ServerVariable";
+import { RawServerDatabaseList } from "./database";
+import { RawLocation } from "./location";
+import { RawNodeAllocationList } from "./nodeAllocation";
+import { RawPanelEgg } from "./panelEgg";
+import { RawPanelNest } from "./panelNest";
+import { RawPanelNode } from "./panelNode";
+import { RawPanelUser } from "./panelUser";
+import { ServerStatus } from "./serverStatus";
+import { RawServerSubUserList } from "./serverSubUser";
+import { RawServerVariableList } from "./serverVariable";
 
 export interface RawServerList {
   object: "list";
@@ -25,7 +26,7 @@ export interface ServerAttributes {
   identifier: string;
   name: string;
   description: string;
-  status: null; // FIXME: Set to an actual status
+  status: ServerStatus;
   suspended: boolean;
   limits: {
     memory: 0 | number;
@@ -52,8 +53,8 @@ export interface ServerAttributes {
     readonly installed: 1 | 0;
     environment: { [key: string]: string | number | boolean | null };
   };
-  updated_at: string;
-  readonly created_at: string;
+  updated_at: string | Date;
+  readonly created_at: string | Date;
   readonly relationships?: {
     readonly allocations?: RawNodeAllocationList;
     readonly user?: RawPanelUser;

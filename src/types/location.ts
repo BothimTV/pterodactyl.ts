@@ -12,6 +12,6 @@ export interface LocationAttributes {
   readonly id: number;
   short: string;
   long?: null | string;
-  updated_at: string;
-  readonly created_at: string;
+  updated_at: string | Date;
+  readonly created_at: string | Date;
 }

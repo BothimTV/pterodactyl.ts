@@ -1,6 +1,6 @@
-import { RawLocation } from "./Location";
-import { RawNodeAllocationList } from "./NodeAllocation";
-import { RawServerList } from "./Server";
+import { RawLocation } from "./location";
+import { RawNodeAllocationList } from "./nodeAllocation";
+import { RawServerList } from "./server";
 
 export interface RawPanelNodeList {
   object: "list";
@@ -21,8 +21,8 @@ export interface PanelNodeAttributes {
   readonly location_id: number;
   fqdn: string;
   scheme: "http" | "https";
-  behind_proxy: false;
-  maintenance_mode: false;
+  behind_proxy: boolean;
+  maintenance_mode: boolean;
   memory: number;
   memory_overallocate: number;
   disk: number;
@@ -31,13 +31,13 @@ export interface PanelNodeAttributes {
   daemon_listen: 8080 | number;
   daemon_sftp: 2022 | number;
   daemon_base: "/var/lib/pterodactyl/volumes" | string;
-  readonly created_at: string;
-  updated_at: string;
+  readonly created_at: string | Date;
+  updated_at: string  | Date;
   allocated_resources: {
     memory: number;
     disk: number;
   };
-  readonly relationships: {
+  readonly relationships?: {
     readonly allocations?: RawNodeAllocationList;
     readonly location?: RawLocation;
     readonly servers?: RawServerList;
