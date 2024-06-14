@@ -1,26 +1,30 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
-import { ApplicationClient } from '../ApplicationClient/ApplicationClient';
-import { WebsocketEvent } from '../types/consoleSocket';
-import { UserClient } from './UserClient';
+import { BaseClient } from '../BaseClient/BaseClient';
+import { ConsoleLogWsEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/consoleSocket';
 
-var client: ApplicationClient | UserClient
+var client: BaseClient
 export class ServerConsoleConnection extends EventEmitter {
 
     private endpoint: string
-    private apiKey: string
 
     private socket?: WebSocket
     private currentKey?: string
+    private debugLogging? = false
 
-    constructor(endpoint: string, apiKey: string, c: ApplicationClient | UserClient) {
+    constructor(endpoint: string, c: BaseClient) {
         super()
         this.endpoint = endpoint
-        this.apiKey = apiKey
         client = c
     }
 
-    public async connect() {
+    /**
+     * Connect to a servers console.
+     * You can then listen on the 
+     * @param debugLogging Debug enabled?
+     */
+    public async connect(debugLogging?: boolean) {
+        this.debugLogging = debugLogging
         if (!this.socket) {
             this.socket = new WebSocket(await this.setKey(), {
                 origin: new URL(this.endpoint).origin
@@ -51,24 +55,26 @@ export class ServerConsoleConnection extends EventEmitter {
     private async listen(data: WebsocketEvent) {
         switch (data.event) {
             case 'auth success': {
-                console.debug("Auth success")
+                if (this.debugLogging) console.debug("Auth success")
                 this.emit("auth_success")
                 break;
             }
             case 'status': {
-                this.emit("status", data.args)
+                if (this.debugLogging) console.debug("Received status event: " + data.args)
+                this.emit("status", (data as StatusWsEvent).args[0])
                 break;
             }
             case 'console output': {
-                this.emit("console_output", data.args)
+                if (this.debugLogging) console.debug("Received console output event: " + data.args)
+                this.emit("console_output", (data as ConsoleLogWsEvent).args[0])
                 break;
             }
             case 'stats': {
-                this.emit("stats", data.args)
+                this.emit("stats", JSON.parse((data as StatsWsEvent).args[0]) as StatsWsJson)
                 break;
             }
             case 'token expiring': {
-                console.warn("Token expiring, renewing...")
+                if (this.debugLogging) console.warn("Token expiring, renewing...")
                 await this.setKey()
                 await this.authSocket()
                 break;
@@ -83,11 +89,70 @@ export class ServerConsoleConnection extends EventEmitter {
         }
     }
 
-    public async disconnect() {
+    /**
+     * Disconnect from the server.
+     */
+    public disconnect(): void {
         if (this.socket) {
             this.socket.close()
             this.socket = undefined
         }
+    }
+
+    public requestStats(): void {
+        this.socket?.send(JSON.stringify({ event: "send stats", args: [null] }));
+    }
+
+    public requestLogs(): void {
+        this.socket?.send(JSON.stringify({ event: "send logs", args: [null] }));
+    }
+
+    public getStats(): Promise<StatsWsJson> { // TODO: Check if this event is received when the server is offline - prevent getting stuck!
+        return new Promise((resolve, reject) => {
+            if (!this.socket) {
+                return reject("No socket connection")
+            } else {
+                this.socket.addEventListener("message", async (ev) => {
+                    await this.requestStats();
+                    const data = (JSON.parse(ev.data as string) as WebsocketEvent)
+                    if (data.event == "stats") {
+                        return resolve(JSON.parse((data as StatsWsEvent).args[0]) as StatsWsJson)
+                    }
+                })
+            }
+        })
+    }
+
+    public getLogs(): Promise<Array<string>> {
+        return new Promise((resolve, reject) => {
+            if (!this.socket) {
+                return reject("No socket connection")
+            } else {
+                const res: Array<string> = []
+                var submitTimeout: NodeJS.Timeout = setTimeout(() => {
+                    resolve(["No logs - is the server online?"])
+                }, 5000)
+                this.socket.addEventListener("message", async (ev) => {
+                    await this.getLogs();
+                    const data = (JSON.parse(ev.data as string) as WebsocketEvent)
+                    if (data.event == "console output") {
+                        res.push(data.args[0])
+                        clearTimeout(submitTimeout)
+                        submitTimeout = setTimeout(() => {
+                            resolve(res)
+                        }, 1000)
+                    }
+                })
+            }
+        })
+    }
+
+    public sendPoweraction(action: string): void {
+        this.socket?.send(JSON.stringify({ event: "set state", args: [action] }));
+    }
+
+    public sendCommand(cmd: string): void {
+        this.socket?.send(JSON.stringify({ event: "send command", args: [cmd] }));
     }
 
 
