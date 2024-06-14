@@ -7,10 +7,10 @@ import { RawLocation, RawLocationList } from "../types/location";
 import { RawPanelNode, RawPanelNodeList } from "../types/panelNode";
 import { RawPanelUser, RawPanelUserList } from "../types/panelUser";
 import { RawServer, RawServerList } from "../types/server";
-import { ApplicationServer } from "./ApplicationServer";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
 import { PanelUser } from "./PanelUser";
+import { Server } from "./Server";
 
 export class ApplicationClient extends BaseClient {
   constructor(options: ClientOptions) {
@@ -94,7 +94,7 @@ export class ApplicationClient extends BaseClient {
   */
   public async createNode(nodeProperties: PanelNodeBuilder): Promise<PanelNode> {
     const endpoint = new URL(this.panel + "/api/application/nodes");
-    return new PanelNode(this, await this.api({ url: endpoint.href, method: "POST", data: nodeProperties }) as Node)
+    return new PanelNode(this, await this.api({ url: endpoint.href, method: "POST", data: nodeProperties }) as RawPanelNode)
   }
 
   /**
@@ -129,12 +129,12 @@ export class ApplicationClient extends BaseClient {
   /**
   * Get servers for this panel
   */
-  public async getServers(): Promise<Array<ApplicationServer>> {
+  public async getServers(): Promise<Array<Server>> {
     const endpoint = new URL(this.panel + "/api/application/servers");
     const data = await this.api({ url: endpoint.href }) as RawServerList
-    const res: Array<ApplicationServer> = [];
+    const res: Array<Server> = [];
     for (const server of data.data) {
-      res.push(new ApplicationServer(this, server));
+      res.push(new Server(this, server));
     }
     return res;
   }
@@ -143,26 +143,26 @@ export class ApplicationClient extends BaseClient {
   * Get a server for this panel
   * @param serverId The target server Id
   */
-  public async getServer(serverId: number): Promise<ApplicationServer> {
+  public async getServer(serverId: number): Promise<Server> {
     const endpoint = new URL(this.panel + "/api/application/servers/" + serverId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases");
-    return new ApplicationServer(this, await this.api({ url: endpoint.href }) as RawServer)
+    return new Server(this, await this.api({ url: endpoint.href }) as RawServer)
   }
 
   /**
   * Get a server by their external id
   * @prop externalId The target servers external id
   */
-  public async getExternalServer(externalId: string): Promise<ApplicationServer> {
+  public async getExternalServer(externalId: string): Promise<Server> {
     const endpoint = new URL(this.panel + "/api/application/servers/external/" + externalId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases");
-    return new ApplicationServer(this, await this.api({ url: endpoint.href }) as RawServer)
+    return new Server(this, await this.api({ url: endpoint.href }) as RawServer)
   }
 
   /**
   * Create a server
   */
-  public async createServer(serverProperties: ServerBuilder): Promise<ApplicationServer> {
+  public async createServer(serverProperties: ServerBuilder): Promise<Server> {
     const endpoint = new URL(this.panel + "/api/application/servers");
-    return new ApplicationServer(this, await this.api({ url: endpoint.href, method: "POST", data: serverProperties }) as RawServer)
+    return new Server(this, await this.api({ url: endpoint.href, method: "POST", data: serverProperties }) as RawServer)
   }
 
   /**
