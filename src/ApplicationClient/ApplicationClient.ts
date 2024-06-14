@@ -1,10 +1,8 @@
-import { AxiosRequestConfig } from "axios";
 import { LocationCreateProperties } from "../../types/RequestBodies";
-import { ClientOptions } from "../../types/Util";
+import { BaseClient, ClientOptions } from "../BaseClient/BaseClient";
 import { PanelNodeBuilder } from "../builder/PanelNodeBuilder";
 import { PanelUserBuilder } from "../builder/PanelUserBuilder";
 import { ServerBuilder } from "../builder/ServerBuilder";
-import { ApiRequestHandler } from "../functions/axois";
 import { RawLocation, RawLocationList } from "../types/location";
 import { RawPanelNode, RawPanelNodeList } from "../types/panelNode";
 import { RawPanelUser, RawPanelUserList } from "../types/panelUser";
@@ -14,19 +12,9 @@ import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
 import { PanelUser } from "./PanelUser";
 
-export class ApplicationClient {
-  protected apikey: string;
-  public panel: string;
-  public api = async function api(config: AxiosRequestConfig, errorSet?: Array<{ code: number; message: string; }>, ignoredErrors?: Array<string>): Promise<any> { };
+export class ApplicationClient extends BaseClient {
   constructor(options: ClientOptions) {
-    this.apikey = "Bearer " + options.apikey;
-    this.panel = options.panel;
-    this.api = new ApiRequestHandler(this.apikey).axiosRequest
-    try {
-      new URL(this.panel);
-    } catch (error) {
-      throw new Error("Invalid panel url");
-    }
+    super(options);
   }
 
   /**
