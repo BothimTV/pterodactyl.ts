@@ -1,8 +1,13 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
-import { ApplicationClient } from "../src/classes/application/ApplicationClient";
-import { NodeAllocationBuilder } from "../src/classes/builder/NodeAllocationBuilder";
-import { PanelNodeBuilder } from "../src/classes/builder/PanelNodeBuilder";
-import { PanelUserBuilder } from "../src/classes/builder/PanelUserBuilder";
+import {
+  GenericContainer,
+  StartedTestContainer,
+  TestContainer
+} from "testcontainers";
+import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
+import { NodeAllocationBuilder } from "../src/builder/NodeAllocationBuilder";
+import { PanelNodeBuilder } from "../src/builder/PanelNodeBuilder";
+import { PanelUserBuilder } from "../src/builder/PanelUserBuilder";
 
 const client = new ApplicationClient({
   apikey: process.env.API_KEY || "",
@@ -12,7 +17,15 @@ const client = new ApplicationClient({
 describe("Test the Application API", () => {
   var testUserId: number
   var testNodeId: number
+  let panel: StartedTestContainer
+  let wings: StartedTestContainer
   beforeAll(async () => {
+    const panelContainer: TestContainer = new GenericContainer("ghcr.io/pterodactyl/panel")
+    const wingsContainer: TestContainer = new GenericContainer("ghcr.io/pterodactyl/wings")
+    panelContainer.withExposedPorts();
+    wingsContainer.withExposedPorts();
+    panel = await panelContainer.start();
+    wings = await wingsContainer.start();  
     testUserId = await client.createUser(
       new PanelUserBuilder()
         .setEmail("test@test.de")
@@ -173,5 +186,7 @@ describe("Test the Application API", () => {
   afterAll(async () => {
     await (await client.getUser(testUserId)).delete()
     //await (await client.getNode(testNodeId)).delete()
+    await panel.stop()
+    await wings.stop()
   })
 });
