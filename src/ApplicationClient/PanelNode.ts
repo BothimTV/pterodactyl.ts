@@ -1,5 +1,5 @@
-import { AllocationList, Node, NodeConfiguration } from "../../types/ApplicationApiResponse";
-import { NodeAllocationBuilder } from "../builder/NodeAllocationBuilder";
+import { RawNodeConfiguration } from "../types/nodeConfiguration";
+import { AllocationBuilder } from "../builder/AllocationBuilder";
 import { RawLocation } from "../types/location";
 import { RawNodeAllocationList } from "../types/nodeAllocation";
 import { PanelNodeAttributes, RawPanelNode } from "../types/panelNode";
@@ -35,7 +35,7 @@ export class PanelNode implements PanelNodeAttributes{
         memory: number;
         disk: number;
     }
-    public nodeConfiguration?: NodeConfiguration;
+    public nodeConfiguration?: RawNodeConfiguration;
     public allocations?: Array<NodeAllocation>
     public relationships?: { readonly allocations?: RawNodeAllocationList | undefined; readonly location?: RawLocation | undefined; readonly servers?: RawServerList | undefined; };
 
@@ -70,9 +70,9 @@ export class PanelNode implements PanelNodeAttributes{
     /**
     * Get the config of this node
     */
-    public async getConfiguration(): Promise<NodeConfiguration> {
+    public async getConfiguration(): Promise<RawNodeConfiguration> {
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id + "/configuration");
-        this.nodeConfiguration = await client.api({ url: endpoint.href }) as NodeConfiguration
+        this.nodeConfiguration = await client.api({ url: endpoint.href }) as RawNodeConfiguration
         return this.nodeConfiguration
     }
 
@@ -97,7 +97,7 @@ export class PanelNode implements PanelNodeAttributes{
         }
     }
 
-    private updateThisNode(node: Node | null) {
+    private updateThisNode(node: RawPanelNode | null) {
         if (!node) {
             return console.error("There was an error whilst updating this node, you'll have to set the configuration manually!")
         }
@@ -127,7 +127,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.name = name;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -138,7 +138,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.description = description;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -149,7 +149,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.location_id = typeof location === "number" ? location : location.id;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -160,7 +160,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.public = isPublic ? 1 : 0;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -171,7 +171,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.fqdn = fqdn;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -182,7 +182,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.scheme = scheme;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -193,7 +193,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.behind_proxy = behindProxy ? 1 : 0;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -204,7 +204,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.maintenance_mode = maintenanceActive ? 1 : 0;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -215,7 +215,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.memory = memory;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -228,7 +228,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.memory_overallocate = overAllocation;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -239,7 +239,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.disk = disk;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -252,7 +252,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.disk_overallocate = overAllocation;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -264,7 +264,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.upload_size = limit;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -281,7 +281,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.daemon_listen = port;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -298,7 +298,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.daemon_sftp = port;
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -310,7 +310,7 @@ export class PanelNode implements PanelNodeAttributes{
         var data = this.updateProps();
         data.reset_secret = "on";
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id);
-        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as Node | null)
+        this.updateThisNode(await client.api({ url: endpoint.href, method: "PATCH", data: data }, undefined, ["ConfigurationNotPersistedException"]) as RawPanelNode | null)
     }
 
     /**
@@ -326,7 +326,7 @@ export class PanelNode implements PanelNodeAttributes{
      */
     public async getAllocations(): Promise<Array<NodeAllocation>> {
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id + "/allocations");
-        const data = await client.api({ url: endpoint.href }) as AllocationList
+        const data = await client.api({ url: endpoint.href }) as RawNodeAllocationList
         const res: Array<NodeAllocation> = []
         for (const allocation of data.data) {
             res.push(new NodeAllocation(client, allocation, this))
@@ -338,7 +338,7 @@ export class PanelNode implements PanelNodeAttributes{
     /**
     * Create a allocation for this node
     */
-    public async createAllocation(allocationProperties: NodeAllocationBuilder): Promise<void> {
+    public async createAllocation(allocationProperties: AllocationBuilder): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/nodes/" + this.id + "/allocations");
         await client.api({ url: endpoint.href, data: allocationProperties, method: "POST" })
     }

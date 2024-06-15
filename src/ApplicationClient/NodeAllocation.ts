@@ -1,5 +1,4 @@
-import { Allocation } from "../../types/ApplicationApiResponse";
-import { NodeAllocationAttributes } from "../types/nodeAllocation";
+import { NodeAllocationAttributes, RawNodeAllocation } from "../types/nodeAllocation";
 import { ApplicationClient } from "./ApplicationClient";
 import { PanelNode } from "./PanelNode";
 
@@ -8,12 +7,12 @@ export class NodeAllocation implements NodeAllocationAttributes {
     protected node: PanelNode;
     public readonly id: number;
     public readonly ip: string;
-    public readonly alias: null | string;
+    public readonly alias?: null | string;
     public readonly port: number;
-    public readonly notes: null | string;
+    public readonly notes?: null | string;
     public readonly assigned: boolean;
 
-    constructor(applicationClient: ApplicationClient, allocationProps: Allocation, node: PanelNode) {
+    constructor(applicationClient: ApplicationClient, allocationProps: RawNodeAllocation, node: PanelNode) {
         client = applicationClient;
         this.node = node;
         this.id = allocationProps.attributes.id;

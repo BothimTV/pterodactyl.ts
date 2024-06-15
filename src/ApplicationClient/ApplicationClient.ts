@@ -1,16 +1,16 @@
-import { LocationCreateProperties } from "../../types/RequestBodies";
 import { BaseClient, ClientOptions } from "../BaseClient/BaseClient";
-import { PanelNodeBuilder } from "../builder/PanelNodeBuilder";
-import { PanelUserBuilder } from "../builder/PanelUserBuilder";
+import { LocationBuilder } from "../builder/LocationBuilder";
+import { NodeBuilder } from "../builder/NodeBuilder";
 import { ServerBuilder } from "../builder/ServerBuilder";
+import { UserBuilder } from "../builder/UserBuilder";
 import { RawLocation, RawLocationList } from "../types/location";
 import { RawPanelNode, RawPanelNodeList } from "../types/panelNode";
-import { RawPanelUser, RawPanelUserList } from "../types/panelUser";
 import { RawServer, RawServerList } from "../types/server";
+import { RawUser, RawUserList } from "../types/user";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
-import { PanelUser } from "./PanelUser";
 import { Server } from "./Server";
+import { User } from "./User";
 
 export class ApplicationClient extends BaseClient {
   constructor(options: ClientOptions) {
@@ -28,42 +28,42 @@ export class ApplicationClient extends BaseClient {
    * @param sortBy Sort users by id oder uuid
    * @param reverseSort Reverse the sort @requires sortBy
    */
-  public async getUsers(filter?: { email?: string; uuid?: string; username?: string; externalId?: string; }, sortBy?: "id" | "uuid", reverseSort?: boolean): Promise<Array<PanelUser>> {
+  public async getUsers(filter?: { email?: string; uuid?: string; username?: string; externalId?: string; }, sortBy?: "id" | "uuid", reverseSort?: boolean): Promise<Array<User>> {
     var endpoint = new URL(this.panel + "/api/application/users?include=servers");
     if (filter?.email) endpoint.searchParams.append("filter[email]", filter.email);
     if (filter?.username) endpoint.searchParams.append("filter[username]", filter.username);
     if (filter?.uuid) endpoint.searchParams.append("filter[uuid]", filter.uuid);
     if (filter?.externalId) endpoint.searchParams.append("filter[external_id]", filter.externalId);
     if (sortBy) endpoint.searchParams.append("sort", `${reverseSort ? "-" : ""}${sortBy}`);
-    const users = await this.api({ url: endpoint.href, }) as RawPanelUserList
-    return users.data.map(user => new PanelUser(this, user));
+    const users = await this.api({ url: endpoint.href, }) as RawUserList
+    return users.data.map(user => new User(this, user));
   }
 
   /**
    * Get a user via their userId
    * @param userId The id of a user
    */
-  public async getUser(userId: number): Promise<PanelUser> {
+  public async getUser(userId: number): Promise<User> {
     const endpoint = new URL(this.panel + "/api/application/users/" + userId + "?include=servers");
-    return new PanelUser(this, await this.api({ url: endpoint.href }) as RawPanelUser);
+    return new User(this, await this.api({ url: endpoint.href }) as RawUser);
   }
 
   /**
   * Get a user via their external id
   * @param externalId The external id of a user
   */
-  public async getExternalUser(externalId: string): Promise<PanelUser> {
+  public async getExternalUser(externalId: string): Promise<User> {
     const endpoint = new URL(this.panel + "/api/application/users/external/" + externalId + "?include=servers"); 
-    return new PanelUser(this, await this.api({ url: endpoint.href }) as RawPanelUser)
+    return new User(this, await this.api({ url: endpoint.href }) as RawUser)
   }
 
   /**
    * Create a user
-   * @param userProperties Construct a user via new PanelUserBuilder()
+   * @param userProperties Construct a user via new UserBuilder()
    */
-  public async createUser(userProperties: PanelUserBuilder): Promise<PanelUser> {
+  public async createUser(userProperties: UserBuilder): Promise<User> {
     const endpoint = new URL(this.panel + "/api/application/users");
-    return new PanelUser(this, await this.api({ url: endpoint.href, method: "POST", data: userProperties }, [{ code: 422, message: "There is already a user with this email and/or username" }]) as RawPanelUser);
+    return new User(this, await this.api({ url: endpoint.href, method: "POST", data: userProperties }, [{ code: 422, message: "There is already a user with this email and/or username" }]) as RawUser);
   }
 
   /**
@@ -92,7 +92,7 @@ export class ApplicationClient extends BaseClient {
   * Create a node
   * @param nodeProperties The properties for the new node
   */
-  public async createNode(nodeProperties: PanelNodeBuilder): Promise<PanelNode> {
+  public async createNode(nodeProperties: NodeBuilder): Promise<PanelNode> {
     const endpoint = new URL(this.panel + "/api/application/nodes");
     return new PanelNode(this, await this.api({ url: endpoint.href, method: "POST", data: nodeProperties }) as RawPanelNode)
   }
@@ -121,7 +121,7 @@ export class ApplicationClient extends BaseClient {
   /**
   * Create a location for this panel
   */
-  public async createLocation(locationProperties: LocationCreateProperties): Promise<PanelLocation> {
+  public async createLocation(locationProperties: LocationBuilder): Promise<PanelLocation> {
     const endpoint = new URL(this.panel + "/api/application/locations");
     return new PanelLocation(this, await this.api({ url: endpoint.href, method: "POST", data: locationProperties }) as RawLocation)
   }

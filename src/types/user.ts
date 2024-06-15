@@ -1,16 +1,16 @@
 import { RawServerList } from "./server";
 
-export interface RawPanelUserList {
+export interface RawUserList {
   object: "list";
-  data: Array<RawPanelUser>;
+  data: Array<RawUser>;
 }
 
-export interface RawPanelUser {
+export interface RawUser {
   object: "user";
-  attributes: PanelUserAttributes;
+  attributes: UserAttributes;
 }
 
-export interface PanelUserAttributes {
+export interface UserAttributes {
   readonly id: number;
   external_id?: string | null;
   readonly uuid: string;

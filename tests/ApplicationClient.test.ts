@@ -5,9 +5,9 @@ import {
   TestContainer
 } from "testcontainers";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
-import { NodeAllocationBuilder } from "../src/builder/NodeAllocationBuilder";
-import { PanelNodeBuilder } from "../src/builder/PanelNodeBuilder";
-import { PanelUserBuilder } from "../src/builder/PanelUserBuilder";
+import { NodeAllocationBuilder } from "../src/builder/AllocationBuilder";
+import { PanelNodeBuilder } from "../src/builder/NodeBuilder";
+import { PanelUserBuilder } from "../src/builder/UserBuilder";
 
 const client = new ApplicationClient({
   apikey: process.env.API_KEY || "",

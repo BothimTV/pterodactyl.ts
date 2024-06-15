@@ -4,10 +4,10 @@ import { RawNodeAllocationList } from "./nodeAllocation";
 import { RawPanelEgg } from "./panelEgg";
 import { RawPanelNest } from "./panelNest";
 import { RawPanelNode } from "./panelNode";
-import { RawPanelUser } from "./panelUser";
 import { ServerStatus } from "./serverStatus";
 import { RawServerSubUserList } from "./serverSubUser";
 import { RawServerVariableList } from "./serverVariable";
+import { RawPanelUser } from "./user";
 
 export interface RawServerList {
   object: "list";

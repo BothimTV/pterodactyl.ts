@@ -5,11 +5,11 @@ import { RawNodeAllocationList } from "../types/nodeAllocation";
 import { RawPanelEgg } from "../types/panelEgg";
 import { RawPanelNest } from "../types/panelNest";
 import { RawPanelNode } from "../types/panelNode";
-import { RawPanelUser } from "../types/panelUser";
 import { RawServer, ServerAttributes } from "../types/server";
 import { ServerStatus } from "../types/serverStatus";
 import { RawServerSubUserList } from "../types/serverSubUser";
 import { RawServerVariableList } from "../types/serverVariable";
+import { RawUser } from "../types/user";
 import { ApplicationClient } from "./ApplicationClient";
 import { ServerDatabase } from "./ServerDatabase";
 
@@ -53,7 +53,7 @@ export class Server implements ServerAttributes {
     public readonly created_at: Date;
     readonly relationships?: {
         readonly allocations?: RawNodeAllocationList;
-        readonly user?: RawPanelUser;
+        readonly user?: RawUser;
         readonly subusers?: RawServerSubUserList;
         readonly nest?: RawPanelNest;
         readonly egg?: RawPanelEgg;

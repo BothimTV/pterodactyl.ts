@@ -1,5 +1,4 @@
-import { Location } from "../../types/ApplicationApiResponse"
-import { LocationUpdateProperties } from "../../types/RequestBodies"
+import { LocationBuilder } from "../builder/LocationBuilder"
 import { LocationAttributes, RawLocation } from "../types/location"
 import { ApplicationClient } from "./ApplicationClient"
 
@@ -25,9 +24,9 @@ export class PanelLocation implements LocationAttributes{
   * Update this location
   * FIXME: @deprecated
   */
-  public async update(updateProperties: LocationUpdateProperties): Promise<void> {
+  public async update(updateProperties: LocationBuilder): Promise<void> {
     const endpoint = new URL(client.panel + "/api/application/locations/" + this.id);
-    const data = await client.api({ url: endpoint.href, method: "PATCH", data: updateProperties }) as Location
+    const data = await client.api({ url: endpoint.href, method: "PATCH", data: updateProperties }) as RawLocation
     this.short = data.attributes.short
     this.long = data.attributes.long
     this.updated_at = new Date(data.attributes.updated_at)

@@ -1,5 +1,5 @@
-import { PanelUserAttributes, RawPanelUser } from "../types/panelUser";
 import { RawServer } from "../types/server";
+import { RawUser, UserAttributes } from "../types/user";
 import { ApplicationClient } from "./ApplicationClient";
 import { Server } from "./Server";
 
@@ -12,7 +12,7 @@ var relationships:
       };
     }
   | undefined;
-export class PanelUser implements PanelUserAttributes {
+export class User implements UserAttributes {
   public readonly id: number;
   public external_id?: string | null;
   public readonly uuid: string;
@@ -27,7 +27,7 @@ export class PanelUser implements PanelUserAttributes {
   public updated_at: Date;
   public servers?: Array<Server>;
 
-  constructor(applicationClient: ApplicationClient, userData: RawPanelUser) {
+  constructor(applicationClient: ApplicationClient, userData: RawUser) {
     client = applicationClient;
     this.id = userData.attributes.id;
     this.external_id = userData.attributes.external_id;
@@ -66,7 +66,7 @@ export class PanelUser implements PanelUserAttributes {
     };
   }
 
-  private updateThisUser(user: RawPanelUser) {
+  private updateThisUser(user: RawUser) {
     this.email = user.attributes.email;
     this.username = user.attributes.username;
     this.first_name = user.attributes.first_name;
@@ -91,7 +91,7 @@ export class PanelUser implements PanelUserAttributes {
         url: endpoint.href,
         method: "PATCH",
         data: data,
-      })) as RawPanelUser
+      })) as RawUser
     );
   }
 
@@ -110,7 +110,7 @@ export class PanelUser implements PanelUserAttributes {
         url: endpoint.href,
         method: "PATCH",
         data: data,
-      })) as RawPanelUser
+      })) as RawUser
     );
   }
 
@@ -129,7 +129,7 @@ export class PanelUser implements PanelUserAttributes {
         url: endpoint.href,
         method: "PATCH",
         data: data,
-      })) as RawPanelUser
+      })) as RawUser
     );
   }
 
@@ -148,7 +148,7 @@ export class PanelUser implements PanelUserAttributes {
         url: endpoint.href,
         method: "PATCH",
         data: data,
-      })) as RawPanelUser
+      })) as RawUser
     );
   }
 
@@ -168,7 +168,7 @@ export class PanelUser implements PanelUserAttributes {
         url: endpoint.href,
         method: "PATCH",
         data: data,
-      })) as RawPanelUser
+      })) as RawUser
     );
   }
 
@@ -187,7 +187,7 @@ export class PanelUser implements PanelUserAttributes {
         url: endpoint.href,
         method: "PATCH",
         data: data,
-      })) as RawPanelUser
+      })) as RawUser
     );
   }
 
@@ -207,7 +207,7 @@ export class PanelUser implements PanelUserAttributes {
         url: endpoint.href,
         method: "PATCH",
         data: data,
-      })) as RawPanelUser
+      })) as RawUser
     );
   }
 }

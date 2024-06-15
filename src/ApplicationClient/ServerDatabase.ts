@@ -1,4 +1,3 @@
-import { ServerDatabase as ServerDb } from "../../types/ApplicationApiResponse";
 import { RawServerDatabase, ServerDatabaseAttributes } from "../types/database";
 import { ApplicationClient } from "./ApplicationClient";
 
@@ -14,8 +13,8 @@ export class ServerDatabase implements ServerDatabaseAttributes {
   public max_connections: number;
   public created_at: Date
   public updated_at: Date
-  public password: string
-  public dbHost: {
+  public password?: string
+  public dbHost?: {
     id: number;
     name: string;
     host: string;
@@ -37,17 +36,19 @@ export class ServerDatabase implements ServerDatabaseAttributes {
     this.max_connections = dbProperties.attributes.max_connections;
     this.created_at = new Date(dbProperties.attributes.created_at);
     this.updated_at = new Date(dbProperties.attributes.updated_at);
-    this.password = dbProperties.attributes.relationships.password.attributes.password;
-    this.dbHost = {
-      id: dbProperties.attributes.relationships.host.attributes.id,
-      name: dbProperties.attributes.relationships.host.attributes.name,
-      host: dbProperties.attributes.relationships.host.attributes.host,
-      port: dbProperties.attributes.relationships.host.attributes.port,
-      username: dbProperties.attributes.relationships.host.attributes.username,
-      node: dbProperties.attributes.relationships.host.attributes.node,
-      created_at: new Date(dbProperties.attributes.relationships.host.attributes.created_at),
-      updated_at: new Date(dbProperties.attributes.relationships.host.attributes.updated_at)
-    };
+    if (dbProperties.attributes.relationships) {
+      this.password = dbProperties.attributes.relationships.password.attributes.password;
+      this.dbHost = {
+        id: dbProperties.attributes.relationships.host.attributes.id,
+        name: dbProperties.attributes.relationships.host.attributes.name,
+        host: dbProperties.attributes.relationships.host.attributes.host,
+        port: dbProperties.attributes.relationships.host.attributes.port,
+        username: dbProperties.attributes.relationships.host.attributes.username,
+        node: dbProperties.attributes.relationships.host.attributes.node,
+        created_at: new Date(dbProperties.attributes.relationships.host.attributes.created_at),
+        updated_at: new Date(dbProperties.attributes.relationships.host.attributes.updated_at)
+      };
+    }
   }
 
   /**
