@@ -45,6 +45,7 @@ export class Server implements ServerAttributes {
     public allocation: number;
     public nest: number;
     public egg: number;
+    public eggData?: RawPanelEgg
     public container: {
         startup_command: string;
         image: string;
@@ -85,6 +86,11 @@ export class Server implements ServerAttributes {
         this.container = serverProperties.attributes.container;
         this.updated_at = new Date(serverProperties.attributes.updated_at);
         this.created_at = new Date(serverProperties.attributes.created_at);
+        this.updateEggData()
+    }
+
+    private async updateEggData() {
+        this.eggData = await client.api({ url: client.panel + "/nests/" + this.nest + "/eggs/" + this.egg + "?include=nest,servers,variables", method: "GET" }) as RawPanelEgg
     }
 
     private updateProps() {
@@ -316,23 +322,26 @@ export class Server implements ServerAttributes {
     }
 
     private async updateStartup() {
-        const eggData = await client.api({ url: client.panel + "/nests/" + this.nest + "/eggs/" + this.egg + "?include=nest,servers,variables", method: "GET" }) as RawPanelEgg
+        if (!this.eggData) return {}
         return {
             startup: this.container.startup_command,
             nest_id: this.nest,
             egg_id: this.egg,
             skip_scripts: 0,
-            docker_image: eggData.attributes.docker_image,
-            custom_docker_image: this.container.image == eggData.attributes.docker_image ? undefined : this.container.image
+            docker_image: this.eggData.attributes.docker_image,
+            custom_docker_image: this.container.image == this.eggData.attributes.docker_image ? undefined : this.container.image
         }
     }
 
-    private updateThisStartup(server: RawServer) {
-        this.container.startup_command = server.attributes.container.startup_command,
-            this.nest = server.attributes.nest,
-            this.egg = server.attributes.egg,
-            this.container.image = server.attributes.container.image,
-            this.updated_at = new Date(server.attributes.updated_at);
+    private async updateThisStartup(server: RawServer) {
+        this.container.startup_command = server.attributes.container.startup_command
+        this.nest = server.attributes.nest
+        this.egg = server.attributes.egg
+        this.container.image = server.attributes.container.image
+        this.updated_at = new Date(server.attributes.updated_at)
+        if (this.egg != server.attributes.egg || this.nest != server.attributes.nest) {
+            await this.updateEggData()
+        }
     }
 
     /**
@@ -344,7 +353,7 @@ export class Server implements ServerAttributes {
         var data = await this.updateStartup()
         data.startup = startup
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
     /** FIXME: Allow input of nest and egg as object
@@ -357,7 +366,7 @@ export class Server implements ServerAttributes {
         data.nest_id = nest
         data.egg_id = egg
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
     /** FIXME: Add support for the egg as object
@@ -368,7 +377,7 @@ export class Server implements ServerAttributes {
         var data = await this.updateStartup()
         data.egg_id = egg
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
     /**
@@ -379,7 +388,7 @@ export class Server implements ServerAttributes {
         var data = await this.updateStartup()
         data.skip_scripts = skip ? 1 : 0
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
     /**
@@ -390,7 +399,7 @@ export class Server implements ServerAttributes {
         var data = await this.updateStartup()
         data.docker_image = image
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
     /**
@@ -401,7 +410,7 @@ export class Server implements ServerAttributes {
         var data = await this.updateStartup()
         data.custom_docker_image = image
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
     /**
