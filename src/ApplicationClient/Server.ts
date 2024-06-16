@@ -1,4 +1,3 @@
-import { ServerUpdateStartupProperties } from "../../types/RequestBodies";
 import { ServerDatabaseBuilder } from "../builder/ServerDatabaseBuilder";
 import { RawServerDatabase, RawServerDatabaseList } from "../types/database";
 import { RawLocation } from "../types/location";
@@ -44,13 +43,13 @@ export class Server implements ServerAttributes {
     public user: number;
     public node: number;
     public allocation: number;
-    public readonly nest: number;
-    public readonly egg: number;
+    public nest: number;
+    public egg: number;
     public container: {
         startup_command: string;
         image: string;
         installed: 0 | 1;
-        environment: any;
+        environment: { [key: string]: string | number | boolean | null };
     };
     public updated_at: Date
     public readonly created_at: Date;
@@ -315,18 +314,94 @@ export class Server implements ServerAttributes {
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/build");
         this.updateThisBuild(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
-    
+
+    private async updateStartup() {
+        const eggData = await client.api({ url: client.panel + "/nests/" + this.nest + "/eggs/" + this.egg + "?include=nest,servers,variables", method: "GET" }) as RawPanelEgg
+        return {
+            startup: this.container.startup_command,
+            nest_id: this.nest,
+            egg_id: this.egg,
+            skip_scripts: 0,
+            docker_image: eggData.attributes.docker_image,
+            custom_docker_image: this.container.image == eggData.attributes.docker_image ? undefined : this.container.image
+        }
+    }
+
+    private updateThisStartup(server: RawServer) {
+        this.container.startup_command = server.attributes.container.startup_command,
+            this.nest = server.attributes.nest,
+            this.egg = server.attributes.egg,
+            this.container.image = server.attributes.container.image,
+            this.updated_at = new Date(server.attributes.updated_at);
+    }
+
     /**
-     * Update this server startup details
-     * FIXME: @deprecated
-     */
-    public async updateStartup(serverProperties: ServerUpdateStartupProperties): Promise<void> {
+    * Set the startup command with which the server will start  
+    * This can include environment vars via {{ VAR_NAME }}
+    * @default startup This will use the default startup command if you set the egg via .setEgg(egg: PanelEgg)
+    */
+    public async setStartupCommand(startup: string) {
+        var data = await this.updateStartup()
+        data.startup = startup
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        const data = await client.api({ url: endpoint.href, method: "PATCH", data: serverProperties }) as RawServer
-        this.container = data.attributes.container
-        this.egg = data.attributes.egg
-        this.nest = data.attributes.nest
-        this.updated_at = new Date(data.attributes.updated_at);
+        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+    }
+
+    /** FIXME: Allow input of nest and egg as object
+     * Set the new nest for this server
+     * @param nest The new nest for this server
+     * @param egg The new egg for this server
+     */
+    public async setNest(nest: number, egg: number) {
+        var data = await this.updateStartup()
+        data.nest_id = nest
+        data.egg_id = egg
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+    }
+
+    /** FIXME: Add support for the egg as object
+     * Change the egg of this server
+     * @param egg The new egg id - this must be included in the current nest!
+     */
+    public async setEgg(egg: number) {
+        var data = await this.updateStartup()
+        data.egg_id = egg
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+    }
+
+    /**
+     * Skip install script
+     * @param skip Whether the install script should be skipped 
+     */
+    public async setSkipInstall(skip: boolean) {
+        var data = await this.updateStartup()
+        data.skip_scripts = skip ? 1 : 0
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+    }
+
+    /**
+     * Set the docker image for this server  
+     * @param image The new image for this container
+     */
+    public async setDockerImage(image: string) {
+        var data = await this.updateStartup()
+        data.docker_image = image
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+    }
+
+    /**
+     * Set the custom docker image for this server  
+     * @param image The new image for this container
+     */
+    public async setCustomDockerImage(image: string) {
+        var data = await this.updateStartup()
+        data.custom_docker_image = image
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
     /**
