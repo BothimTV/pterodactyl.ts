@@ -1,3 +1,6 @@
+import { RawPanelEggList } from "./panelEgg";
+import { RawServerList } from "./server";
+
 export interface RawPanelNestList {
   object: "list";
   data: Array<RawPanelNest>;
@@ -16,4 +19,8 @@ export interface PanelNestAttributes {
   description?: null | string;
   readonly created_at: string;
   updated_at: string;
+  readonly relationships?: {
+    readonly eggs?: RawPanelEggList;
+    readonly servers?: RawServerList;
+  };
 }

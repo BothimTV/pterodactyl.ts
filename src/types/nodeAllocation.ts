@@ -1,3 +1,6 @@
+import { RawPanelNode } from "./panelNode";
+import { RawServer } from "./server";
+
 export interface RawNodeAllocationList {
   object: "list";
   data: Array<RawNodeAllocation>;
@@ -16,4 +19,8 @@ export interface NodeAllocationAttributes {
   notes?: null | string;
   assigned: boolean;
   is_default?: boolean;
+  readonly relationships?: {
+    node?: RawPanelNode;
+    server?: RawServer;
+  }
 }

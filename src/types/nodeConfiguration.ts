@@ -1,28 +1,24 @@
 export interface RawNodeConfiguration {
-    object: "node_configuration"; //TODO: Check if this is valid
-    attributes: NodeConfigurationAttributes;
-}
-
-export interface NodeConfigurationAttributes {
-    debug: boolean;
-    uuid: string;
-    token_id: string;
-    token: string;
-    api: {
-      host: string;
-      port: 8080 | number;
-      ssl: {
-        enabled: boolean;
-        cert: string;
-        key: string;
-      };
-      upload_limit: number;
+  readonly debug: boolean;
+  readonly uuid: string;
+  readonly token_id: string;
+  readonly token: string;
+  readonly api: {
+    readonly host: string;
+    readonly port: 8080 | number;
+    readonly ssl: {
+      readonly enabled: boolean;
+      readonly cert: string;
+      readonly key: string;
     };
-    system: {
-      data: string;
-      sftp: {
-        bind_port: 2022 | number;
-      };
-    };
-    remote: string;
+    readonly upload_limit: number;
   };
+  readonly system: {
+    readonly data: string;
+    readonly sftp: {
+      readonly bind_port: 2022 | number;
+    };
+  };
+  readonly allowed_mounts: Array<unknown>;
+  readonly remote: string;
+}

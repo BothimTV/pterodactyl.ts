@@ -1,3 +1,7 @@
+import { RawPanelNest } from "./panelNest";
+import { RawServerList } from "./server";
+import { RawServerVariableList } from "./serverVariable";
+
 export interface RawPanelEggList {
   object: "list";
   data: Array<RawPanelEgg>;
@@ -12,12 +16,12 @@ export interface PanelEggAttributes {
   readonly id: number;
   readonly uuid: string;
   readonly name: string;
-  nest: number;
+  readonly nest: number;
   readonly author: string;
   description?: null | string;
   docker_image: string;
   docker_images: { [key: string]: string };
-  config: {
+  readonly config: {
     files: {
       [key: string]: {
         parser: string;
@@ -43,4 +47,9 @@ export interface PanelEggAttributes {
   };
   readonly created_at: string;
   updated_at: string;
+  readonly relationships?: {
+    readonly nest?: RawPanelNest;
+    readonly servers?: RawServerList;
+    readonly variables?: RawServerVariableList;
+  };
 }

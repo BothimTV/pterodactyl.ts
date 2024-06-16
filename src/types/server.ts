@@ -7,7 +7,7 @@ import { RawPanelNode } from "./panelNode";
 import { ServerStatus } from "./serverStatus";
 import { RawServerSubUserList } from "./serverSubUser";
 import { RawServerVariableList } from "./serverVariable";
-import { RawPanelUser } from "./user";
+import { RawUser } from "./user";
 
 export interface RawServerList {
   object: "list";
@@ -57,7 +57,7 @@ export interface ServerAttributes {
   readonly created_at: string | Date;
   readonly relationships?: {
     readonly allocations?: RawNodeAllocationList;
-    readonly user?: RawPanelUser;
+    readonly user?: RawUser;
     readonly subusers?: RawServerSubUserList;
     readonly nest?: RawPanelNest;
     readonly egg?: RawPanelEgg;

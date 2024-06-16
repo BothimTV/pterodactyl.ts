@@ -1,4 +1,5 @@
-import { ServerDatabaseCreateProperties, ServerUpdateBuildProperties, ServerUpdateProperties, ServerUpdateStartupProperties } from "../../types/RequestBodies";
+import { ServerUpdateBuildProperties, ServerUpdateProperties, ServerUpdateStartupProperties } from "../../types/RequestBodies";
+import { ServerDatabaseBuilder } from "../builder/ServerDatabaseBuilder";
 import { RawServerDatabase, RawServerDatabaseList } from "../types/database";
 import { RawLocation } from "../types/location";
 import { RawNodeAllocationList } from "../types/nodeAllocation";
@@ -101,6 +102,7 @@ export class Server implements ServerAttributes {
 
     /**
     * Update this server build details
+    * FIXME: @deprecated
     */
     public async updateBuild(serverProperties: ServerUpdateBuildProperties): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/build");
@@ -113,6 +115,7 @@ export class Server implements ServerAttributes {
 
     /**
      * Update this server startup details
+     * FIXME: @deprecated
      */
     public async updateStartup(serverProperties: ServerUpdateStartupProperties): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -177,7 +180,7 @@ export class Server implements ServerAttributes {
     /**
     * Create a database for this server
     */
-    public async createDatabase(databaseCreateProperties: ServerDatabaseCreateProperties): Promise<void> {
+    public async createDatabase(databaseCreateProperties: ServerDatabaseBuilder): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/endpoint");
         await client.api({ url: endpoint.href, data: databaseCreateProperties, method: "POST" })
     }

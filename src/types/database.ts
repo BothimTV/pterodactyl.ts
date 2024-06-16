@@ -8,34 +8,34 @@ export interface RawServerDatabase {
     attributes: ServerDatabaseAttributes;
 }
 
-export interface ServerDatabaseAttributes { // TODO: Test the api endpoints to get a verified response 
-    id: number;
-    server: number;
-    host: number;
-    database: string;
-    username: string;
-    remote: string;
-    max_connections: number;
-    created_at: string | Date; 
+export interface ServerDatabaseAttributes {
+    readonly id: number;
+    readonly server: number;
+    readonly host: number;
+    readonly database: string;
+    readonly username: string;
+    readonly remote: string;
+    readonly max_connections: number;
+    readonly created_at: string | Date; 
     updated_at: string | Date; 
-    relationships?: { 
-      password: {
-        object: "database_password";
-        attributes: {
+    readonly relationships?: { 
+      readonly password: {
+        readonly object: "database_password";
+        readonly attributes: {
           password: string;
         };
       };
-      host: {
-        object: "database_host";
-        attributes: {
-          id: number;
-          name: string;
-          host: string;
-          port: number;
-          username: string;
-          node: number;
-          created_at: string; 
-          updated_at: string; 
+      readonly host?: {
+        readonly object: "database_host";
+        readonly attributes: {
+          readonly id: number;
+          readonly name: string;
+          readonly host: string;
+          readonly port: number;
+          readonly username: string;
+          readonly node: number;
+          readonly created_at: string; 
+          readonly updated_at: string; 
         };
       };
     };
