@@ -3,6 +3,8 @@ import WebSocket from 'ws';
 import { BaseClient } from '../BaseClient/BaseClient';
 import { ConsoleLogWsEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/consoleSocket';
 
+// file deepcode ignore InsufficientPostmessageValidation 
+
 var client: BaseClient
 export class ServerConsoleConnection extends EventEmitter {
 
