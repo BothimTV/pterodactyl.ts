@@ -322,14 +322,15 @@ export class Server implements ServerAttributes {
     }
 
     private async updateStartup() {
-        if (!this.eggData) return {}
+        if (!this.eggData) throw new Error("Egg data not found")
         return {
             startup: this.container.startup_command,
             nest_id: this.nest,
             egg_id: this.egg,
             skip_scripts: 0,
             docker_image: this.eggData.attributes.docker_image,
-            custom_docker_image: this.container.image == this.eggData.attributes.docker_image ? undefined : this.container.image
+            custom_docker_image: this.container.image == this.eggData.attributes.docker_image ? undefined : this.container.image,
+            environment: this.container.environment ? this.container.environment : {}
         }
     }
 
@@ -339,6 +340,7 @@ export class Server implements ServerAttributes {
         this.egg = server.attributes.egg
         this.container.image = server.attributes.container.image
         this.updated_at = new Date(server.attributes.updated_at)
+        this.container.environment = server.attributes.container.environment
         if (this.egg != server.attributes.egg || this.nest != server.attributes.nest) {
             await this.updateEggData()
         }
@@ -398,6 +400,28 @@ export class Server implements ServerAttributes {
     public async setDockerImage(image: string) {
         var data = await this.updateStartup()
         data.docker_image = image
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+    }
+
+     /**
+     * Set the environment vars with which the server will start
+     * @param environment Overwrites all current variables
+     */
+     public async setEnvironment(environment: { [environment: string]: string }) {
+        var data = await this.updateStartup()
+        data.environment = environment
+        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
+        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
+    }
+
+    /**
+     * Add environment vars with which the server will start
+     * @param environment Add a variable and value to the current variables
+     */
+    public async addEnvironmentVariable(key: string, value: string) {
+        var data = await this.updateStartup()
+        data.environment[key] = value
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
         await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
