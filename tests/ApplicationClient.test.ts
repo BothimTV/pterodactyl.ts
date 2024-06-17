@@ -5,9 +5,9 @@ import {
   TestContainer
 } from "testcontainers";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
-import { NodeAllocationBuilder } from "../src/builder/AllocationBuilder";
-import { PanelNodeBuilder } from "../src/builder/NodeBuilder";
-import { PanelUserBuilder } from "../src/builder/UserBuilder";
+import { AllocationBuilder } from "../src/builder/AllocationBuilder";
+import { NodeBuilder } from "../src/builder/NodeBuilder";
+import { UserBuilder } from "../src/builder/UserBuilder";
 
 const client = new ApplicationClient({
   apikey: process.env.API_KEY || "",
@@ -27,7 +27,7 @@ describe("Test the Application API", () => {
     panel = await panelContainer.start();
     wings = await wingsContainer.start();  
     testUserId = await client.createUser(
-      new PanelUserBuilder()
+      new UserBuilder()
         .setEmail("test@test.de")
         .setUsername("test")
         .setFirstName("test")
@@ -37,7 +37,7 @@ describe("Test the Application API", () => {
       return user.id
     }).catch((e) => { return 200 })
     testNodeId = await client.createNode(
-      new PanelNodeBuilder()
+      new NodeBuilder()
         .setName("Test Node")
         .setLocationId(1)
         .setFqdn("test.de")
@@ -45,7 +45,7 @@ describe("Test the Application API", () => {
         .setDisk(1024)
     ).then(async (node) => {
       await node.createAllocation(
-        new NodeAllocationBuilder()
+        new AllocationBuilder()
           .setIp("0.0.0.0")
           .setAlias("test-node.test.de")
           .addPort(25565)
