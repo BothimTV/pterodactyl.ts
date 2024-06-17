@@ -38,16 +38,18 @@ export class ServerDatabase implements ServerDatabaseAttributes {
     this.updated_at = new Date(dbProperties.attributes.updated_at);
     if (dbProperties.attributes.relationships) {
       this.password = dbProperties.attributes.relationships.password.attributes.password;
-      this.dbHost = {
-        id: dbProperties.attributes.relationships.host.attributes.id,
-        name: dbProperties.attributes.relationships.host.attributes.name,
-        host: dbProperties.attributes.relationships.host.attributes.host,
-        port: dbProperties.attributes.relationships.host.attributes.port,
-        username: dbProperties.attributes.relationships.host.attributes.username,
-        node: dbProperties.attributes.relationships.host.attributes.node,
-        created_at: new Date(dbProperties.attributes.relationships.host.attributes.created_at),
-        updated_at: new Date(dbProperties.attributes.relationships.host.attributes.updated_at)
-      };
+      if (dbProperties.attributes.relationships.host) {
+        this.dbHost = {
+          id: dbProperties.attributes.relationships.host.attributes.id,
+          name: dbProperties.attributes.relationships.host.attributes.name,
+          host: dbProperties.attributes.relationships.host.attributes.host,
+          port: dbProperties.attributes.relationships.host.attributes.port,
+          username: dbProperties.attributes.relationships.host.attributes.username,
+          node: dbProperties.attributes.relationships.host.attributes.node,
+          created_at: new Date(dbProperties.attributes.relationships.host.attributes.created_at),
+          updated_at: new Date(dbProperties.attributes.relationships.host.attributes.updated_at)
+        };
+      }
     }
   }
 
