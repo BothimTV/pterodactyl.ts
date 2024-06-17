@@ -17,8 +17,8 @@ export interface PanelNestAttributes {
   readonly author: string;
   name: string;
   description?: null | string;
-  readonly created_at: string;
-  updated_at: string;
+  readonly created_at: string | Date;
+  updated_at: string | Date;
   readonly relationships?: {
     readonly eggs?: RawPanelEggList;
     readonly servers?: RawServerList;

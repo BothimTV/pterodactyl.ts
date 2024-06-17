@@ -11,6 +11,8 @@ import { RawServerSubUserList } from "../types/serverSubUser";
 import { RawServerVariableList } from "../types/serverVariable";
 import { RawUser } from "../types/user";
 import { ApplicationClient } from "./ApplicationClient";
+import { Egg } from "./Egg";
+import { Nest } from "./Nest";
 import { NodeAllocation } from "./NodeAllocation";
 import { ServerDatabase } from "./ServerDatabase";
 import { User } from "./User";
@@ -358,26 +360,15 @@ export class Server implements ServerAttributes {
         await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
-    /** FIXME: Allow input of nest and egg as object
+    /**
      * Set the new nest for this server
      * @param nest The new nest for this server
      * @param egg The new egg for this server
      */
-    public async setNest(nest: number, egg: number) {
+    public async setNestAndEgg(nest: number | Nest, egg: number | Egg) {
         var data = await this.updateStartup()
-        data.nest_id = nest
-        data.egg_id = egg
-        const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
-        await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
-    }
-
-    /** FIXME: Add support for the egg as object
-     * Change the egg of this server
-     * @param egg The new egg id - this must be included in the current nest!
-     */
-    public async setEgg(egg: number) {
-        var data = await this.updateStartup()
-        data.egg_id = egg
+        data.nest_id = typeof nest == "number" ? nest : nest.id
+        data.egg_id = typeof egg == "number" ? egg : egg.id
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
         await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }

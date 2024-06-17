@@ -45,8 +45,8 @@ export interface PanelEggAttributes {
     container: string;
     extends?: null | string;
   };
-  readonly created_at: string;
-  updated_at: string;
+  readonly created_at: string | Date;
+  updated_at: string | Date;
   readonly relationships?: {
     readonly nest?: RawPanelNest;
     readonly servers?: RawServerList;
