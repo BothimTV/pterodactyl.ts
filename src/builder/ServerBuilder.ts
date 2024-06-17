@@ -1,3 +1,4 @@
+import { Egg } from "../ApplicationClient/Egg"
 import { NodeAllocation } from "../ApplicationClient/NodeAllocation"
 import { User } from "../ApplicationClient/User"
 
@@ -291,12 +292,22 @@ export class ServerBuilder {
         return this
     }
 
-    // TODO: Implement when there is a PanelEgg class
-    // This should also set ENV, Docker etc. by default
-    /*public setEgg(egg: number): ServerBuilder {
-        this.egg = egg
+    /**
+     * Set the egg for this server  
+     * When not set as id this will also set the docker image, the startup command and the variables to their default values
+     * @param egg The egg id or the egg as object 
+     */
+    public setEgg(egg: number | Egg): ServerBuilder {
+        this.egg = typeof egg == "number" ? egg : egg.id
+        if (typeof egg != "number") {
+            this.docker_image = egg.docker_image
+            this.startup = egg.startup
+            egg.associatedVariables?.map(variable => {
+                this.environment[variable.name] = variable.default_value
+            })
+        }
         return this
-    }*/
+    }
 
     /**
      * Manually set the egg id

@@ -37,7 +37,7 @@ export class User implements UserAttributes {
     this.first_name = userData.attributes.first_name;
     this.last_name = userData.attributes.last_name;
     this.language = userData.attributes.language;
-    this.root_admin = userData.attributes.root_admin; // NOTE: Not tested - might be readonly
+    this.root_admin = userData.attributes.root_admin;
     this["2fa"] = userData.attributes["2fa"];
     this.created_at = new Date(userData.attributes.created_at);
     this.updated_at = new Date(userData.attributes.updated_at);
