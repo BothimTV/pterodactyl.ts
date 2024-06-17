@@ -4,14 +4,12 @@ import { ApplicationClient } from "./ApplicationClient";
 import { Server } from "./Server";
 
 var client: ApplicationClient;
-var relationships:
-  | {
-      servers?: {
-        object: "list";
-        data: Array<RawServer>;
-      };
-    }
-  | undefined;
+var relationships: {
+  servers?: {
+    object: "list";
+    data: Array<RawServer>;
+  };
+} | undefined;
 export class User implements UserAttributes {
   public readonly id: number;
   public external_id?: string | null;
@@ -48,9 +46,7 @@ export class User implements UserAttributes {
    * Delete this user from the panel
    */
   public async delete(): Promise<void> {
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
     await client.api({ url: endpoint.href, method: "DELETE" });
   }
 
@@ -83,15 +79,8 @@ export class User implements UserAttributes {
   public async setEmail(email: string): Promise<void> {
     var data = this.updateProps();
     data.email = email;
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
-    this.updateThisUser(
-      (await client.api({
-        url: endpoint.href,
-        method: "PATCH",
-        data: data,
-      })) as RawUser
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+    this.updateThisUser((await client.api({ url: endpoint.href, method: "PATCH", data: data, })) as RawUser
     );
   }
 
@@ -102,15 +91,8 @@ export class User implements UserAttributes {
   public async setUsername(username: string): Promise<void> {
     var data = this.updateProps();
     data.username = username;
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
-    this.updateThisUser(
-      (await client.api({
-        url: endpoint.href,
-        method: "PATCH",
-        data: data,
-      })) as RawUser
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+    this.updateThisUser((await client.api({ url: endpoint.href, method: "PATCH", data: data, })) as RawUser
     );
   }
 
@@ -121,15 +103,8 @@ export class User implements UserAttributes {
   public async setFirstName(firstName: string): Promise<void> {
     var data = this.updateProps();
     data.first_name = firstName;
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
-    this.updateThisUser(
-      (await client.api({
-        url: endpoint.href,
-        method: "PATCH",
-        data: data,
-      })) as RawUser
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+    this.updateThisUser((await client.api({ url: endpoint.href, method: "PATCH", data: data, })) as RawUser
     );
   }
 
@@ -140,16 +115,8 @@ export class User implements UserAttributes {
   public async setLastName(lastName: string): Promise<void> {
     var data = this.updateProps();
     data.last_name = lastName;
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
-    this.updateThisUser(
-      (await client.api({
-        url: endpoint.href,
-        method: "PATCH",
-        data: data,
-      })) as RawUser
-    );
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+    this.updateThisUser((await client.api({ url: endpoint.href, method: "PATCH", data: data, })) as RawUser);
   }
 
   /**
@@ -160,16 +127,8 @@ export class User implements UserAttributes {
   public async setLanguage(language: string): Promise<void> {
     var data = this.updateProps();
     data.language = language;
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
-    this.updateThisUser(
-      (await client.api({
-        url: endpoint.href,
-        method: "PATCH",
-        data: data,
-      })) as RawUser
-    );
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+    this.updateThisUser((await client.api({ url: endpoint.href, method: "PATCH", data: data, })) as RawUser);
   }
 
   /**
@@ -179,16 +138,8 @@ export class User implements UserAttributes {
   public async setPassword(password: string): Promise<void> {
     var data = this.updateProps();
     data.password = password;
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
-    this.updateThisUser(
-      (await client.api({
-        url: endpoint.href,
-        method: "PATCH",
-        data: data,
-      })) as RawUser
-    );
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+    this.updateThisUser((await client.api({ url: endpoint.href, method: "PATCH", data: data, })) as RawUser);
   }
 
   /**
@@ -199,15 +150,7 @@ export class User implements UserAttributes {
   public async setPanelAdmin(panelAdmin: boolean): Promise<void> {
     var data = this.updateProps();
     data.root_admin = panelAdmin ? 1 : 0;
-    const endpoint = new URL(
-      client.panel + "/api/application/users/" + this.id
-    );
-    this.updateThisUser(
-      (await client.api({
-        url: endpoint.href,
-        method: "PATCH",
-        data: data,
-      })) as RawUser
-    );
+    const endpoint = new URL(client.panel + "/api/application/users/" + this.id);
+    this.updateThisUser((await client.api({ url: endpoint.href, method: "PATCH", data: data, })) as RawUser);
   }
 }

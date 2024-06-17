@@ -1,9 +1,8 @@
-import { LocationBuilder } from "../builder/LocationBuilder"
 import { LocationAttributes, RawLocation } from "../types/location"
 import { ApplicationClient } from "./ApplicationClient"
 
 var client: ApplicationClient
-export class PanelLocation implements LocationAttributes{
+export class PanelLocation implements LocationAttributes {
 
   public readonly id: number
   public short: string
@@ -20,16 +19,39 @@ export class PanelLocation implements LocationAttributes{
     this.created_at = new Date(locationProps.attributes.created_at)
   }
 
+  private updateProps() {
+    return {
+      short: this.short,
+      long: this.long
+    }
+  }
+
+  private updateThis(location: RawLocation) {
+    this.short = location.attributes.short
+    this.long = location.attributes.long
+    this.updated_at = new Date(location.attributes.updated_at)
+  }
+
   /**
-  * Update this location
-  * FIXME: @deprecated
-  */
-  public async update(updateProperties: LocationBuilder): Promise<void> {
+   * Set the new short name for this location
+   * @param short The new name
+   */
+  public async setShort(short: string): Promise<void> {
     const endpoint = new URL(client.panel + "/api/application/locations/" + this.id);
-    const data = await client.api({ url: endpoint.href, method: "PATCH", data: updateProperties }) as RawLocation
-    this.short = data.attributes.short
-    this.long = data.attributes.long
-    this.updated_at = new Date(data.attributes.updated_at)
+    var data = this.updateProps()
+    data.short = short
+    this.updateThis(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawLocation)
+  }
+
+  /**
+   * Set the new description for this location
+   * @param long The new description, can be an empty string
+   */
+  public async setDescription(long: string): Promise<void> {
+    const endpoint = new URL(client.panel + "/api/application/locations/" + this.id);
+    var data = this.updateProps()
+    data.long = long
+    this.updateThis(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawLocation)
   }
 
   /**

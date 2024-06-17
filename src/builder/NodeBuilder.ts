@@ -11,9 +11,9 @@ export class NodeBuilder {
     private behind_proxy: number = 0
     private daemonBase: string = "/var/lib/pterodactyl/volumes"
     private memory: number
-    private memory_overallocate: number= 0
+    private memory_overallocate: number = 0
     private disk: number
-    private disk_overallocate: number= 0
+    private disk_overallocate: number = 0
     private daemon_listen: number = 8080
     private daemon_sftp: number = 2022
 
@@ -60,7 +60,6 @@ export class NodeBuilder {
         this.location_id = location.id
         return this
     }
-
 
     /**
      * Set the public status for this node
@@ -109,7 +108,6 @@ export class NodeBuilder {
         this.daemonBase = daemonBase
         return this
     }
-
 
     /**
      * Set the memory for this node (in MiB)
@@ -168,13 +166,9 @@ export class NodeBuilder {
      * @default daemon_sftpPort 2022
      * @optional
      */
-    public setdaemonSftp(daemon_sftpPort: number): NodeBuilder {
+    public setDaemonSftp(daemon_sftpPort: number): NodeBuilder {
         this.daemon_sftp = daemon_sftpPort
         return this
     }
-
-
-
-
 
 }

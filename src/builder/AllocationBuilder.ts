@@ -4,7 +4,6 @@ export class AllocationBuilder {
     private ports: Array<string>
     private alias?: string = "";
 
-
     constructor() {
         this.ip = "";
         this.ports = [];
@@ -23,27 +22,18 @@ export class AllocationBuilder {
      * Add a port to this allocation
      * @argument port Port to bind on | Range: 1024 <= 65535
      */
-    public addPort(port: number): AllocationBuilder {
+    public addPort(port: number | string): AllocationBuilder {
         this.ports.push(port.toString());
         return this;
     }
 
     /**
      * Add ports to this allocation
-     * @argument ports Ports to bin on | Range: 1024 <= 65535
-     */
-    public addPorts(ports: Array<number>): AllocationBuilder {
-        this.ports = this.ports.concat(ports.map(port => port.toString()));
-        return this;
-    }
-
-    /**
-     * Add ports to this allocation by range
      * You can use 25565-25570 as range
      * @argument ports Ports to bin on | Range: 1024 <= 65535
      */
-    public addPortsByRange(portRange: string): AllocationBuilder {
-        this.ports.push(portRange);
+    public addPorts(ports: Array<number | string>): AllocationBuilder {
+        this.ports.push(...(ports.map(p => p.toString())));
         return this;
     }
 

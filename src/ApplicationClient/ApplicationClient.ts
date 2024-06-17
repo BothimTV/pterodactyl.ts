@@ -4,9 +4,13 @@ import { NodeBuilder } from "../builder/NodeBuilder";
 import { ServerBuilder } from "../builder/ServerBuilder";
 import { UserBuilder } from "../builder/UserBuilder";
 import { RawLocation, RawLocationList } from "../types/location";
+import { RawPanelEgg, RawPanelEggList } from "../types/panelEgg";
+import { RawPanelNest, RawPanelNestList } from "../types/panelNest";
 import { RawPanelNode, RawPanelNodeList } from "../types/panelNode";
 import { RawServer, RawServerList } from "../types/server";
 import { RawUser, RawUserList } from "../types/user";
+import { Egg } from "./Egg";
+import { Nest } from "./Nest";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
 import { Server } from "./Server";
@@ -17,11 +21,6 @@ export class ApplicationClient extends BaseClient {
     super(options);
   }
 
-  /**
-   *
-   *  User management
-   *
-   */
   /**
    * Get all users associated to the panel
    * @param filter Filter users by email, uuid, username and/or externalId
@@ -53,7 +52,7 @@ export class ApplicationClient extends BaseClient {
   * @param externalId The external id of a user
   */
   public async getExternalUser(externalId: string): Promise<User> {
-    const endpoint = new URL(this.panel + "/api/application/users/external/" + externalId + "?include=servers"); 
+    const endpoint = new URL(this.panel + "/api/application/users/external/" + externalId + "?include=servers");
     return new User(this, await this.api({ url: endpoint.href }) as RawUser)
   }
 
@@ -72,11 +71,7 @@ export class ApplicationClient extends BaseClient {
   public async getNodes(): Promise<Array<PanelNode>> {
     const endpoint = new URL(this.panel + "/api/application/nodes?include=allocations,location,servers");
     const data = await this.api({ url: endpoint.href }) as RawPanelNodeList
-    const res: Array<PanelNode> = [];
-    for (const node of data.data) {
-      res.push(new PanelNode(this, node));
-    }
-    return res;
+    return data.data.map(node => new PanelNode(this, node));
   }
 
   /**
@@ -103,11 +98,7 @@ export class ApplicationClient extends BaseClient {
   public async getLocations(): Promise<Array<PanelLocation>> {
     const endpoint = new URL(this.panel + "/api/application/locations?include=nodes,servers");
     const data = await this.api({ url: endpoint.href }) as RawLocationList
-    const res: Array<PanelLocation> = [];
-    for (const location of data.data) {
-      res.push(new PanelLocation(this, location));
-    }
-    return res;
+    return data.data.map(location => new PanelLocation(this, location));
   }
 
   /**
@@ -132,11 +123,7 @@ export class ApplicationClient extends BaseClient {
   public async getServers(): Promise<Array<Server>> {
     const endpoint = new URL(this.panel + "/api/application/servers");
     const data = await this.api({ url: endpoint.href }) as RawServerList
-    const res: Array<Server> = [];
-    for (const server of data.data) {
-      res.push(new Server(this, server));
-    }
-    return res;
+    return data.data.map(server => new Server(this, server));
   }
 
   /**
@@ -168,27 +155,29 @@ export class ApplicationClient extends BaseClient {
   /**
    * Get the nests of this panel
    */
-  public async getNests(): Promise<Array<any>> {
+  public async getNests(): Promise<Array<Nest>> {
     const endpoint = new URL(this.panel + "/api/application/nests?include=eggs,servers");
-    throw new Error("Not implemented yet");
+    const data = await this.api({ url: endpoint.href }) as RawPanelNestList
+    return data.data.map(nest => new Nest(this, nest))
   }
 
   /**
    * Get a nest by id of this panel
    * @param nestId The id of the nest you want to get
    */
-  public async getNest(nestId: number): Promise<any> {
+  public async getNest(nestId: number): Promise<Nest> {
     const endpoint = new URL(this.panel + "/api/application/nests/" + nestId + "?include=eggs,servers");
-    throw new Error("Not implemented yet");
+    return new Nest(this, await this.api({ url: endpoint.href }) as RawPanelNest)
   }
 
   /**
    * Get the eggs of this panel
    * @param nestId The if of the nest you want to get the eggs from 
    */
-  public async getEggs(nestId: number): Promise<Array<any>> {
+  public async getEggs(nestId: number): Promise<Array<Egg>> {
     const endpoint = new URL(this.panel + "/api/application/nests/" + nestId + "/eggs?include=nest,servers,config,script,variables");
-    throw new Error("Not implemented yet");
+    const data = await this.api({ url: endpoint.href }) as RawPanelEggList
+    return data.data.map(egg => new Egg(this, egg))
   }
 
   /**
@@ -196,10 +185,9 @@ export class ApplicationClient extends BaseClient {
    * @param nestId The if of the nest you want to get the egg from
    * @param eggId The egg you want to get 
    */
-  public async getEgg(nestId: number, eggId: number): Promise<any> {
+  public async getEgg(nestId: number, eggId: number): Promise<Egg> {
     const endpoint = new URL(this.panel + "/api/application/nests/" + nestId + "/eggs/" + eggId + "?include=nest,servers,config,script,variables");
-    throw new Error("Not implemented yet");
+    return new Egg(this, await this.api({ url: endpoint.href }) as RawPanelEgg)
   }
-
 
 }

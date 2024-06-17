@@ -201,7 +201,7 @@ export class Server implements ServerAttributes {
      * Example: 0; 1-3; 4,5,6;
      * @param limit The new cpu limit in %
      */
-    public async setCpuPinning(pinning: Array<string> | string): Promise<void> {
+    public async setCpuPinning(pinning: Array<string | number> | string): Promise<void> {
         var data = this.updateBuild()
         data.threads = typeof pinning === "string" ? pinning : pinning.join(",");
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/build");
@@ -365,7 +365,7 @@ export class Server implements ServerAttributes {
      * @param nest The new nest for this server
      * @param egg The new egg for this server
      */
-    public async setNestAndEgg(nest: number | Nest, egg: number | Egg) {
+    public async setNestAndEgg(nest: number | Nest, egg: number | Egg): Promise<void>  {
         var data = await this.updateStartup()
         data.nest_id = typeof nest == "number" ? nest : nest.id
         data.egg_id = typeof egg == "number" ? egg : egg.id
@@ -377,7 +377,7 @@ export class Server implements ServerAttributes {
      * Skip install script
      * @param skip Whether the install script should be skipped 
      */
-    public async setSkipInstall(skip: boolean) {
+    public async setSkipInstall(skip: boolean): Promise<void>  {
         var data = await this.updateStartup()
         data.skip_scripts = skip ? 1 : 0
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -388,7 +388,7 @@ export class Server implements ServerAttributes {
      * Set the docker image for this server  
      * @param image The new image for this container
      */
-    public async setDockerImage(image: string) {
+    public async setDockerImage(image: string): Promise<void>  {
         var data = await this.updateStartup()
         data.docker_image = image
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -399,7 +399,7 @@ export class Server implements ServerAttributes {
      * Set the environment vars with which the server will start
      * @param environment Overwrites all current variables
      */
-     public async setEnvironment(environment: { [environment: string]: string }) {
+     public async setEnvironment(environment: { [environment: string]: string }): Promise<void>  {
         var data = await this.updateStartup()
         data.environment = environment
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -410,7 +410,7 @@ export class Server implements ServerAttributes {
      * Add environment vars with which the server will start
      * @param environment Add a variable and value to the current variables
      */
-    public async addEnvironmentVariable(key: string, value: string) {
+    public async addEnvironmentVariable(key: string, value: string): Promise<void>  {
         var data = await this.updateStartup()
         data.environment[key] = value
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -421,7 +421,7 @@ export class Server implements ServerAttributes {
      * Set the custom docker image for this server  
      * @param image The new image for this container
      */
-    public async setCustomDockerImage(image: string) {
+    public async setCustomDockerImage(image: string): Promise<void>  {
         var data = await this.updateStartup()
         data.custom_docker_image = image
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -434,6 +434,7 @@ export class Server implements ServerAttributes {
     public async suspend(): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/suspend");
         await client.api({ url: endpoint.href, method: "POST" })
+        this.suspended = true
     }
 
     /**
@@ -442,6 +443,7 @@ export class Server implements ServerAttributes {
     public async unsuspend(): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/unsuspend");
         await client.api({ url: endpoint.href, method: "POST" })
+        this.suspended = false
     }
 
     /**

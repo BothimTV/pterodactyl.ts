@@ -224,8 +224,8 @@ export class ServerBuilder {
      * @optional
      * @default undefined
      */
-    public setCpuPinning(cores: Array<number | string>): ServerBuilder {
-        this.limits.threads = cores.join(',')
+    public setCpuPinning(pinning: Array<number | string> | string): ServerBuilder {
+        this.limits.threads = typeof pinning === 'string' ? pinning : pinning.join(',')
         return this
     }
 
@@ -372,6 +372,5 @@ export class ServerBuilder {
         this.environment[key] = value
         return this
     }
-
 
 }
