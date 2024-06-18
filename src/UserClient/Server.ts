@@ -3,7 +3,7 @@ import { DatabaseBuilder } from "../builder/DatabaseBuilder";
 import { ScheduleBuilder } from "../builder/ScheduleBuilder";
 import { RawServerSubUserList } from "../types/application/serverSubUser";
 import { ServerSignal, ServerStatus } from "../types/base/serverStatus";
-import { RawAllocationList } from "../types/user/allocation";
+import { RawAllocation, RawAllocationList } from "../types/user/allocation";
 import { RawEgg } from "../types/user/egg";
 import { RawEggVariableList } from "../types/user/eggVariable";
 import { RawFileList } from "../types/user/file";
@@ -17,6 +17,7 @@ import { File } from "./File";
 import { Schedule } from "./Schedule";
 import { ServerConsoleConnection } from "./ServerConsoleConnection";
 import { UserClient } from "./UserClient";
+import { Allocation } from "./Allocation";
 
 let client: UserClient
 export class Server implements ServerAttributes {
@@ -257,6 +258,22 @@ export class Server implements ServerAttributes {
     public async createSchedule(builder: ScheduleBuilder): Promise<Schedule> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/schedules");
         return new Schedule(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSchedule, this); 
+    }
+
+    /**
+     * Get all allocation assigned to this server
+     */
+    public async getAllocations(): Promise<Array<Allocation>> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/network/allocations");
+        return (await client.api({ url: endpoint.href }) as RawAllocationList).data.map(allocation => new Allocation(client, allocation, this));
+    }
+
+    /**
+     * Create a new allocation for this server
+     */
+    public async createAllocation(): Promise<Allocation> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/network/allocations");
+        return new Allocation(client, await client.api({ url: endpoint.href, method: "POST" }) as RawAllocation, this); 
     }
 
 }
