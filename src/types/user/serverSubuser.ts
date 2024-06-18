@@ -11,11 +11,11 @@ export interface RawServerSubuser {
 }
 
 export interface ServerSubuserAttributes {
-  uuid: string;
-  username: string;
-  email: string;
-  image: string;
-  "2fa_enabled": boolean;
-  created_at: string | Date;
+  readonly uuid: string;
+  readonly username: string;
+  readonly email: string;
+  readonly image: string;
+  readonly "2fa_enabled": boolean;
+  readonly created_at: string | Date;
   permissions: Array<UserPermission>;
 }
