@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { DatabaseBuilder } from "../builder/DatabaseBuilder";
 import { ScheduleBuilder } from "../builder/ScheduleBuilder";
+import { SubUserBuilder } from "../builder/SubUserBuilder";
 import { RawServerSubUserList } from "../types/application/serverSubUser";
 import { ServerSignal, ServerStatus } from "../types/base/serverStatus";
 import { RawAllocation, RawAllocationList } from "../types/user/allocation";
@@ -10,14 +11,16 @@ import { RawFileList } from "../types/user/file";
 import { RawServer, ServerAttributes } from "../types/user/server";
 import { RawServerDatabase, RawServerDatabaseList } from "../types/user/serverDatabase";
 import { RawServerSchedule, RawServerScheduleList } from "../types/user/serverSchedule";
+import { RawServerSubuser, RawServerSubuserList } from "../types/user/serverSubuser";
 import { RawSignedUrl } from "../types/user/signedUrl";
 import { RawStats, StatsAttributes } from "../types/user/stats";
+import { Allocation } from "./Allocation";
 import { Database } from "./Database";
 import { File } from "./File";
 import { Schedule } from "./Schedule";
 import { ServerConsoleConnection } from "./ServerConsoleConnection";
+import { SubUser } from "./SubUser";
 import { UserClient } from "./UserClient";
-import { Allocation } from "./Allocation";
 
 let client: UserClient
 export class Server implements ServerAttributes {
@@ -274,6 +277,30 @@ export class Server implements ServerAttributes {
     public async createAllocation(): Promise<Allocation> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/network/allocations");
         return new Allocation(client, await client.api({ url: endpoint.href, method: "POST" }) as RawAllocation, this); 
+    }
+
+    /**
+     * Get all subusers of this server
+     */
+    public async getSubusers(): Promise<Array<SubUser>> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/users");
+        return (await client.api({ url: endpoint.href }) as RawServerSubuserList).data.map(subuser => new SubUser(client, subuser, this));
+    }
+
+    /**
+     * Get all subusers of this server
+     */
+    public async getSubuser(uuid: string): Promise<SubUser> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/users/" + uuid);
+        return new SubUser(client, await client.api({ url: endpoint.href }) as RawServerSubuser, this);
+    }
+
+    /**
+     * Create a new subuser
+     */
+    public async createSubuser(builder: SubUserBuilder): Promise<SubUser> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/users");
+        return new SubUser(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSubuser, this);
     }
 
 }
