@@ -11,6 +11,9 @@ importers:
       axios:
         specifier: ^1.7.2
         version: 1.7.2
+      fs:
+        specifier: 0.0.1-security
+        version: 0.0.1-security
       ws:
         specifier: ^8.17.1
         version: 8.17.1
@@ -27,9 +30,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.10
         version: 8.5.10
-      fs:
-        specifier: 0.0.1-security
-        version: 0.0.1-security
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.14.2)

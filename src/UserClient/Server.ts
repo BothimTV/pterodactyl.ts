@@ -1,13 +1,17 @@
+import { readFileSync } from "fs";
 import { DatabaseBuilder } from "../builder/DatabaseBuilder";
 import { RawServerSubUserList } from "../types/application/serverSubUser";
 import { ServerSignal, ServerStatus } from "../types/base/serverStatus";
+import { RawSignedUrl } from "../types/base/signedUrl";
 import { RawAllocationList } from "../types/user/allocation";
 import { RawEgg } from "../types/user/egg";
 import { RawEggVariableList } from "../types/user/eggVariable";
+import { RawFileList } from "../types/user/file";
 import { RawServer, ServerAttributes } from "../types/user/server";
 import { RawServerDatabase, RawServerDatabaseList } from "../types/user/serverDatabase";
 import { RawStats, StatsAttributes } from "../types/user/stats";
 import { Database } from "./Database";
+import { File } from "./File";
 import { ServerConsoleConnection } from "./ServerConsoleConnection";
 import { UserClient } from "./UserClient";
 
@@ -150,5 +154,82 @@ export class Server implements ServerAttributes {
         return new Database(client, (await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerDatabase), this);
     }
 
+    /**
+     * Gets the files of a specific directory
+     */
+    public async getFiles(dir: string = "/"): Promise<Array<File>> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/list?directory=" + encodeURIComponent(dir));
+        return (await client.api({ url: endpoint.href }) as RawFileList).data.map(file => new File(client, file, this, dir));
+    }
+
+    /**
+     * Rename files in a specific directory
+     */
+    public async renameFiles(dir: string, files: Array<{from: string | File, to: string}>): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/rename");
+        const targets = files.map(file => {
+            return { from: typeof file.from === "string" ? file.from : file.from.name, to: file.to }
+        })
+        await client.api({ url: endpoint.href, method: 'PUT', data: { root: dir, files: targets } })
+    }
+
+    /**
+     * Compress files in a specific directory
+     */
+    public async compressFiles(dir: string, files: Array<string | File>): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/compress");
+        const targets = files.map(file => typeof file === "string" ? file : file.name)
+        await client.api({ url: endpoint.href, method: 'POST', data: { root: dir, files: targets } })
+    }
+
+    /**
+     * Decompress a archive
+     */
+    public async decompressFile(dir: string, file: string | File): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/decompress");
+        await client.api({ url: endpoint.href, method: 'POST', data: { root: dir, file: typeof file === "string" ? file : file.name } })
+    }
+
+    /**
+     * Delete files in a specific directory
+     */
+    public async deleteFiles(dir: string, files: Array<string | File>): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/delete");
+        const targets = files.map(file => typeof file === "string" ? file : file.name)
+        await client.api({ url: endpoint.href, method: 'POST', data: { root: dir, files: targets } })
+    }
+
+    /**
+     * Create a folder in a specific directory
+     */
+    public async createFolder(dir: string, folderName: string): Promise<void>  {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/create-folder");
+        await client.api({ url: endpoint.href, method: 'POST', data: { root: dir, name: folderName } })
+    }
+
+    /**
+     * Get a upload url to upload files
+     */
+    public async uploadUrl(): Promise<URL> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/upload");
+        return new URL((await client.api({ url: endpoint.href, method: 'GET' }) as RawSignedUrl).attributes.url)
+    }
+
+    /**
+     * Upload a file
+     * @file A buffer, blob or the path to the file
+     */
+    public async uploadFile(dir: string = "/", file: Blob | Buffer | string, filename: string): Promise<void> {
+        const uploadUrl = await this.uploadUrl()
+        uploadUrl.searchParams.append("directory", dir)
+        await client.api({ url: uploadUrl.href, method: 'OPTIONS' })
+        let blob
+        if (file instanceof Blob) blob = file
+        else if (file instanceof Buffer) blob = new Blob([file])
+        else blob = new Blob([readFileSync(file)])
+        const formData = new FormData()
+        formData.append("files", blob, filename)
+        await client.api({ url: uploadUrl.href, method: 'POST', data: formData })
+    }
 
 }
