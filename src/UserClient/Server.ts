@@ -330,12 +330,42 @@ export class Server implements ServerAttributes {
         return new Backup(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawBackup, this);
     }
 
-    /** TODO: Variable (with .setValue())
-     * Get the variables of this server
+    /**
+     * Set the docker image for this server
      */
-    public async getVariables(): Promise<Array<Variable>> {
-        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/startup");
-        return (await client.api({ url: endpoint.href }) as RawEggVariableList).data.map(variable => new Variable(client, variable, this));
+    public async setDockerImage(image: string): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/docker-image");
+        await client.api({ url: endpoint.href, method: "PUT", data: { docker_image: image } })
+            .then(val => this.docker_image = image)
+            .catch(e => { throw new Error("Failed to set docker image") })
+    }
+
+    /**
+     * Set the name for this server
+     */
+    public async setName(name: string): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/rename");
+        await client.api({ url: endpoint.href, method: "POST", data: { name: name, description: this.description } })
+            .then(val => this.name = name)
+            .catch(e => { throw new Error("Failed to set name") })
+    }
+
+    /**
+     * Set the description for this server
+     */
+    public async setDescription(description: string): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/rename");
+        await client.api({ url: endpoint.href, method: "POST", data: { name: this.name, description: description } })
+            .then(val => this.description = description)
+            .catch(e => { throw new Error("Failed to set description") })
+    }
+
+    /**
+     * Reinstall this server
+     */
+    public async reinstall(): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/reinstall");
+        await client.api({ url: endpoint.href, method: "POST" })
     }
 
 }
