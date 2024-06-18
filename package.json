@@ -1,6 +1,6 @@
 {
-  "name": "pterodactyl-api",
-  "version": "0.0.1",
+  "name": "pterodactyl.ts",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -9,10 +9,19 @@
     "lint": "tsc"
   },
   "author": "Bothim_TV",
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
+  "description": "Easily manage your panel and servers on a Pterodactyl panel",
+  "keywords": [
+    "pterodactyl",
+    "wrapper",
+    "api",
+    "panel",
+    "server"
+  ],
+  "repository": {
+    "url": "https://github.com/BothimTV/PterodactylAPI"
+  },
   "devDependencies": {
-    "@changesets/cli": "^2.27.5",
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
     "@types/ws": "^8.5.10",
@@ -20,6 +29,7 @@
     "testcontainers": "^10.9.0",
     "ts-jest": "^29.1.5",
     "tsup": "^8.1.0",
+    "typedoc": "^0.25.13",
     "typescript": "^5.4.5"
   },
   "dependencies": {
