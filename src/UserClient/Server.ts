@@ -263,7 +263,7 @@ export class Server implements ServerAttributes {
      */
     public async createSchedule(builder: ScheduleBuilder): Promise<Schedule> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/schedules");
-        return new Schedule(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSchedule, this); 
+        return new Schedule(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSchedule, this);
     }
 
     /**
@@ -279,7 +279,7 @@ export class Server implements ServerAttributes {
      */
     public async createAllocation(): Promise<Allocation> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/network/allocations");
-        return new Allocation(client, await client.api({ url: endpoint.href, method: "POST" }) as RawAllocation, this); 
+        return new Allocation(client, await client.api({ url: endpoint.href, method: "POST" }) as RawAllocation, this);
     }
 
     /**
@@ -305,7 +305,7 @@ export class Server implements ServerAttributes {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/users");
         return new SubUser(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSubuser, this);
     }
-    
+
     /**
      * Get all backups of this server
      */
@@ -328,6 +328,44 @@ export class Server implements ServerAttributes {
     public async createBackup(builder: BackupBuilder): Promise<Backup> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/backups");
         return new Backup(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawBackup, this);
+    }
+
+    /**
+     * Set the docker image for this server
+     */
+    public async setDockerImage(image: string): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/docker-image");
+        await client.api({ url: endpoint.href, method: "PUT", data: { docker_image: image } })
+            .then(val => this.docker_image = image)
+            .catch(e => { throw new Error("Failed to set docker image") })
+    }
+
+    /**
+     * Set the name for this server
+     */
+    public async setName(name: string): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/rename");
+        await client.api({ url: endpoint.href, method: "POST", data: { name: name, description: this.description } })
+            .then(val => this.name = name)
+            .catch(e => { throw new Error("Failed to set name") })
+    }
+
+    /**
+     * Set the description for this server
+     */
+    public async setDescription(description: string): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/rename");
+        await client.api({ url: endpoint.href, method: "POST", data: { name: this.name, description: description } })
+            .then(val => this.description = description)
+            .catch(e => { throw new Error("Failed to set description") })
+    }
+
+    /**
+     * Reinstall this server
+     */
+    public async reinstall(): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/settings/reinstall");
+        await client.api({ url: endpoint.href, method: "POST" })
     }
 
 }

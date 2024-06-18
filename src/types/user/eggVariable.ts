@@ -14,11 +14,11 @@ export interface RawEggVariable {
 }
 
 export interface EggVariableAttributes {
-  name: string;
-  description: string;
-  env_variable: string;
-  default_value: string;
+  readonly name: string;
+  readonly description: string;
+  readonly env_variable: string;
+  readonly default_value: string;
   server_value: string;
-  is_editable: boolean;
-  rules: string;
+  readonly is_editable: boolean;
+  readonly rules: string;
 }
