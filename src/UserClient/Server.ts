@@ -330,14 +330,6 @@ export class Server implements ServerAttributes {
         return new Backup(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawBackup, this);
     }
 
-    /** TODO: Variable (with .setValue())
-     * Get the variables of this server
-     */
-    public async getVariables(): Promise<Array<Variable>> {
-        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/startup");
-        return (await client.api({ url: endpoint.href }) as RawEggVariableList).data.map(variable => new Variable(client, variable, this));
-    }
-
     /**
      * Set the docker image for this server
      */
