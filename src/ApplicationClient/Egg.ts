@@ -4,7 +4,7 @@ import { RawServerList } from "../types/application/server";
 import { RawServerVariableList } from "../types/application/serverVariable";
 import { ApplicationClient } from "./ApplicationClient";
 import { Nest } from "./Nest";
-import { Server } from "./Server";
+import { PanelServer } from "./PanelServer";
 import { ServerVariable } from "./ServerVariable";
 
 var client: ApplicationClient
@@ -28,7 +28,7 @@ export class Egg implements PanelEggAttributes {
         readonly variables?: RawServerVariableList
     };
     parentNest?: Nest;
-    associatedServers?: Array<Server>
+    associatedServers?: Array<PanelServer>
     associatedVariables?: Array<ServerVariable>
 
     constructor(applicationClient: ApplicationClient, eggProps: RawPanelEgg) {
@@ -47,7 +47,7 @@ export class Egg implements PanelEggAttributes {
         this.updated_at = new Date(eggProps.attributes.updated_at)
         this.rawRelationships = eggProps.attributes.relationships
         if (this.rawRelationships?.nest) this.parentNest = new Nest(applicationClient, this.rawRelationships.nest)
-        if (this.rawRelationships?.servers) this.associatedServers = this.rawRelationships.servers.data.map(srv => new Server(applicationClient, srv) )
+        if (this.rawRelationships?.servers) this.associatedServers = this.rawRelationships.servers.data.map(srv => new PanelServer(applicationClient, srv) )
         if (this.rawRelationships?.variables) this.associatedVariables = this.rawRelationships.variables.data.map(variable => new ServerVariable(variable) )
         client = applicationClient
     }

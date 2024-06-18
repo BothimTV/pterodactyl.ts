@@ -1,7 +1,7 @@
 import { RawServer } from "../types/application/server";
 import { RawUser, UserAttributes } from "../types/application/user";
 import { ApplicationClient } from "./ApplicationClient";
-import { Server } from "./Server";
+import { PanelServer } from "./PanelServer";
 
 var client: ApplicationClient;
 var relationships: {
@@ -10,7 +10,7 @@ var relationships: {
     data: Array<RawServer>;
   };
 } | undefined;
-export class User implements UserAttributes {
+export class PanelUser implements UserAttributes {
   public readonly id: number;
   public external_id?: string | null;
   public readonly uuid: string;
@@ -23,7 +23,7 @@ export class User implements UserAttributes {
   public readonly "2fa": boolean;
   public readonly created_at: Date;
   public updated_at: Date;
-  public servers?: Array<Server>;
+  public servers?: Array<PanelServer>;
 
   constructor(applicationClient: ApplicationClient, userData: RawUser) {
     client = applicationClient;

@@ -1,6 +1,6 @@
 import { Egg } from "../ApplicationClient/Egg"
 import { NodeAllocation } from "../ApplicationClient/NodeAllocation"
-import { User } from "../ApplicationClient/User"
+import { PanelUser } from "../ApplicationClient/PanelUser"
 
 export class ServerBuilder {
 
@@ -87,7 +87,7 @@ export class ServerBuilder {
     /**
      * @param user The user that will own this server
      */
-    public setOwner(user: User): ServerBuilder {
+    public setOwner(user: PanelUser): ServerBuilder {
         this.user = user.id
         return this
     }

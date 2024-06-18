@@ -13,8 +13,8 @@ import { Egg } from "./Egg";
 import { Nest } from "./Nest";
 import { PanelLocation } from "./PanelLocation";
 import { PanelNode } from "./PanelNode";
-import { Server } from "./Server";
-import { User } from "./User";
+import { PanelServer } from "./PanelServer";
+import { PanelUser } from "./PanelUser";
 
 export class ApplicationClient extends BaseClient {
   constructor(options: ClientOptions) {
@@ -27,7 +27,7 @@ export class ApplicationClient extends BaseClient {
    * @param sortBy Sort users by id oder uuid
    * @param reverseSort Reverse the sort @requires sortBy
    */
-  public async getUsers(filter?: { email?: string; uuid?: string; username?: string; externalId?: string; }, sortBy?: "id" | "uuid", reverseSort?: boolean): Promise<Array<User>> {
+  public async getUsers(filter?: { email?: string; uuid?: string; username?: string; externalId?: string; }, sortBy?: "id" | "uuid", reverseSort?: boolean): Promise<Array<PanelUser>> {
     var endpoint = new URL(this.panel + "/api/application/users?include=servers");
     if (filter?.email) endpoint.searchParams.append("filter[email]", filter.email);
     if (filter?.username) endpoint.searchParams.append("filter[username]", filter.username);
@@ -35,34 +35,34 @@ export class ApplicationClient extends BaseClient {
     if (filter?.externalId) endpoint.searchParams.append("filter[external_id]", filter.externalId);
     if (sortBy) endpoint.searchParams.append("sort", `${reverseSort ? "-" : ""}${sortBy}`);
     const users = await this.api({ url: endpoint.href, }) as RawUserList
-    return users.data.map(user => new User(this, user));
+    return users.data.map(user => new PanelUser(this, user));
   }
 
   /**
    * Get a user via their userId
    * @param userId The id of a user
    */
-  public async getUser(userId: number): Promise<User> {
+  public async getUser(userId: number): Promise<PanelUser> {
     const endpoint = new URL(this.panel + "/api/application/users/" + userId + "?include=servers");
-    return new User(this, await this.api({ url: endpoint.href }) as RawUser);
+    return new PanelUser(this, await this.api({ url: endpoint.href }) as RawUser);
   }
 
   /**
   * Get a user via their external id
   * @param externalId The external id of a user
   */
-  public async getExternalUser(externalId: string): Promise<User> {
+  public async getExternalUser(externalId: string): Promise<PanelUser> {
     const endpoint = new URL(this.panel + "/api/application/users/external/" + externalId + "?include=servers");
-    return new User(this, await this.api({ url: endpoint.href }) as RawUser)
+    return new PanelUser(this, await this.api({ url: endpoint.href }) as RawUser)
   }
 
   /**
    * Create a user
    * @param userProperties Construct a user via new UserBuilder()
    */
-  public async createUser(userProperties: UserBuilder): Promise<User> {
+  public async createUser(userProperties: UserBuilder): Promise<PanelUser> {
     const endpoint = new URL(this.panel + "/api/application/users");
-    return new User(this, await this.api({ url: endpoint.href, method: "POST", data: userProperties }, [{ code: 422, message: "There is already a user with this email and/or username" }]) as RawUser);
+    return new PanelUser(this, await this.api({ url: endpoint.href, method: "POST", data: userProperties }, [{ code: 422, message: "There is already a user with this email and/or username" }]) as RawUser);
   }
 
   /**
@@ -120,36 +120,36 @@ export class ApplicationClient extends BaseClient {
   /**
   * Get servers for this panel
   */
-  public async getServers(): Promise<Array<Server>> {
+  public async getServers(): Promise<Array<PanelServer>> {
     const endpoint = new URL(this.panel + "/api/application/servers");
     const data = await this.api({ url: endpoint.href }) as RawServerList
-    return data.data.map(server => new Server(this, server));
+    return data.data.map(server => new PanelServer(this, server));
   }
 
   /**
   * Get a server for this panel
   * @param serverId The target server Id
   */
-  public async getServer(serverId: number): Promise<Server> {
+  public async getServer(serverId: number): Promise<PanelServer> {
     const endpoint = new URL(this.panel + "/api/application/servers/" + serverId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases");
-    return new Server(this, await this.api({ url: endpoint.href }) as RawServer)
+    return new PanelServer(this, await this.api({ url: endpoint.href }) as RawServer)
   }
 
   /**
   * Get a server by their external id
   * @prop externalId The target servers external id
   */
-  public async getExternalServer(externalId: string): Promise<Server> {
+  public async getExternalServer(externalId: string): Promise<PanelServer> {
     const endpoint = new URL(this.panel + "/api/application/servers/external/" + externalId + "?include=allocations,user,subusers,pack,nest,egg,variables,location,node,databases");
-    return new Server(this, await this.api({ url: endpoint.href }) as RawServer)
+    return new PanelServer(this, await this.api({ url: endpoint.href }) as RawServer)
   }
 
   /**
   * Create a server
   */
-  public async createServer(serverProperties: ServerBuilder): Promise<Server> {
+  public async createServer(serverProperties: ServerBuilder): Promise<PanelServer> {
     const endpoint = new URL(this.panel + "/api/application/servers");
-    return new Server(this, await this.api({ url: endpoint.href, method: "POST", data: serverProperties }) as RawServer)
+    return new PanelServer(this, await this.api({ url: endpoint.href, method: "POST", data: serverProperties }) as RawServer)
   }
 
   /**

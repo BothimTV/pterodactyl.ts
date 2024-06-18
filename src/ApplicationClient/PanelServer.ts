@@ -14,11 +14,11 @@ import { ApplicationClient } from "./ApplicationClient";
 import { Egg } from "./Egg";
 import { Nest } from "./Nest";
 import { NodeAllocation } from "./NodeAllocation";
+import { PanelUser } from "./PanelUser";
 import { ServerDatabase } from "./ServerDatabase";
-import { User } from "./User";
 
 var client: ApplicationClient
-export class Server implements ServerAttributes {
+export class PanelServer implements ServerAttributes {
 
     public readonly id: number;
     public external_id?: null | string;
@@ -138,7 +138,7 @@ export class Server implements ServerAttributes {
      * Set the owner for this server
      * @param owner The ownerId or the User object
      */
-    public async setOwner(owner: number | User): Promise<void> {
+    public async setOwner(owner: number | PanelUser): Promise<void> {
         var data = this.updateProps()
         data.owner_id = typeof owner === "number" ? owner : owner.id;
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/details");
