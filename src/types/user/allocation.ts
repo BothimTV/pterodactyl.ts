@@ -9,10 +9,10 @@ export interface RawAllocation {
 }
 
 export interface AllocationAttributes {
-  id: number;
-  ip: string;
-  ip_alias?: string;
-  port: number;
-  notes: null | string;
+  readonly id: number;
+  readonly ip: string;
+  readonly ip_alias?: string;
+  readonly port: number;
+  notes?: null | string;
   is_default: boolean;
 }

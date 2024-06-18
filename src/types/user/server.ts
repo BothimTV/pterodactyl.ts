@@ -15,43 +15,43 @@ export interface RawServer {
 }
 
 export interface ServerAttributes {
-  server_owner: boolean;
-  identifier: string;
-  internal_id: number | string;
-  uuid: string;
+  readonly server_owner: boolean;
+  readonly identifier: string;
+  readonly internal_id: number | string;
+  readonly uuid: string;
   name: string;
-  node: string;
-  is_node_under_maintenance: boolean;
-  sftp_details: {
-    ip: string;
-    port: 2022 | number;
+  readonly node: string;
+  readonly is_node_under_maintenance: boolean;
+  readonly sftp_details: {
+    readonly ip: string;
+    readonly port: 2022 | number;
   };
   description: string;
-  limits: {
-    memory: number;
-    swap: number;
-    disk: number;
-    io: number;
-    cpu: number;
-    threads?: null | string;
-    oom_disabled: boolean;
+  readonly limits: {
+    readonly memory: number;
+    readonly swap: number;
+    readonly disk: number;
+    readonly io: number;
+    readonly cpu: number;
+    readonly threads?: null | string;
+    readonly oom_disabled: boolean;
   };
-  invocation: string;
+  readonly invocation: string;
   docker_image: string;
-  egg_features: Array<string>;
-  feature_limits: {
-    databases: number;
-    allocations: number;
-    backups: number;
+  readonly egg_features: Array<string>;
+  readonly feature_limits: {
+    readonly databases: number;
+    readonly allocations: number;
+    readonly backups: number;
   };
   status: null | ServerStatus;
-  is_suspended: boolean;
-  is_installing: boolean;
-  is_transferring: boolean;
-  relationships?: {
-    allocations?: RawAllocationList;
-    variable?: RawEggVariableList;
-    egg?: RawEgg;
-    subusers?: RawServerSubUserList;
+  readonly is_suspended: boolean;
+  readonly is_installing: boolean;
+  readonly is_transferring: boolean;
+  readonly relationships?: {
+    readonly allocations?: RawAllocationList;
+    readonly variable?: RawEggVariableList;
+    readonly egg?: RawEgg;
+    readonly subusers?: RawServerSubUserList;
   };
 }

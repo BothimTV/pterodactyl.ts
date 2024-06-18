@@ -11,16 +11,16 @@ export interface RawServerDatabase {
 }
 
 export interface ServerDatabaseAttributes {
-  id: string;
-  host: {
-    address: string;
-    port: 3306 | string;
+  readonly id: string;
+  readonly host: {
+    readonly address: string;
+    readonly port: 3306 | string;
   };
-  name: string;
-  username: string;
-  connections_from: "%" | string;
-  max_connections: number;
-  relationships?: {
+  readonly name: string;
+  readonly username: string;
+  readonly connections_from: "%" | string;
+  readonly max_connections: number;
+  readonly relationships?: {
     password?: RawDatabasePassword;
   };
 }

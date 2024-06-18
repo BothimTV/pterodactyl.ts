@@ -1,23 +1,26 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
-import { BaseClient } from '../BaseClient/BaseClient';
 import { ConsoleLogWsEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/user/consoleSocket';
+import { Server } from './Server';
+import { UserClient } from './UserClient';
 
 // file deepcode ignore InsufficientPostmessageValidation 
 
-var client: BaseClient
+let client: UserClient
 export class ServerConsoleConnection extends EventEmitter {
 
+    private server: Server
     private endpoint: string
 
     private socket?: WebSocket
     private currentKey?: string
     private debugLogging? = false
 
-    constructor(endpoint: string, c: BaseClient) {
+    constructor(server: Server, userClient: UserClient) {
         super()
-        this.endpoint = endpoint
-        client = c
+        this.server = server
+        this.endpoint = userClient.panel + "/api/client/servers/" + server.identifier + "/websocket"
+        client = userClient
     }
 
     /**

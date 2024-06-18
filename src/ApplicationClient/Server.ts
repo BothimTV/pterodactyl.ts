@@ -1,4 +1,4 @@
-import { ServerDatabaseBuilder } from "../builder/ServerDatabaseBuilder";
+import { DatabaseBuilder } from "../builder/DatabaseBuilder";
 import { RawServerDatabase, RawServerDatabaseList } from "../types/application/database";
 import { RawLocation } from "../types/application/location";
 import { RawNodeAllocationList } from "../types/application/nodeAllocation";
@@ -484,7 +484,7 @@ export class Server implements ServerAttributes {
     /**
     * Create a database for this server
     */
-    public async createDatabase(databaseCreateProperties: ServerDatabaseBuilder): Promise<void> {
+    public async createDatabase(databaseCreateProperties: DatabaseBuilder): Promise<void> {
         const endpoint = new URL(client.panel + "/api/application/endpoint");
         await client.api({ url: endpoint.href, data: databaseCreateProperties, method: "POST" })
     }
