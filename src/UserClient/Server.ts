@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import { DatabaseBuilder } from "../builder/DatabaseBuilder";
+import { ScheduleBuilder } from "../builder/ScheduleBuilder";
 import { RawServerSubUserList } from "../types/application/serverSubUser";
 import { ServerSignal, ServerStatus } from "../types/base/serverStatus";
 import { RawSignedUrl } from "../types/base/signedUrl";
@@ -9,9 +10,11 @@ import { RawEggVariableList } from "../types/user/eggVariable";
 import { RawFileList } from "../types/user/file";
 import { RawServer, ServerAttributes } from "../types/user/server";
 import { RawServerDatabase, RawServerDatabaseList } from "../types/user/serverDatabase";
+import { RawServerSchedule, RawServerScheduleList } from "../types/user/serverSchedule";
 import { RawStats, StatsAttributes } from "../types/user/stats";
 import { Database } from "./Database";
 import { File } from "./File";
+import { Schedule } from "./Schedule";
 import { ServerConsoleConnection } from "./ServerConsoleConnection";
 import { UserClient } from "./UserClient";
 
@@ -120,7 +123,7 @@ export class Server implements ServerAttributes {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/power");
         await client.api({ url: endpoint.href, method: "POST", data: { signal: ServerSignal.STOP } });
     }
-    
+
     /**
      * Restart this server
      */
@@ -137,7 +140,7 @@ export class Server implements ServerAttributes {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/power");
         await client.api({ url: endpoint.href, method: "POST", data: { signal: ServerSignal.KILL } });
     }
-    
+
     /**
      * Get the databases of this server
      */
@@ -165,7 +168,7 @@ export class Server implements ServerAttributes {
     /**
      * Rename files in a specific directory
      */
-    public async renameFiles(dir: string, files: Array<{from: string | File, to: string}>): Promise<void> {
+    public async renameFiles(dir: string, files: Array<{ from: string | File, to: string }>): Promise<void> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/rename");
         const targets = files.map(file => {
             return { from: typeof file.from === "string" ? file.from : file.from.name, to: file.to }
@@ -202,7 +205,7 @@ export class Server implements ServerAttributes {
     /**
      * Create a folder in a specific directory
      */
-    public async createFolder(dir: string, folderName: string): Promise<void>  {
+    public async createFolder(dir: string, folderName: string): Promise<void> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/create-folder");
         await client.api({ url: endpoint.href, method: 'POST', data: { root: dir, name: folderName } })
     }
@@ -212,7 +215,7 @@ export class Server implements ServerAttributes {
      */
     public async uploadUrl(): Promise<URL> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/files/upload");
-        return new URL((await client.api({ url: endpoint.href, method: 'GET' }) as RawSignedUrl).attributes.url)
+        return new URL((await client.api({ url: endpoint.href }) as RawSignedUrl).attributes.url)
     }
 
     /**
@@ -230,6 +233,30 @@ export class Server implements ServerAttributes {
         const formData = new FormData()
         formData.append("files", blob, filename)
         await client.api({ url: uploadUrl.href, method: 'POST', data: formData })
+    }
+
+    /**
+     * Get the schedules of this server
+     */
+    public async getSchedules(): Promise<Array<Schedule>> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/schedules");
+        return (await client.api({ url: endpoint.href }) as RawServerScheduleList).data.map(schedule => new Schedule(client, schedule, this));
+    }
+
+    /**
+     * Get the schedules of this server
+     */
+    public async getSchedule(id: number): Promise<Schedule> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/schedules/" + id);
+        return new Schedule(client, await client.api({ url: endpoint.href }) as RawServerSchedule, this);
+    }
+
+    /**
+     * Create a new schedule
+     */
+    public async createSchedule(builder: ScheduleBuilder): Promise<Schedule> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/schedules");
+        return new Schedule(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSchedule, this); 
     }
 
 }
