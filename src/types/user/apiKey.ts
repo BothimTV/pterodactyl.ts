@@ -6,12 +6,15 @@ export interface RawApiKeyList {
 export interface RawApiKey {
   object: "api_key";
   attributes: ApiKeyAttributes;
+  meta?: {
+    secret_token: string
+  }
 }
 
 export interface ApiKeyAttributes {
-  identifier: string;
-  description: string;
-  allowed_ips: Array<string>;
-  last_used_at: string | Date;
-  created_at: string | Date;
+  readonly identifier: string;
+  readonly description: string;
+  readonly allowed_ips: Array<string>;
+  readonly last_used_at: string | Date;
+  readonly created_at: string | Date;
 }
