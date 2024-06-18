@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import { BackupBuilder } from "../builder/BackupBuilder";
 import { DatabaseBuilder } from "../builder/DatabaseBuilder";
 import { ScheduleBuilder } from "../builder/ScheduleBuilder";
 import { SubUserBuilder } from "../builder/SubUserBuilder";
@@ -9,12 +10,14 @@ import { RawEgg } from "../types/user/egg";
 import { RawEggVariableList } from "../types/user/eggVariable";
 import { RawFileList } from "../types/user/file";
 import { RawServer, ServerAttributes } from "../types/user/server";
+import { RawBackup, RawBackupList } from "../types/user/serverBackup";
 import { RawServerDatabase, RawServerDatabaseList } from "../types/user/serverDatabase";
 import { RawServerSchedule, RawServerScheduleList } from "../types/user/serverSchedule";
 import { RawServerSubuser, RawServerSubuserList } from "../types/user/serverSubuser";
 import { RawSignedUrl } from "../types/user/signedUrl";
 import { RawStats, StatsAttributes } from "../types/user/stats";
 import { Allocation } from "./Allocation";
+import { Backup } from "./Backup";
 import { Database } from "./Database";
 import { File } from "./File";
 import { Schedule } from "./Schedule";
@@ -288,7 +291,7 @@ export class Server implements ServerAttributes {
     }
 
     /**
-     * Get all subusers of this server
+     * Get a subuser of this server
      */
     public async getSubuser(uuid: string): Promise<SubUser> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/users/" + uuid);
@@ -301,6 +304,30 @@ export class Server implements ServerAttributes {
     public async createSubuser(builder: SubUserBuilder): Promise<SubUser> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/users");
         return new SubUser(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSubuser, this);
+    }
+    
+    /**
+     * Get all backups of this server
+     */
+    public async getBackups(): Promise<Array<Backup>> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/backups");
+        return (await client.api({ url: endpoint.href }) as RawBackupList).data.map(backup => new Backup(client, backup, this));
+    }
+
+    /**
+     * Get a backup of this server
+     */
+    public async getBackup(uuid: string): Promise<Backup> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/backups/" + uuid);
+        return new Backup(client, await client.api({ url: endpoint.href }) as RawBackup, this);
+    }
+
+    /**
+     * Create a new backup
+     */
+    public async createBackup(builder: BackupBuilder): Promise<Backup> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/backups");
+        return new Backup(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawBackup, this);
     }
 
 }
