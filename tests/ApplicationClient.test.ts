@@ -1,8 +1,9 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import {
   GenericContainer,
-  StartedTestContainer,
-  TestContainer
+  Network,
+  StartedNetwork,
+  StartedTestContainer
 } from "testcontainers";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
 import { AllocationBuilder } from "../src/builder/AllocationBuilder";
@@ -19,13 +20,15 @@ describe("Test the Application API", () => {
   var testNodeId: number
   let panel: StartedTestContainer
   let wings: StartedTestContainer
+  let network: StartedNetwork
   beforeAll(async () => {
-    const panelContainer: TestContainer = new GenericContainer("ghcr.io/pterodactyl/panel")
-    const wingsContainer: TestContainer = new GenericContainer("ghcr.io/pterodactyl/wings")
-    panelContainer.withExposedPorts();
-    wingsContainer.withExposedPorts();
-    panel = await panelContainer.start();
-    wings = await wingsContainer.start();  
+    network = await new Network().start();
+    panel = await new GenericContainer("ghcr.io/pterodactyl/panel")
+      .withNetwork(network)
+      .start();
+    wings = await new GenericContainer("ghcr.io/pterodactyl/wings")
+      .withNetwork(network)
+      .start();
     testUserId = await client.createUser(
       new UserBuilder()
         .setEmail("test@test.de")
@@ -178,7 +181,7 @@ describe("Test the Application API", () => {
       expect(oldNodeData.daemon_sftp).not.toBe(2023)
 
       await node.resetDaemonMasterKey()
-        
+
       console.log(node)
     })
   }, 60000)
