@@ -46,7 +46,7 @@ export class ServerConsoleConnection extends EventEmitter {
 
     private async setKey(): Promise<string> {
         const res = await client.api({ url: this.endpoint }) as { data: { token: string, socket: string } }
-        this.currentKey = res.data.socket
+        this.currentKey = res.data.token
         return res.data.socket
     }
 
@@ -88,7 +88,7 @@ export class ServerConsoleConnection extends EventEmitter {
                 throw new Error("Token expired")
             }
             default: {
-                console.error(`Unknown event: ${data}`)
+                console.error(`Unknown event: ${JSON.stringify(data)}`)
                 break
             }
         }
@@ -112,18 +112,21 @@ export class ServerConsoleConnection extends EventEmitter {
         this.socket?.send(JSON.stringify({ event: "send logs", args: [null] }));
     }
 
-    public getStats(): Promise<StatsWsJson> { // TODO: Check if this event is received when the server is offline - prevent getting stuck!
+    public getStats(): Promise<StatsWsJson> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
                 return reject("No socket connection")
             } else {
-                this.socket.addEventListener("message", async (ev) => {
-                    await this.requestStats();
+                const collect = (ev: any) => {
+                    this.requestStats();
                     const data = (JSON.parse(ev.data as string) as WebsocketEvent)
                     if (data.event == "stats") {
+                        if (!this.socket) return reject("No socket connection")
+                        this.socket.removeEventListener("message", collect)
                         return resolve(JSON.parse((data as StatsWsEvent).args[0]) as StatsWsJson)
                     }
-                })
+                }
+                this.socket.addEventListener("message", collect)
             }
         })
     }
@@ -137,17 +140,20 @@ export class ServerConsoleConnection extends EventEmitter {
                 var submitTimeout: NodeJS.Timeout = setTimeout(() => {
                     resolve(["No logs - is the server online?"])
                 }, 5000)
-                this.socket.addEventListener("message", async (ev) => {
+                const collect = async (ev: any) => {
                     await this.getLogs();
                     const data = (JSON.parse(ev.data as string) as WebsocketEvent)
                     if (data.event == "console output") {
                         res.push(data.args[0])
                         clearTimeout(submitTimeout)
                         submitTimeout = setTimeout(() => {
+                            if (!this.socket) return reject("No socket connection") 
+                            this.socket.removeEventListener("message", collect)
                             resolve(res)
                         }, 1000)
                     }
-                })
+                }
+                this.socket.addEventListener("message", collect)
             }
         })
     }
