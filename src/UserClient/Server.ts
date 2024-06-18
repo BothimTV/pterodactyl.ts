@@ -24,6 +24,7 @@ import { Schedule } from "./Schedule";
 import { ServerConsoleConnection } from "./ServerConsoleConnection";
 import { SubUser } from "./SubUser";
 import { UserClient } from "./UserClient";
+import { Variable } from "./Variable";
 
 let client: UserClient
 export class Server implements ServerAttributes {
@@ -328,6 +329,14 @@ export class Server implements ServerAttributes {
     public async createBackup(builder: BackupBuilder): Promise<Backup> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/backups");
         return new Backup(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawBackup, this);
+    }
+
+    /**
+     * Get the variables of this server
+     */
+    public async getVariables(): Promise<Array<Variable>> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/startup");
+        return (await client.api({ url: endpoint.href }) as RawEggVariableList).data.map(variable => new Variable(client, variable, this));
     }
 
     /**
