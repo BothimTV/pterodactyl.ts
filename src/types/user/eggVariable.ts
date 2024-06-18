@@ -1,6 +1,11 @@
 export interface RawEggVariableList {
   object: "list";
   data: Array<RawEggVariable>;
+  meta?: {
+    startup_command: string;
+    docker_images: { [key: string]: string };
+    raw_startup_command: string;
+  };
 }
 
 export interface RawEggVariable {
