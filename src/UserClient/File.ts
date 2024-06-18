@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { RawSignedUrl } from "../types/base/signedUrl";
 import { FileAttributes, RawFile } from "../types/user/file";
+import { RawSignedUrl } from "../types/user/signedUrl";
 import { Server } from "./Server";
 import { UserClient } from "./UserClient";
 
