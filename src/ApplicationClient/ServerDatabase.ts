@@ -1,4 +1,4 @@
-import { RawServerDatabase, ServerDatabaseAttributes } from "../types/database";
+import { RawServerDatabase, ServerDatabaseAttributes } from "../types/application/database";
 import { ApplicationClient } from "./ApplicationClient";
 
 var client: ApplicationClient;

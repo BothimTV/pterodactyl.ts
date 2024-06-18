@@ -1,4 +1,4 @@
-import { LocationAttributes, RawLocation } from "../types/location"
+import { LocationAttributes, RawLocation } from "../types/application/location"
 import { ApplicationClient } from "./ApplicationClient"
 
 var client: ApplicationClient

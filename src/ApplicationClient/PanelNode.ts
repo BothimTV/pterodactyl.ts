@@ -1,9 +1,9 @@
 import { AllocationBuilder } from "../builder/AllocationBuilder";
-import { RawLocation } from "../types/location";
-import { RawNodeAllocationList } from "../types/nodeAllocation";
-import { RawNodeConfiguration } from "../types/nodeConfiguration";
-import { PanelNodeAttributes, RawPanelNode } from "../types/panelNode";
-import { RawServerList } from "../types/server";
+import { RawLocation } from "../types/application/location";
+import { RawNodeAllocationList } from "../types/application/nodeAllocation";
+import { RawNodeConfiguration } from "../types/application/nodeConfiguration";
+import { PanelNodeAttributes, RawPanelNode } from "../types/application/panelNode";
+import { RawServerList } from "../types/application/server";
 import { ApplicationClient } from "./ApplicationClient";
 import { NodeAllocation } from "./NodeAllocation";
 import { PanelLocation } from "./PanelLocation";

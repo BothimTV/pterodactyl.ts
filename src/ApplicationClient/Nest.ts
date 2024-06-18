@@ -1,6 +1,6 @@
-import { RawPanelEggList } from "../types/panelEgg";
-import { PanelNestAttributes, RawPanelNest } from "../types/panelNest";
-import { RawServerList } from "../types/server";
+import { RawPanelEggList } from "../types/application/panelEgg";
+import { PanelNestAttributes, RawPanelNest } from "../types/application/panelNest";
+import { RawServerList } from "../types/application/server";
 import { ApplicationClient } from "./ApplicationClient";
 import { Egg } from "./Egg";
 import { Server } from "./Server";

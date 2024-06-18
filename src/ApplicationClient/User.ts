@@ -1,5 +1,5 @@
-import { RawServer } from "../types/server";
-import { RawUser, UserAttributes } from "../types/user";
+import { RawServer } from "../types/application/server";
+import { RawUser, UserAttributes } from "../types/application/user";
 import { ApplicationClient } from "./ApplicationClient";
 import { Server } from "./Server";
 

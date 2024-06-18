@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
 import { BaseClient } from '../BaseClient/BaseClient';
-import { ConsoleLogWsEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/consoleSocket';
+import { ConsoleLogWsEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/user/consoleSocket';
 
 // file deepcode ignore InsufficientPostmessageValidation 
 

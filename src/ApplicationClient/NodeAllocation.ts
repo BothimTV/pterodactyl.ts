@@ -1,4 +1,4 @@
-import { NodeAllocationAttributes, RawNodeAllocation } from "../types/nodeAllocation";
+import { NodeAllocationAttributes, RawNodeAllocation } from "../types/application/nodeAllocation";
 import { ApplicationClient } from "./ApplicationClient";
 import { PanelNode } from "./PanelNode";
 
