@@ -263,7 +263,7 @@ export class Server implements ServerAttributes {
      */
     public async createSchedule(builder: ScheduleBuilder): Promise<Schedule> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/schedules");
-        return new Schedule(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSchedule, this); 
+        return new Schedule(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSchedule, this);
     }
 
     /**
@@ -279,7 +279,7 @@ export class Server implements ServerAttributes {
      */
     public async createAllocation(): Promise<Allocation> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/network/allocations");
-        return new Allocation(client, await client.api({ url: endpoint.href, method: "POST" }) as RawAllocation, this); 
+        return new Allocation(client, await client.api({ url: endpoint.href, method: "POST" }) as RawAllocation, this);
     }
 
     /**
@@ -305,7 +305,7 @@ export class Server implements ServerAttributes {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/users");
         return new SubUser(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawServerSubuser, this);
     }
-    
+
     /**
      * Get all backups of this server
      */
@@ -328,6 +328,14 @@ export class Server implements ServerAttributes {
     public async createBackup(builder: BackupBuilder): Promise<Backup> {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/backups");
         return new Backup(client, await client.api({ url: endpoint.href, method: "POST", data: builder }) as RawBackup, this);
+    }
+
+    /** TODO: Variable (with .setValue())
+     * Get the variables of this server
+     */
+    public async getVariables(): Promise<Array<Variable>> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.identifier + "/startup");
+        return (await client.api({ url: endpoint.href }) as RawEggVariableList).data.map(variable => new Variable(client, variable, this));
     }
 
 }
