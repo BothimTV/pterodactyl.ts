@@ -1,4 +1,4 @@
-import { UserPermission } from "./userPermission";
+import { UserPermission } from "../base/userPermission";
 
 export interface RawServerSubUserList {
   object: "list";

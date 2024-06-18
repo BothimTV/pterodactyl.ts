@@ -1,10 +1,10 @@
+import { ServerStatus } from "../base/serverStatus";
 import { RawServerDatabaseList } from "./database";
 import { RawLocation } from "./location";
 import { RawNodeAllocationList } from "./nodeAllocation";
 import { RawPanelEgg } from "./panelEgg";
 import { RawPanelNest } from "./panelNest";
 import { RawPanelNode } from "./panelNode";
-import { ServerStatus } from "./serverStatus";
 import { RawServerSubUserList } from "./serverSubUser";
 import { RawServerVariableList } from "./serverVariable";
 import { RawUser } from "./user";
