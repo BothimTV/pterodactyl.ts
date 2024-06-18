@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
+import { ServerSignalOption } from '../types/base/serverStatus';
 import { ConsoleLogWsEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/user/consoleSocket';
 import { Server } from './Server';
 import { UserClient } from './UserClient';
@@ -9,7 +10,6 @@ import { UserClient } from './UserClient';
 let client: UserClient
 export class ServerConsoleConnection extends EventEmitter {
 
-    private server: Server
     private endpoint: string
 
     private socket?: WebSocket
@@ -18,7 +18,6 @@ export class ServerConsoleConnection extends EventEmitter {
 
     constructor(server: Server, userClient: UserClient) {
         super()
-        this.server = server
         this.endpoint = userClient.panel + "/api/client/servers/" + server.identifier + "/websocket"
         client = userClient
     }
@@ -104,14 +103,23 @@ export class ServerConsoleConnection extends EventEmitter {
         }
     }
 
+    /**
+     * Request the stats of this server
+     */
     public requestStats(): void {
         this.socket?.send(JSON.stringify({ event: "send stats", args: [null] }));
     }
 
+    /**
+     * Request the logs of this server
+     */
     public requestLogs(): void {
         this.socket?.send(JSON.stringify({ event: "send logs", args: [null] }));
     }
 
+    /**
+     * Get the stats of this server
+     */
     public getStats(): Promise<StatsWsJson> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
@@ -131,6 +139,9 @@ export class ServerConsoleConnection extends EventEmitter {
         })
     }
 
+    /**
+     * Get the logs of this server
+     */
     public getLogs(): Promise<Array<string>> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
@@ -147,7 +158,7 @@ export class ServerConsoleConnection extends EventEmitter {
                         res.push(data.args[0])
                         clearTimeout(submitTimeout)
                         submitTimeout = setTimeout(() => {
-                            if (!this.socket) return reject("No socket connection") 
+                            if (!this.socket) return reject("No socket connection")
                             this.socket.removeEventListener("message", collect)
                             resolve(res)
                         }, 1000)
@@ -158,13 +169,18 @@ export class ServerConsoleConnection extends EventEmitter {
         })
     }
 
-    public sendPoweraction(action: string): void {
+    /**
+     * Send a power action to this server
+     */
+    public sendPoweraction(action: ServerSignalOption): void {
         this.socket?.send(JSON.stringify({ event: "set state", args: [action] }));
     }
 
+    /**
+     * Send a command to this server
+     */
     public sendCommand(cmd: string): void {
         this.socket?.send(JSON.stringify({ event: "send command", args: [cmd] }));
     }
-
 
 }
