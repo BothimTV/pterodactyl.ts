@@ -52,6 +52,9 @@ export class Egg implements PanelEggAttributes {
         client = applicationClient
     }
 
-    // TODO: Add methods 
+    /**
+     * There are no methods documented :/
+     * Are there methods that would be practical to have? 
+     */
 
 }

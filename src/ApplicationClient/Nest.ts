@@ -34,7 +34,10 @@ export class Nest implements PanelNestAttributes {
         if (this.rawRelationships?.servers) this.associatedServers = this.rawRelationships.servers.data.map(serverProps => new PanelServer(applicationClient, serverProps));
         client = applicationClient;
     }
-
-    // TODO: Add methods 
+    
+    /**
+     * There are no methods documented :/
+     * Are there methods that would be practical to have? 
+     */
 
 }
