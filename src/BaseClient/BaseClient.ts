@@ -13,7 +13,7 @@ export class BaseClient {
   public api = async function api(config: AxiosRequestConfig, errorSet?: Array<{ code: number; message: string; }>, ignoredErrors?: Array<string>): Promise<any> { };
   constructor(options: ClientOptions) {
     this.apikey = "Bearer " + options.apikey;
-    this.panel = options.panel;
+    this.panel = new URL(options.panel).origin;
     this.api = new ApiRequestHandler(this.apikey).axiosRequest
     try {
       new URL(this.panel);

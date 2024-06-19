@@ -1,11 +1,11 @@
 # Pterodactyl.ts
 This is a easy to use typescript based api wrapper for the pterodactyl api.
 
-# Documentation
+# Quick start
 Most functions are tested, if something doesn't work please open an issue on github.
 
 ## ApplicationClient
-[Documentation](https://pterots.bothimtv.com/classes/ApplicationClient.html)
+With the ApplicationClient you can manage servers, nodes, users, and more.
 ```ts
 import { ApplicationClient } from "pterodactyl.ts"
 const applicationClient = new ApplicationClient({
@@ -13,9 +13,10 @@ const applicationClient = new ApplicationClient({
     panel: ""
 })
 ```
+[Documentation](https://pterots.bothimtv.com/classes/ApplicationClient.html)
 
 ## UserClient
-[Documentation](https://pterots.bothimtv.com/classes/UserClient.html)
+With the ApplicationClient you can manage servers, subusers, backups, files and more.
 ```ts
 import { UserClient } from "pterodactyl.ts"
 const userClient = new UserClient({
@@ -23,6 +24,29 @@ const userClient = new UserClient({
     panel: ""
 })
 ```
+```ts
+// Get a specific server from your account
+const server = await userClient.getServer("someId")
+
+/**
+ * Console connection
+ */ 
+// The authentication is done automatically
+const socket = await server.getConsoleSocket()
+await socket.connect(true)
+
+// Get the logs, when the server is offline you'll receive a generated log message 
+const logs = await socket.getLogs()
+
+socket.disconnect()
+
+/**
+ * File management
+ */
+// Accepts a filepath, buffer or blob
+await server.uploadFile("/", "hello.world", "hello.world")
+```
+[Documentation](https://pterots.bothimtv.com/classes/UserClient.html)
 
 ## Disclaimer
 Use is at own risk!  
