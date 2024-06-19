@@ -1,23 +1,31 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
 import { ServerSignalOption } from '../types/base/serverStatus';
-import { ConsoleLogWsEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/user/consoleSocket';
+import { ConsoleLogWsEvent, PowerState, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/user/consoleSocket';
 import { Server } from './Server';
 import { UserClient } from './UserClient';
 
 // file deepcode ignore InsufficientPostmessageValidation 
 
 let client: UserClient
-export class ServerConsoleConnection extends EventEmitter {
+export class ServerConsoleConnection {
 
     private endpoint: string
 
     private socket?: WebSocket
     private currentKey?: string
     private debugLogging? = false
+    private eventEmitter = new EventEmitter()
+
+    public on(eventName: "auth_success" | "status" | "console_output" | "stats", listener: (...args: any[]) => void) {
+        this.eventEmitter.on(eventName, listener)
+    }
+
+    private emit(eventName: "auth_success" | "status" | "console_output" | "stats", payload: undefined | PowerState | string | StatsWsJson) {
+        this.eventEmitter.emit(eventName, payload)
+    }
 
     constructor(server: Server, userClient: UserClient) {
-        super()
         this.endpoint = userClient.panel + "/api/client/servers/" + server.identifier + "/websocket"
         client = userClient
     }
@@ -27,7 +35,7 @@ export class ServerConsoleConnection extends EventEmitter {
      * You can then listen on the 
      * @param debugLogging Debug enabled?
      */
-    public async connect(debugLogging?: boolean) {
+    public async connect(debugLogging?: boolean): Promise<void> {
         this.debugLogging = debugLogging
         if (!this.socket) {
             this.socket = new WebSocket(await this.setKey(), {
@@ -60,7 +68,7 @@ export class ServerConsoleConnection extends EventEmitter {
         switch (data.event) {
             case 'auth success': {
                 if (this.debugLogging) console.debug("Auth success")
-                this.emit("auth_success")
+                this.emit("auth_success", undefined)
                 break;
             }
             case 'status': {
