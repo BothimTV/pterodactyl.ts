@@ -41,6 +41,11 @@ await socket.connect(true)
 // Get the logs, when the server is offline you'll receive a generated log message 
 const logs = await socket.getLogs()
 
+// Get live console logging
+socket.on("console_output", log => {
+    console.log(log)
+})
+
 socket.disconnect()
 
 /**

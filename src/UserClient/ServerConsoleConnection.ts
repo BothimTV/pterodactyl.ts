@@ -17,11 +17,11 @@ export class ServerConsoleConnection {
     private debugLogging? = false
     private eventEmitter = new EventEmitter()
 
-    public on(eventName: "auth_success" | "status" | "console_output" | "stats", listener: (...args: any[]) => void) {
+    public on(eventName: "auth_success" | "status" | "console_output" | "stats" | "error", listener: (...args: any[]) => void) {
         this.eventEmitter.on(eventName, listener)
     }
 
-    private emit(eventName: "auth_success" | "status" | "console_output" | "stats", payload: undefined | PowerState | string | StatsWsJson) {
+    private emit(eventName: "auth_success" | "status" | "console_output" | "stats" | "error", payload: undefined | PowerState | string | StatsWsJson) {
         this.eventEmitter.emit(eventName, payload)
     }
 
@@ -42,13 +42,22 @@ export class ServerConsoleConnection {
                 origin: new URL(this.endpoint).origin
             })
             if (!this.socket) throw new Error("Failed to create socket connection")
-            this.socket.onopen = async () => {
-                await this.authSocket()
-            };
-            this.socket.addEventListener("message", (ev) => {
-                this.listen(JSON.parse(ev.data as string) as WebsocketEvent)
+            return await new Promise(resolve => {
+                if (!this.socket) throw new Error("No socket connection")
+                this.socket.onopen = async () => {
+                    await this.authSocket()
+                    this.addListen()
+                    resolve()
+                };
             })
         }
+    }
+
+    private addListen() {
+        if (!this.socket) return console.error(new Error("No socket connection"))
+        this.socket.addEventListener("message", (ev) => {
+            this.listen(JSON.parse(ev.data as string) as WebsocketEvent)
+        })
     }
 
     private async setKey(): Promise<string> {
@@ -83,6 +92,10 @@ export class ServerConsoleConnection {
             }
             case 'stats': {
                 this.emit("stats", JSON.parse((data as StatsWsEvent).args[0]) as StatsWsJson)
+                break;
+            }
+            case 'daemon error': {
+                this.emit("error", data.args[0])
                 break;
             }
             case 'token expiring': {
