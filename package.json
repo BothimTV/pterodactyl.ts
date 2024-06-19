@@ -1,6 +1,6 @@
 {
   "name": "pterodactyl.ts",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -21,6 +21,7 @@
   "repository": {
     "url": "https://github.com/BothimTV/PterodactylAPI"
   },
+  "homepage": "https://pterots.bothimtv.com",
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
