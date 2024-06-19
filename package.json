@@ -20,7 +20,7 @@
     "server"
   ],
   "repository": {
-    "url": "https://github.com/BothimTV/PterodactylAPI"
+    "url": "git+https://github.com/BothimTV/PterodactylAPI.git"
   },
   "homepage": "https://pterots.bothimtv.com",
   "devDependencies": {

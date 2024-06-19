@@ -1,3 +1,6 @@
+![Known Vulnerabilities](https://snyk.io/test/github/BothimTV/PterodactykAPI/badge.svg)
+[![Build Status](https://github.com/BothimTV/PterodactylAPI/actions/workflows/main.yml/badge.svg)](https://github.com/BothimTV/PterodactylAPI/actions/workflows/main.yml)
+
 # Pterodactyl.ts
 This is a easy to use typescript based api wrapper for the pterodactyl api.
 
