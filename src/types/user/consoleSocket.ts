@@ -4,7 +4,8 @@ export type WebsocketEvent =
     | ConsoleLogWsEvent
     | StatsWsEvent
     | TokenExpiringWsEvent
-    | TokenExpiredWsEvent;
+    | TokenExpiredWsEvent
+    | DaemonErrorEvent;
 
 export type AuthSuccessWsEvent = {
     event: "auth success";
@@ -36,3 +37,5 @@ export type StatsWsJson = {
 export type TokenExpiringWsEvent = { event: "token expiring" };
 
 export type TokenExpiredWsEvent = { event: "token expired" };
+
+export type DaemonErrorEvent = { event: "daemon error", args: [string]}
