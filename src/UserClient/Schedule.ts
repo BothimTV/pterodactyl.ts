@@ -160,4 +160,12 @@ export class Schedule implements ServerScheduleAttributes {
         await client.api({ url: endpoint.href, method: "POST", data: task });
     }
 
+    /**
+     * Executes this schedule
+     */
+    public async execute(): Promise<void> {
+        const endpoint = new URL(client.panel + "/api/client/servers/" + this.parentServer.identifier + "/schedules/" + this.id + "/execute");
+        await client.api({ url: endpoint.href, method: "POST" });
+    }
+
 }
