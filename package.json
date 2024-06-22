@@ -1,5 +1,5 @@
 {
-  "name": "@bothimtv/pterodactyl.ts",
+  "name": "pterodactyl.ts",
   "version": "1.0.6",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

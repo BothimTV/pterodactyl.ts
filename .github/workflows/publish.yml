@@ -36,7 +36,7 @@ jobs:
           with:
             node-version: 20.x
             cache: "pnpm"
-            registry-url: 'https://npm.pkg.github.com'
+            registry-url: 'https://npm.pkg.github.com/@bothimtv'
             scope: "@bothimtv"
         - run: pnpm install --frozen-lockfile
         - run: pnpm run lint && pnpm run build  
