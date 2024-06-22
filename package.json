@@ -1,6 +1,6 @@
 {
   "name": "pterodactyl.ts",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -8,8 +8,8 @@
     "build-docs": "npx typedoc ./src",
     "build": "npx ts-node ./src/createExports.js && tsup src/index.ts --format cjs,esm --dts",
     "lint": "tsc",
-    "gh-publish": "cd ./src && node ./github-util/gh_publish.js",
-    "npm-publish": "cd ./src && node ./github-util/gh_publish.js"
+    "gh-publish": "node ./src/github-util/gh_publish.js",
+    "npm-publish": "node ./src/github-util/npm_publish.js"
   },
   "author": "Bothim_TV",
   "license": "MIT",
