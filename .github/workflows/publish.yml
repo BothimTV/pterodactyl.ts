@@ -18,6 +18,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint && pnpm run build  
+      - run: pnpm run npm-publish
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -40,6 +41,7 @@ jobs:
             scope: "@bothimtv"
         - run: pnpm install --frozen-lockfile
         - run: pnpm run lint && pnpm run build  
+        - run: pnpm run gh-publish
         - run: npm publish
           env:
             NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}            
