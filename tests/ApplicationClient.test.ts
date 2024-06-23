@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { StartedTestContainer } from "testcontainers";
-import { AllocationBuilder, NodeAllocation, PanelUser, UserBuilder } from "../src";
+import { AllocationBuilder, Egg, Nest, NodeAllocation, PanelUser, UserBuilder } from "../src";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
 import { PanelLocation } from "../src/ApplicationClient/PanelLocation";
 import { PanelNode } from "../src/ApplicationClient/PanelNode";
@@ -118,6 +118,20 @@ describe("Test the ApplicationClient", () => {
   test("Allocation delete", async () => {
     await allocations[0]?.delete()
     expect((await node.getAllocations()).length).toBe(4)
+  })
+
+  let nests: Array<Nest>
+  let minecraftEggs: Array<Egg>
+  test("Get all nests", async () => {
+    nests = await applicationClient.getNests()
+    expect(nests.length).toBe(4)
+  })
+
+  test("Get all minecraft eggs", async () => {
+    var mcNest = nests.find(n => n.name == "Minecraft")
+    if (!mcNest) throw new Error("Minecraft nest not found")
+    minecraftEggs = await applicationClient.getEggs(mcNest.id)
+    expect(minecraftEggs.length).toBe(5)
   })
 
 });
