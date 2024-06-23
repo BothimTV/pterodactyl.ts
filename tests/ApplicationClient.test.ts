@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { StartedTestContainer } from "testcontainers";
+import { PanelUser, UserBuilder } from "../src";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
 import { PanelLocation } from "../src/ApplicationClient/PanelLocation";
 import { PanelNode } from "../src/ApplicationClient/PanelNode";
@@ -53,7 +54,6 @@ beforeAll(async () => {
 
 describe("Test the ApplicationClient", () => {
   test("Test initial data", async () => {
-
     const nodes = await applicationClient.getNodes()
     const users = await applicationClient.getUsers()
     const locations = await applicationClient.getLocations()
@@ -61,10 +61,46 @@ describe("Test the ApplicationClient", () => {
     expect(nodes.length).toBe(1)
     expect(users.length).toBe(1)
     expect(locations.length).toBe(1)
-
   })
 
+  let testUser: PanelUser
+  test("User creation", async () => {
+    testUser = await applicationClient.createUser(
+      new UserBuilder()
+        .setAdmin(false)
+        .setEmail("test@bothimtv.com")
+        .setFirstName("test")
+        .setLastName("test")
+        .setPassword("test")
+        .setUsername("test")
+    )
+    expect(testUser.root_admin).toBe(false)
+    expect(testUser.email).toBe("test@bothimtv.com")
+    expect(testUser.first_name).toBe("test")
+    expect(testUser.last_name).toBe("test")
+    expect(testUser.username).toBe("test")
+  })
 
+  test("User update", async () => {
+    await testUser.setPanelAdmin(true)
+    await testUser.setEmail("newTest@bothimtv.com")
+    await testUser.setFirstName("newTest")
+    await testUser.setLastName("newTest")
+    await testUser.setUsername("newTest")
+    await testUser.setPassword("newTest")
+
+    expect(testUser.root_admin).toBe(true)
+    expect(testUser.email).toBe("newTest@bothimtv.com")
+    expect(testUser.first_name).toBe("newTest")
+    expect(testUser.last_name).toBe("newTest")
+    expect(testUser.username).toBe("newtest") // Usernames are stored lower case
+  })
+
+  test("User delete", async () => {
+        await testUser.delete()
+        const emptyList = await applicationClient.getUsers({email: "newTest@bothimtv.com", username: "newTest", uuid: testUser.uuid})
+        expect(emptyList.length).toBe(0)
+  })
 });
 
 afterAll(async () => {
