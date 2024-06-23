@@ -1,23 +1,18 @@
-name: Test
-on: [] # pull_request, push, workflow_dispatch
+name: Jest Tests
+on: [pull_request, push, workflow_dispatch]  
 
 jobs:
   test:
     runs-on: self-hosted
-    container:
-      image: debian:latest
-      ports:
-        - 80
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - uses: actions/setup-node@v3
+          version: 9
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: "pnpm"
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run lint && pnpm run build
-      - run:
+      - run: pnpm run test
