@@ -5,6 +5,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
+    "test": "npx jest",
     "build-docs": "npx typedoc ./src",
     "build": "npx ts-node ./src/createExports.js && tsup src/index.ts --format cjs,esm --dts",
     "lint": "tsc",
