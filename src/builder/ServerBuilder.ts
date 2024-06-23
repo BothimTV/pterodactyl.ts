@@ -303,7 +303,7 @@ export class ServerBuilder {
             this.docker_image = egg.docker_image
             this.startup = egg.startup
             egg.associatedVariables?.forEach(variable => {
-                this.environment[variable.name] = variable.default_value
+                this.environment[variable.env_variable] = variable.default_value
             })
         }
         return this
