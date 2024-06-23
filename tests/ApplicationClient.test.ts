@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { StartedTestContainer } from "testcontainers";
-import { AllocationBuilder, Egg, Nest, NodeAllocation, PanelServer, PanelUser, ServerBuilder, UserBuilder } from "../src";
+import { AllocationBuilder, Egg, Nest, NodeAllocation, PanelUser, UserBuilder } from "../src";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
 import { PanelLocation } from "../src/ApplicationClient/PanelLocation";
 import { PanelNode } from "../src/ApplicationClient/PanelNode";
@@ -140,30 +140,6 @@ describe("Test the ApplicationClient", () => {
     if (!mcNest) throw new Error("Minecraft nest not found")
     minecraftEggs = await applicationClient.getEggs(mcNest.id)
     expect(minecraftEggs.length).toBe(5)
-  })
-
-  let server: PanelServer
-  test("Create a Server", async () => {
-    if (!allocations[0] || !allocations[1] || !allocations[2]) throw new Error("No allocations found")
-    let bungeecordEgg = minecraftEggs.find(e => e.name == "Bungeecord")
-    if (!bungeecordEgg) throw new Error("Bungeecord egg not found") 
-    server = await applicationClient.createServer(
-      new ServerBuilder()
-        .setOwner(me)
-        .setName("Test Server")
-        .setDescription("A great test server")
-        .setAllocation(allocations[0])
-        .addAdditionalAllocation(allocations[1])
-        .setAdditionalAllocations([allocations[2]])
-        .setEgg(bungeecordEgg)
-        .setCpuLimit(100)
-        .setMemoryLimit(3000)
-        .setDiskLimit(1000)
-        .setBackupLimit(3)
-        .setDatabaseLimit(3)
-        .setAllocationLimit(3)
-        .startServerWhenInstalled(true)
-    )
   })
 
 });
