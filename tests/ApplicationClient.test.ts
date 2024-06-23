@@ -1,6 +1,11 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { StartedTestContainer } from "testcontainers";
-import { ApplicationClient, LocationBuilder, NodeBuilder, PanelLocation, PanelNode, UserClient } from "../dist";
+import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
+import { PanelLocation } from "../src/ApplicationClient/PanelLocation";
+import { PanelNode } from "../src/ApplicationClient/PanelNode";
+import { UserClient } from "../src/UserClient/UserClient";
+import { LocationBuilder } from "../src/builder/LocationBuilder";
+import { NodeBuilder } from "../src/builder/NodeBuilder";
 import { cleanup, getNetwork, getPanel, startWings } from "./containerProvider";
 
 let applicationClient: ApplicationClient
