@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { StartedTestContainer } from "testcontainers";
-import { PanelUser, UserBuilder } from "../src";
+import { AllocationBuilder, NodeAllocation, PanelUser, UserBuilder } from "../src";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
 import { PanelLocation } from "../src/ApplicationClient/PanelLocation";
 import { PanelNode } from "../src/ApplicationClient/PanelNode";
@@ -101,6 +101,25 @@ describe("Test the ApplicationClient", () => {
     const emptyList = await applicationClient.getUsers({ email: "newTest@bothimtv.com", username: "newTest", uuid: testUser.uuid })
     expect(emptyList.length).toBe(0)
   })
+
+  let allocations: Array<NodeAllocation>
+  test("Allocation create", async () => {
+    await node.createAllocation(
+      new AllocationBuilder()
+        .addPort("25565-25566")
+        .addPorts([25577, "25578-25579"])
+        .setAlias("testNode.bothimtv.com")
+        .setIp(node.fqdn)
+    )
+    allocations = await node.getAllocations()
+    expect(allocations.length).toBe(5)
+  })
+
+  test("Allocation delete", async () => {
+    await allocations[0]?.delete()
+    expect((await node.getAllocations()).length).toBe(4)
+  })
+
 });
 
 afterAll(async () => {
