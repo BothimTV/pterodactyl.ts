@@ -7,7 +7,7 @@ export class ServerBuilder {
     private name: string
     private user: number
     private description?: string
-    private start_on_completion: "on" | undefined
+    private start_on_completion: boolean
 
     private node_id?: number // @deprecated Is only used for frontend 
 
@@ -47,7 +47,7 @@ export class ServerBuilder {
             allocations: 0,
             backups: 0
         }
-        this.start_on_completion = "on"
+        this.start_on_completion = true
         this.limits = {
             cpu: 0,
             threads: '',
@@ -106,7 +106,7 @@ export class ServerBuilder {
      * @default start true
      */
     public startServerWhenInstalled(start: boolean): ServerBuilder {
-        this.start_on_completion = start ? 'on' : undefined
+        this.start_on_completion = start
         return this
     }
 
