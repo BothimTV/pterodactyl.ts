@@ -97,9 +97,9 @@ describe("Test the ApplicationClient", () => {
   })
 
   test("User delete", async () => {
-        await testUser.delete()
-        const emptyList = await applicationClient.getUsers({email: "newTest@bothimtv.com", username: "newTest", uuid: testUser.uuid})
-        expect(emptyList.length).toBe(0)
+    await testUser.delete()
+    const emptyList = await applicationClient.getUsers({ email: "newTest@bothimtv.com", username: "newTest", uuid: testUser.uuid })
+    expect(emptyList.length).toBe(0)
   })
 });
 
