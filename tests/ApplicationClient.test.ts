@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { StartedTestContainer } from "testcontainers";
-import { AllocationBuilder, Egg, Nest, NodeAllocation, PanelUser, UserBuilder } from "../src";
+import { AllocationBuilder, Egg, Nest, NodeAllocation, PanelServer, PanelUser, ServerBuilder, UserBuilder } from "../src";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
 import { PanelLocation } from "../src/ApplicationClient/PanelLocation";
 import { PanelNode } from "../src/ApplicationClient/PanelNode";
@@ -53,14 +53,22 @@ beforeAll(async () => {
 }, 2 * 60 * 1000)
 
 describe("Test the ApplicationClient", () => {
+  let panelNodes: Array<PanelNode>
+  let panelUsers: Array<PanelUser>
+  let panelLocations: Array<PanelLocation>
+  let me: PanelUser
   test("Test initial data", async () => {
-    const nodes = await applicationClient.getNodes()
-    const users = await applicationClient.getUsers()
-    const locations = await applicationClient.getLocations()
+    panelNodes = await applicationClient.getNodes()
+    panelUsers = await applicationClient.getUsers()
+    panelLocations = await applicationClient.getLocations()
 
-    expect(nodes.length).toBe(1)
-    expect(users.length).toBe(1)
-    expect(locations.length).toBe(1)
+    let findMe = panelUsers.find(u => u.username == "admin") 
+    if (!findMe) throw new Error("Admin user not found")
+    me = findMe
+
+    expect(panelNodes.length).toBe(1)
+    expect(panelUsers.length).toBe(1)
+    expect(panelLocations.length).toBe(1)
   })
 
   let testUser: PanelUser
@@ -116,7 +124,7 @@ describe("Test the ApplicationClient", () => {
   })
 
   test("Allocation delete", async () => {
-    await allocations[0]?.delete()
+    await allocations[4]?.delete()
     expect((await node.getAllocations()).length).toBe(4)
   })
 
@@ -132,6 +140,30 @@ describe("Test the ApplicationClient", () => {
     if (!mcNest) throw new Error("Minecraft nest not found")
     minecraftEggs = await applicationClient.getEggs(mcNest.id)
     expect(minecraftEggs.length).toBe(5)
+  })
+
+  let server: PanelServer
+  test("Create a Server", async () => {
+    if (!allocations[0] || !allocations[1] || !allocations[2]) throw new Error("No allocations found")
+    let bungeecordEgg = minecraftEggs.find(e => e.name == "Bungeecord")
+    if (!bungeecordEgg) throw new Error("Bungeecord egg not found") 
+    server = await applicationClient.createServer(
+      new ServerBuilder()
+        .setOwner(me)
+        .setName("Test Server")
+        .setDescription("A great test server")
+        .setAllocation(allocations[0])
+        .addAdditionalAllocation(allocations[1])
+        .setAdditionalAllocations([allocations[2]])
+        .setEgg(bungeecordEgg)
+        .setCpuLimit(100)
+        .setMemoryLimit(3000)
+        .setDiskLimit(1000)
+        .setBackupLimit(3)
+        .setDatabaseLimit(3)
+        .setAllocationLimit(3)
+        .startServerWhenInstalled(true)
+    )
   })
 
 });
