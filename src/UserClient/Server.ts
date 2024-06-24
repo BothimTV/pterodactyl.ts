@@ -3,7 +3,6 @@ import { BackupBuilder } from "../builder/BackupBuilder";
 import { DatabaseBuilder } from "../builder/DatabaseBuilder";
 import { ScheduleBuilder } from "../builder/ScheduleBuilder";
 import { SubUserBuilder } from "../builder/SubUserBuilder";
-import { RawServerSubUserList } from "../types/application/serverSubUser";
 import { ServerSignal, ServerStatus } from "../types/base/serverStatus";
 import { RawAllocation, RawAllocationList } from "../types/user/allocation";
 import { RawEgg } from "../types/user/egg";
@@ -27,6 +26,12 @@ import { UserClient } from "./UserClient";
 import { Variable } from "./Variable";
 
 let client: UserClient
+var relationships: {
+    readonly allocations?: RawAllocationList;
+    readonly variable?: RawEggVariableList;
+    readonly egg?: RawEgg;
+    readonly subusers?: RawServerSubuserList;
+} | undefined;
 export class Server implements ServerAttributes {
     readonly server_owner: boolean;
     readonly identifier: string;
@@ -61,12 +66,10 @@ export class Server implements ServerAttributes {
     readonly is_suspended: boolean;
     readonly is_installing: boolean;
     readonly is_transferring: boolean;
-    readonly relationships?: {
-        readonly allocations?: RawAllocationList;
-        readonly variable?: RawEggVariableList;
-        readonly egg?: RawEgg;
-        readonly subusers?: RawServerSubUserList;
-    };
+    public allocations?: Array<Allocation>
+    public variables?: Array<Variable>
+    public egg?: RawEgg
+    public subusers?: Array<SubUser>
 
     constructor(userClient: UserClient, server: RawServer) {
         client = userClient
@@ -88,7 +91,11 @@ export class Server implements ServerAttributes {
         this.is_suspended = server.attributes.is_suspended;
         this.is_installing = server.attributes.is_installing;
         this.is_transferring = server.attributes.is_transferring;
-        this.relationships = server.attributes.relationships;
+        relationships = server.attributes.relationships;
+        if (relationships?.allocations) this.allocations = relationships.allocations.data.map(a => new Allocation(userClient, a, this));
+        if (relationships?.variable) this.variables = relationships.variable.data.map(v => new Variable(userClient, v, this));
+        if (relationships?.egg) this.egg = relationships.egg;
+        if (relationships?.subusers) this.subusers = relationships.subusers.data.map(s => new SubUser(userClient, s, this));
     }
 
     /**

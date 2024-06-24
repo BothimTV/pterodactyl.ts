@@ -1,12 +1,17 @@
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
 import { StartedTestContainer } from "testcontainers";
-import { AllocationBuilder, Egg, Nest, NodeAllocation, PanelUser, UserBuilder } from "../src";
 import { ApplicationClient } from "../src/ApplicationClient/ApplicationClient";
+import { Egg } from "../src/ApplicationClient/Egg";
+import { Nest } from "../src/ApplicationClient/Nest";
+import { NodeAllocation } from "../src/ApplicationClient/NodeAllocation";
 import { PanelLocation } from "../src/ApplicationClient/PanelLocation";
 import { PanelNode } from "../src/ApplicationClient/PanelNode";
+import { PanelUser } from "../src/ApplicationClient/PanelUser";
 import { UserClient } from "../src/UserClient/UserClient";
+import { AllocationBuilder } from "../src/builder/AllocationBuilder";
 import { LocationBuilder } from "../src/builder/LocationBuilder";
 import { NodeBuilder } from "../src/builder/NodeBuilder";
+import { UserBuilder } from "../src/builder/UserBuilder";
 import { cleanup, getNetwork, getPanel, startWings } from "./containerProvider";
 
 let applicationClient: ApplicationClient

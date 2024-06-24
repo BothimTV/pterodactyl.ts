@@ -1,8 +1,8 @@
-import { RawServerSubUserList } from "../application/serverSubUser";
 import { ServerStatus } from "../base/serverStatus";
 import { RawAllocationList } from "./allocation";
 import { RawEgg } from "./egg";
 import { RawEggVariableList } from "./eggVariable";
+import { RawServerSubuserList } from "./serverSubuser";
 
 export interface RawServerList {
   object: "list";
@@ -52,6 +52,6 @@ export interface ServerAttributes {
     readonly allocations?: RawAllocationList;
     readonly variable?: RawEggVariableList;
     readonly egg?: RawEgg;
-    readonly subusers?: RawServerSubUserList;
+    readonly subusers?: RawServerSubuserList;
   };
 }

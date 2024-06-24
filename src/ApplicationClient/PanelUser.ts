@@ -40,6 +40,7 @@ export class PanelUser implements UserAttributes {
     this.created_at = new Date(userData.attributes.created_at);
     this.updated_at = new Date(userData.attributes.updated_at);
     relationships = userData.attributes.relationships;
+    if (relationships?.servers) this.servers = relationships.servers.data.map((server) => new PanelServer(client, server));
   }
 
   /**

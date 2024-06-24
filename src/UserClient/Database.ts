@@ -4,6 +4,9 @@ import { Server } from "./Server";
 import { UserClient } from "./UserClient";
 
 let client: UserClient
+var relationships: {
+    password?: RawDatabasePassword;
+} | undefined;
 export class Database implements ServerDatabaseAttributes {
     readonly id: string;
     readonly host: {
@@ -14,9 +17,6 @@ export class Database implements ServerDatabaseAttributes {
     readonly username: string;
     readonly connections_from: string;
     readonly max_connections: number;
-    relationships?: {
-        password?: RawDatabasePassword;
-    };
     password?: string;
     readonly parentServer: Server
 
@@ -28,7 +28,7 @@ export class Database implements ServerDatabaseAttributes {
         this.username = databaseProps.attributes.username
         this.connections_from = databaseProps.attributes.connections_from
         this.max_connections = databaseProps.attributes.max_connections
-        this.relationships = databaseProps.attributes.relationships
+        relationships = databaseProps.attributes.relationships
         this.parentServer = parentServer
         this.password = databaseProps.attributes.relationships?.password?.attributes.password
     }
@@ -41,8 +41,8 @@ export class Database implements ServerDatabaseAttributes {
         const endpoint = new URL(client.panel + "/api/client/servers/" + this.parentServer.identifier + "/databases/" + this.id + "/rotate-password");
         const res = await client.api({ url: endpoint.href, method: "POST" }) as RawServerDatabase
         this.password = res.attributes.relationships?.password?.attributes.password
-        this.relationships = res.attributes.relationships
-        return this.relationships?.password?.attributes.password;
+        relationships = res.attributes.relationships
+        return relationships?.password?.attributes.password;
     }
 
     /**

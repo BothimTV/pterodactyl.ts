@@ -8,6 +8,11 @@ import { PanelServer } from "./PanelServer";
 import { ServerVariable } from "./ServerVariable";
 
 var client: ApplicationClient
+var relationships: {
+    nest?: RawPanelNest
+    servers?: RawServerList
+    variables?: RawServerVariableList
+} | undefined;
 export class Egg implements PanelEggAttributes {
     readonly id: number;
     readonly uuid: string;
@@ -22,11 +27,6 @@ export class Egg implements PanelEggAttributes {
     script: { privileged: boolean; install: string; entry: string; container: string; extends?: string | null | undefined; };
     readonly created_at: string | Date;
     updated_at: string | Date;
-    private readonly rawRelationships?: {
-        readonly nest?: RawPanelNest
-        readonly servers?: RawServerList
-        readonly variables?: RawServerVariableList
-    };
     parentNest?: Nest;
     associatedServers?: Array<PanelServer>
     associatedVariables?: Array<ServerVariable>
@@ -45,10 +45,10 @@ export class Egg implements PanelEggAttributes {
         this.script = eggProps.attributes.script
         this.created_at = new Date(eggProps.attributes.created_at)
         this.updated_at = new Date(eggProps.attributes.updated_at)
-        this.rawRelationships = eggProps.attributes.relationships
-        if (this.rawRelationships?.nest) this.parentNest = new Nest(applicationClient, this.rawRelationships.nest)
-        if (this.rawRelationships?.servers) this.associatedServers = this.rawRelationships.servers.data.map(srv => new PanelServer(applicationClient, srv) )
-        if (this.rawRelationships?.variables) this.associatedVariables = this.rawRelationships.variables.data.map(variable => new ServerVariable(variable) )
+        relationships = eggProps.attributes.relationships
+        if (relationships?.nest) this.parentNest = new Nest(applicationClient, relationships.nest)
+        if (relationships?.servers) this.associatedServers = relationships.servers.data.map(srv => new PanelServer(applicationClient, srv) )
+        if (relationships?.variables) this.associatedVariables = relationships.variables.data.map(variable => new ServerVariable(variable) )
         client = applicationClient
     }
 
