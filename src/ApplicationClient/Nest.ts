@@ -6,6 +6,10 @@ import { Egg } from "./Egg";
 import { PanelServer } from "./PanelServer";
 
 var client: ApplicationClient
+var relationships: { 
+    readonly eggs?: RawPanelEggList; 
+    readonly servers?: RawServerList; 
+} | undefined;
 export class Nest implements PanelNestAttributes {
     readonly id: number;
     readonly uuid: string;
@@ -14,10 +18,6 @@ export class Nest implements PanelNestAttributes {
     description?: string | null;
     readonly created_at: string | Date;
     updated_at: string | Date;
-    private readonly rawRelationships?: { 
-        readonly eggs?: RawPanelEggList; 
-        readonly servers?: RawServerList; 
-    };
     readonly associatedEggs?: Array<Egg>;
     readonly associatedServers?: Array<PanelServer>;
 
@@ -29,9 +29,9 @@ export class Nest implements PanelNestAttributes {
         this.description = nestProps.attributes.description;
         this.created_at = new Date(nestProps.attributes.created_at);
         this.updated_at = new Date(nestProps.attributes.updated_at);
-        this.rawRelationships = nestProps.attributes.relationships;
-        if (this.rawRelationships?.eggs) this.associatedEggs = this.rawRelationships.eggs.data.map(eggProps => new Egg(applicationClient, eggProps));
-        if (this.rawRelationships?.servers) this.associatedServers = this.rawRelationships.servers.data.map(serverProps => new PanelServer(applicationClient, serverProps));
+        relationships = nestProps.attributes.relationships;
+        if (relationships?.eggs) this.associatedEggs = relationships.eggs.data.map(eggProps => new Egg(applicationClient, eggProps));
+        if (relationships?.servers) this.associatedServers = relationships.servers.data.map(serverProps => new PanelServer(applicationClient, serverProps));
         client = applicationClient;
     }
     

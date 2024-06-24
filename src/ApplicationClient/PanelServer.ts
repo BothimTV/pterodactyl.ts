@@ -14,10 +14,25 @@ import { ApplicationClient } from "./ApplicationClient";
 import { Egg } from "./Egg";
 import { Nest } from "./Nest";
 import { NodeAllocation } from "./NodeAllocation";
+import { PanelLocation } from "./PanelLocation";
+import { PanelNode } from "./PanelNode";
 import { PanelUser } from "./PanelUser";
 import { ServerDatabase } from "./ServerDatabase";
+import { ServerSubUser } from "./ServerSubUser";
+import { ServerVariable } from "./ServerVariable";
 
 var client: ApplicationClient
+var relationships: {
+    readonly allocations?: RawNodeAllocationList;
+    readonly user?: RawUser;
+    readonly subusers?: RawServerSubUserList;
+    readonly nest?: RawPanelNest;
+    readonly egg?: RawPanelEgg;
+    readonly variables?: RawServerVariableList;
+    readonly location?: RawLocation;
+    readonly node?: RawPanelNode;
+    readonly databases?: RawServerDatabaseList;
+} | undefined;
 export class PanelServer implements ServerAttributes {
 
     public readonly id: number;
@@ -56,17 +71,16 @@ export class PanelServer implements ServerAttributes {
     };
     public updated_at: Date
     public readonly created_at: Date;
-    readonly relationships?: {
-        readonly allocations?: RawNodeAllocationList;
-        readonly user?: RawUser;
-        readonly subusers?: RawServerSubUserList;
-        readonly nest?: RawPanelNest;
-        readonly egg?: RawPanelEgg;
-        readonly variables?: RawServerVariableList;
-        readonly location?: RawLocation;
-        readonly node?: RawPanelNode;
-        readonly databases?: RawServerDatabaseList;
-    };
+
+    public readonly allocations?: Array<NodeAllocation>
+    public readonly owner?: PanelUser
+    public readonly subusers?: Array<ServerSubUser>
+    public readonly associatedNest?: Nest
+    public readonly associatedEgg?: Egg
+    public readonly variables?: Array<ServerVariable>
+    public readonly location?: PanelLocation
+    public readonly associatedNode?: PanelNode
+    public readonly databases?: Array<ServerDatabase>
 
     constructor(applicationClient: ApplicationClient, serverProperties: RawServer) {
         client = applicationClient;
@@ -89,6 +103,17 @@ export class PanelServer implements ServerAttributes {
         this.updated_at = new Date(serverProperties.attributes.updated_at);
         this.created_at = new Date(serverProperties.attributes.created_at);
         this.updateEggData()
+        relationships = serverProperties.attributes.relationships
+        if (relationships?.node) this.associatedNode = new PanelNode(client, relationships.node)
+        let nodeId = relationships?.node?.attributes.id
+        if (relationships?.allocations && nodeId) this.allocations = relationships.allocations.data.map(allocation => new NodeAllocation(client, allocation, nodeId))
+        if (relationships?.databases) this.databases = relationships.databases.data.map(database => new ServerDatabase(client, database))
+        if (relationships?.nest) this.associatedNest = new Nest(client, relationships.nest)
+        if (relationships?.egg) this.associatedEgg = new Egg(client, relationships.egg)
+        if (relationships?.subusers) this.subusers = relationships.subusers.data.map(subuser => new ServerSubUser(subuser))
+        if (relationships?.user) this.owner = new PanelUser(client, relationships.user)
+        if (relationships?.variables) this.variables = relationships.variables.data.map(variable => new ServerVariable(variable))
+        if (relationships?.location) this.location = new PanelLocation(client, relationships.location)
     }
 
     private async updateEggData() {
@@ -365,7 +390,7 @@ export class PanelServer implements ServerAttributes {
      * @param nest The new nest for this server
      * @param egg The new egg for this server
      */
-    public async setNestAndEgg(nest: number | Nest, egg: number | Egg): Promise<void>  {
+    public async setNestAndEgg(nest: number | Nest, egg: number | Egg): Promise<void> {
         var data = await this.updateStartup()
         data.nest_id = typeof nest == "number" ? nest : nest.id
         data.egg_id = typeof egg == "number" ? egg : egg.id
@@ -377,7 +402,7 @@ export class PanelServer implements ServerAttributes {
      * Skip install script
      * @param skip Whether the install script should be skipped 
      */
-    public async setSkipInstall(skip: boolean): Promise<void>  {
+    public async setSkipInstall(skip: boolean): Promise<void> {
         var data = await this.updateStartup()
         data.skip_scripts = skip ? 1 : 0
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -388,18 +413,18 @@ export class PanelServer implements ServerAttributes {
      * Set the docker image for this server  
      * @param image The new image for this container
      */
-    public async setDockerImage(image: string): Promise<void>  {
+    public async setDockerImage(image: string): Promise<void> {
         var data = await this.updateStartup()
         data.docker_image = image
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
         await this.updateThisStartup(await client.api({ url: endpoint.href, method: "PATCH", data: data }) as RawServer)
     }
 
-     /**
-     * Set the environment vars with which the server will start
-     * @param environment Overwrites all current variables
-     */
-     public async setEnvironment(environment: { [environment: string]: string }): Promise<void>  {
+    /**
+    * Set the environment vars with which the server will start
+    * @param environment Overwrites all current variables
+    */
+    public async setEnvironment(environment: { [environment: string]: string }): Promise<void> {
         var data = await this.updateStartup()
         data.environment = environment
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -410,7 +435,7 @@ export class PanelServer implements ServerAttributes {
      * Add environment vars with which the server will start
      * @param environment Add a variable and value to the current variables
      */
-    public async addEnvironmentVariable(key: string, value: string): Promise<void>  {
+    public async addEnvironmentVariable(key: string, value: string): Promise<void> {
         var data = await this.updateStartup()
         data.environment[key] = value
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");
@@ -421,7 +446,7 @@ export class PanelServer implements ServerAttributes {
      * Set the custom docker image for this server  
      * @param image The new image for this container
      */
-    public async setCustomDockerImage(image: string): Promise<void>  {
+    public async setCustomDockerImage(image: string): Promise<void> {
         var data = await this.updateStartup()
         data.custom_docker_image = image
         const endpoint = new URL(client.panel + "/api/application/servers/" + this.id + "/startup");

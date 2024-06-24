@@ -4,7 +4,7 @@ import { PanelNode } from "./PanelNode";
 
 var client: ApplicationClient;
 export class NodeAllocation implements NodeAllocationAttributes {
-    protected node: PanelNode;
+    protected nodeId: number;
     public readonly id: number;
     public readonly ip: string;
     public readonly alias?: null | string;
@@ -12,9 +12,9 @@ export class NodeAllocation implements NodeAllocationAttributes {
     public readonly notes?: null | string;
     public readonly assigned: boolean;
 
-    constructor(applicationClient: ApplicationClient, allocationProps: RawNodeAllocation, node: PanelNode) {
+    constructor(applicationClient: ApplicationClient, allocationProps: RawNodeAllocation, node: PanelNode | number) {
         client = applicationClient;
-        this.node = node;
+        this.nodeId = typeof node == "number" ? node : node.id;
         this.id = allocationProps.attributes.id;
         this.ip = allocationProps.attributes.ip;
         this.alias = allocationProps.attributes.alias;
@@ -27,7 +27,7 @@ export class NodeAllocation implements NodeAllocationAttributes {
      * Delete this allocation
      */
     public async delete(): Promise<void> {
-        const endpoint = new URL(client.panel + "/api/application/nodes/" + this.node.id + "/allocations/" + this.id);
+        const endpoint = new URL(client.panel + "/api/application/nodes/" + this.nodeId + "/allocations/" + this.id);
         await client.api({ url: endpoint.href, method: "DELETE" })
     }
 

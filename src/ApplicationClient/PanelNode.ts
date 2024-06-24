@@ -7,8 +7,15 @@ import { RawServerList } from "../types/application/server";
 import { ApplicationClient } from "./ApplicationClient";
 import { NodeAllocation } from "./NodeAllocation";
 import { PanelLocation } from "./PanelLocation";
+import { PanelServer } from "./PanelServer";
 
 var client: ApplicationClient;
+var relationships: { 
+    allocations?: RawNodeAllocationList; 
+    location?: RawLocation; 
+    servers?: RawServerList; 
+} | undefined;
+
 export class PanelNode implements PanelNodeAttributes {
 
     public readonly id: number;
@@ -37,7 +44,8 @@ export class PanelNode implements PanelNodeAttributes {
     }
     public nodeConfiguration?: RawNodeConfiguration;
     public allocations?: Array<NodeAllocation>
-    public relationships?: { readonly allocations?: RawNodeAllocationList | undefined; readonly location?: RawLocation | undefined; readonly servers?: RawServerList | undefined; };
+    public location?: PanelLocation
+    public servers?: Array<PanelServer>
 
     constructor(applicationClient: ApplicationClient, nodeProps: RawPanelNode) {
         client = applicationClient;
@@ -65,6 +73,10 @@ export class PanelNode implements PanelNodeAttributes {
             memory: nodeProps.attributes.allocated_resources.memory,
             disk: nodeProps.attributes.allocated_resources.disk
         }
+        relationships = nodeProps.attributes.relationships
+        if (relationships?.allocations) this.allocations = relationships.allocations.data.map(allocation => new NodeAllocation(client, allocation, this))
+        if (relationships?.location) this.location = new PanelLocation(client, relationships.location)
+        if (relationships?.servers) this.servers = relationships.servers.data.map(server => new PanelServer(client, server))
     }
 
     /**
