@@ -136,12 +136,14 @@ export class ServerConsoleConnection {
                 break
             }
             case SocketEvent.TOKEN_EXPIRING: {
+                this.emit(SocketEvent.TOKEN_EXPIRING)
                 if (this.debugLogging) console.warn("Token expiring, renewing...")
                 await this.setKey()
                 await this.authSocket()
                 break;
             }
             case SocketEvent.TOKEN_EXPIRED: {
+                this.emit(SocketEvent.TOKEN_EXPIRED)
                 throw new Error("Token expired")
             }
             default: {
