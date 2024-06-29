@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events';
+import stripColor from "strip-color";
 import WebSocket from 'ws';
 import { ServerSignalOption } from '../types/base/serverStatus';
-import { ConsoleLogWsEvent, PowerState, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/user/consoleSocket';
+import { BackupCompletedEvent, BackupCompletedJson, ConsoleLogWsEvent, PowerState, SocketEvent, StatsWsEvent, StatsWsJson, StatusWsEvent, WebsocketEvent } from '../types/user/consoleSocket';
 import { Server } from './Server';
 import { UserClient } from './UserClient';
 
@@ -16,18 +17,20 @@ export class ServerConsoleConnection {
     private currentKey?: string
     private debugLogging? = false
     private eventEmitter = new EventEmitter()
+    private prettyLogs = true
 
-    public on(eventName: "auth_success" | "status" | "console_output" | "stats" | "error", listener: (...args: any[]) => void) {
+    public on(eventName: SocketEvent, listener: (...args: any[]) => void) {
         this.eventEmitter.on(eventName, listener)
     }
 
-    private emit(eventName: "auth_success" | "status" | "console_output" | "stats" | "error", payload: undefined | PowerState | string | StatsWsJson) {
+    private emit(eventName: SocketEvent, payload?: PowerState | string | StatsWsJson | BackupCompletedJson) {
         this.eventEmitter.emit(eventName, payload)
     }
 
-    constructor(server: Server, userClient: UserClient) {
+    constructor(server: Server, userClient: UserClient, prettyLogs: boolean) {
         this.endpoint = userClient.panel + "/api/client/servers/" + server.identifier + "/websocket"
         client = userClient
+        this.prettyLogs = prettyLogs
     }
 
     /**
@@ -75,36 +78,72 @@ export class ServerConsoleConnection {
 
     private async listen(data: WebsocketEvent) {
         switch (data.event) {
-            case 'auth success': {
+            case SocketEvent.AUTH_SUCCESS: {
                 if (this.debugLogging) console.debug("Auth success")
-                this.emit("auth_success", undefined)
+                this.emit(SocketEvent.AUTH_SUCCESS)
                 break;
             }
-            case 'status': {
+            case SocketEvent.STATUS: {
                 if (this.debugLogging) console.debug("Received status event: " + data.args)
-                this.emit("status", (data as StatusWsEvent).args[0])
+                this.emit(SocketEvent.STATUS, (data as StatusWsEvent).args[0])
                 break;
             }
-            case 'console output': {
-                if (this.debugLogging) console.debug("Received console output event: " + data.args)
-                this.emit("console_output", (data as ConsoleLogWsEvent).args[0])
+            case SocketEvent.CONSOLE_OUTPUT: {
+                if (this.debugLogging) console.debug("Received console output event: " + data.args);
+                var res = (data as ConsoleLogWsEvent).args[0]
+                if (this.prettyLogs) res = stripColor(res)
+                this.emit(SocketEvent.CONSOLE_OUTPUT, res)
                 break;
             }
-            case 'stats': {
-                this.emit("stats", JSON.parse((data as StatsWsEvent).args[0]) as StatsWsJson)
+            case SocketEvent.STATS: {
+                this.emit(SocketEvent.STATS, JSON.parse((data as StatsWsEvent).args[0]) as StatsWsJson)
                 break;
             }
-            case 'daemon error': {
-                this.emit("error", data.args[0])
+            case SocketEvent.DAEMON_ERROR: {
+                this.emit(SocketEvent.ERROR)
                 break;
             }
-            case 'token expiring': {
+            case SocketEvent.BACKUP_COMPLETED: {
+                this.emit(SocketEvent.BACKUP_COMPLETED, JSON.parse((data as BackupCompletedEvent).args[0]) as BackupCompletedJson)
+                break
+            }
+            case SocketEvent.DAEMON_MESSAGE: {
+                this.emit(SocketEvent.DAEMON_MESSAGE)
+                break
+            }
+            case SocketEvent.INSTALL_OUTPUT: {
+                this.emit(SocketEvent.INSTALL_OUTPUT)
+                break
+            }
+            case SocketEvent.BACKUP_RESTORE_COMPLETED: {
+                this.emit(SocketEvent.BACKUP_RESTORE_COMPLETED)
+                break
+            }
+            case SocketEvent.INSTALL_COMPLETED: {
+                this.emit(SocketEvent.INSTALL_COMPLETED)
+                break
+            }
+            case SocketEvent.INSTALL_STARTED: {
+                this.emit(SocketEvent.INSTALL_STARTED)
+                break
+            }
+            case SocketEvent.TRANSFER_LOGS: {
+                this.emit(SocketEvent.TRANSFER_LOGS, data.args[0])
+                break
+            }
+            case SocketEvent.TRANSFER_STATUS: {
+                this.emit(SocketEvent.TRANSFER_STATUS, data.args[0])
+                break
+            }
+            case SocketEvent.TOKEN_EXPIRING: {
+                this.emit(SocketEvent.TOKEN_EXPIRING)
                 if (this.debugLogging) console.warn("Token expiring, renewing...")
                 await this.setKey()
                 await this.authSocket()
                 break;
             }
-            case 'token expired': {
+            case SocketEvent.TOKEN_EXPIRED: {
+                this.emit(SocketEvent.TOKEN_EXPIRED)
                 throw new Error("Token expired")
             }
             default: {

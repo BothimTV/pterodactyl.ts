@@ -99,10 +99,10 @@ export class Server implements ServerAttributes {
     }
 
     /**
-     * Get a console socket
+     * Get a console socket and automatically connects to it
      */
-    public async getConsoleSocket(debugLogging: boolean = false): Promise<ServerConsoleConnection> {
-        const socket = new ServerConsoleConnection(this, client)
+    public async getConsoleSocket(debugLogging: boolean = false, prettyLogs: boolean = true): Promise<ServerConsoleConnection> {
+        const socket = new ServerConsoleConnection(this, client, prettyLogs)
         await socket.connect(debugLogging)
         return socket
     }
