@@ -19,7 +19,7 @@ export type WebsocketEvent =
  * Source: https://github.com/pterodactyl/panel/blob/1.0-develop/resources/scripts/components/server/events.ts
  */
 export enum SocketEvent {
-    AUTH_SUCCESS = 'auth_success',
+    AUTH_SUCCESS = 'auth success',
     DAEMON_MESSAGE = 'daemon message',
     DAEMON_ERROR = 'daemon error',
     INSTALL_OUTPUT = 'install output',
