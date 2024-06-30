@@ -100,7 +100,7 @@ export class ServerConsoleConnection {
                 break;
             }
             case SocketEvent.DAEMON_ERROR: {
-                this.emit(SocketEvent.ERROR)
+                this.emit(SocketEvent.DAEMON_ERROR)
                 break;
             }
             case SocketEvent.BACKUP_COMPLETED: {
