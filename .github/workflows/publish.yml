@@ -1,8 +1,7 @@
 name: Publish Package
 on:
-  push:
-    branches:
-        - main
+  release:
+    types: [published]
 jobs:  
   npm:
     runs-on: self-hosted
