@@ -100,11 +100,10 @@ export class Server implements ServerAttributes {
 
     /**
      * Get a console socket and automatically connects to it
+     * @param prettyLogs Should the text NOT include color coding. This will make the logs better readable.
      */
-    public async getConsoleSocket(debugLogging: boolean = false, prettyLogs: boolean = true): Promise<ServerConsoleConnection> {
-        const socket = new ServerConsoleConnection(this, client, prettyLogs)
-        await socket.connect(debugLogging)
-        return socket
+    public async getConsoleSocket(prettyLogs: boolean = true): Promise<ServerConsoleConnection> {
+        return new ServerConsoleConnection(this, client, prettyLogs)
     }
 
     /**

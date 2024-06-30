@@ -32,7 +32,6 @@ export enum SocketEvent {
     TRANSFER_STATUS = 'transfer status',
     BACKUP_COMPLETED = 'backup completed',
     BACKUP_RESTORE_COMPLETED = 'backup restore completed',
-    ERROR = "error",
     TOKEN_EXPIRING = "token expiring",
     TOKEN_EXPIRED = "token expired"
 }

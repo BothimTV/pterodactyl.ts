@@ -19,7 +19,7 @@ export class ServerConsoleConnection {
     private eventEmitter = new EventEmitter()
     private prettyLogs = true
 
-    public on(eventName: SocketEvent, listener: (...args: any[]) => void) {
+    public on(eventName: SocketEvent, listener: (arg?: PowerState | string | StatsWsJson | BackupCompletedJson) => void) {
         this.eventEmitter.on(eventName, listener)
     }
 
@@ -100,7 +100,7 @@ export class ServerConsoleConnection {
                 break;
             }
             case SocketEvent.DAEMON_ERROR: {
-                this.emit(SocketEvent.ERROR)
+                this.emit(SocketEvent.DAEMON_ERROR)
                 break;
             }
             case SocketEvent.BACKUP_COMPLETED: {

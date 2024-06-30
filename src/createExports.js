@@ -1,7 +1,7 @@
 const { readdirSync, writeFileSync } = require("fs")
 
 const classFolders = ["ApplicationClient", "UserClient", "builder"]
-const additionalExports = ["export * from \"./functions/util\";", "export { SocketEvent } from \"./types/user/consoleSocket\";"]
+const additionalExports = ["export * from \"./functions/util\";", "export { SocketEvent, PowerState, StatsWsJson, BackupCompletedJson } from \"./types/user/consoleSocket\";"]
 
 const res = ["/* Auto generated */"]
 
