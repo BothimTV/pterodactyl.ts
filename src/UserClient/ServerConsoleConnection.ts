@@ -19,7 +19,7 @@ export class ServerConsoleConnection {
     private eventEmitter = new EventEmitter()
     private prettyLogs = true
 
-    public on(eventName: SocketEvent, listener: (...args: any[]) => void) {
+    public on(eventName: SocketEvent, listener: (arg?: PowerState | string | StatsWsJson | BackupCompletedJson) => void) {
         this.eventEmitter.on(eventName, listener)
     }
 

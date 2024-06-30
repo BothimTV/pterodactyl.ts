@@ -30,6 +30,7 @@ const userClient = new UserClient({
 ```
 ```ts
 // Get a specific server from your account
+import { SocketEvent } from 'pterodactyl.ts'
 const server = await userClient.getServer("someId")
 
 /**
@@ -43,7 +44,7 @@ await socket.connect(true)
 const logs = await socket.getLogs()
 
 // Get live console logging
-socket.on("console_output", log => {
+socket.on(SocketEvent.CONSOLE_OUTPUT, (log) => {
     console.log(log)
 })
 
