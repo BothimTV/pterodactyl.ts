@@ -36,7 +36,7 @@
     "testcontainers": "^10.10.3",
     "ts-jest": "^29.2.2",
     "tsup": "^8.1.0",
-    "typedoc": "^0.25.13",
+    "typedoc": "^0.26.6",
     "typescript": "^5.5.3"
   },
   "dependencies": {
