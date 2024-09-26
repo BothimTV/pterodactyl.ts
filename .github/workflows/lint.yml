@@ -20,6 +20,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: lint-results
+          path: ./
   write:
     permissions:
       contents: read
@@ -28,6 +34,12 @@ jobs:
     needs: check
     if: ${{ always() && needs.check.result == 'failure' }}
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@master
+        with:
+          name: lint-results
+          path: ./
+
       - name: Fix lint errors
         run: pnpm run lint:fix
 
