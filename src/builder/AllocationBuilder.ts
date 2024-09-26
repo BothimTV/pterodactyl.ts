@@ -1,10 +1,10 @@
 export class AllocationBuilder {
   private ip: string;
   private ports: Array<string>;
-  private alias?: string = "";
+  private alias?: string = '';
 
   constructor() {
-    this.ip = "";
+    this.ip = '';
     this.ports = [];
   }
 

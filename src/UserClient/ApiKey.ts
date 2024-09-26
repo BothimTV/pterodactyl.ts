@@ -1,5 +1,5 @@
-import { ApiKeyAttributes, RawApiKey } from "../types/user/apiKey";
-import { UserClient } from "./UserClient";
+import { ApiKeyAttributes, RawApiKey } from '../types/user/apiKey';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 export class ApiKey implements ApiKeyAttributes {
@@ -25,11 +25,7 @@ export class ApiKey implements ApiKeyAttributes {
    * @throws Unknown api key error
    */
   public async delete(): Promise<void> {
-    const endpoint = new URL(
-      client.panel + "/api/client/account/api-keys/" + this.identifier,
-    );
-    await client.api({ url: endpoint.href, method: "DELETE" }, [
-      { code: 404, message: "Unknown apikey." },
-    ]);
+    const endpoint = new URL(client.panel + '/api/client/account/api-keys/' + this.identifier);
+    await client.api({ url: endpoint.href, method: 'DELETE' }, [{ code: 404, message: 'Unknown apikey.' }]);
   }
 }

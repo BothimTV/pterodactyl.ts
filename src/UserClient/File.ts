@@ -1,8 +1,8 @@
-import axios from "axios";
-import { FileAttributes, RawFile } from "../types/user/file";
-import { RawSignedUrl } from "../types/user/signedUrl";
-import { Server } from "./Server";
-import { UserClient } from "./UserClient";
+import axios from 'axios';
+import { FileAttributes, RawFile } from '../types/user/file';
+import { RawSignedUrl } from '../types/user/signedUrl';
+import { Server } from './Server';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 export class File implements FileAttributes {
@@ -16,14 +16,9 @@ export class File implements FileAttributes {
   readonly created_at: Date;
   modified_at: Date;
   readonly parenServer: Server;
-  readonly dir: string = "/";
+  readonly dir: string = '/';
 
-  constructor(
-    userClient: UserClient,
-    fileProps: RawFile,
-    parentServer: Server,
-    dir: string,
-  ) {
+  constructor(userClient: UserClient, fileProps: RawFile, parentServer: Server, dir: string) {
     client = userClient;
     this.name = fileProps.attributes.name;
     this.mode = fileProps.attributes.mode;
@@ -35,7 +30,7 @@ export class File implements FileAttributes {
     this.created_at = new Date(fileProps.attributes.created_at);
     this.modified_at = new Date(fileProps.attributes.modified_at);
     this.parenServer = parentServer;
-    this.dir = dir.endsWith("/") ? dir : dir + "/";
+    this.dir = dir.endsWith('/') ? dir : dir + '/';
   }
 
   /**
@@ -44,9 +39,9 @@ export class File implements FileAttributes {
   public async getContent(): Promise<string> {
     const endpoint = new URL(
       client.panel +
-        "/api/client/servers/" +
+        '/api/client/servers/' +
         this.parenServer.identifier +
-        "/files/contents?file=" +
+        '/files/contents?file=' +
         encodeURIComponent(this.dir + this.name),
     );
     return await client.api({ url: endpoint.href });
@@ -58,16 +53,12 @@ export class File implements FileAttributes {
   public async downloadUrl(): Promise<URL> {
     const endpoint = new URL(
       client.panel +
-        "/api/client/servers/" +
+        '/api/client/servers/' +
         this.parenServer.identifier +
-        "/files/download?file=" +
+        '/files/download?file=' +
         encodeURIComponent(this.dir + this.name),
     );
-    return new URL(
-      (
-        (await client.api({ url: endpoint.href })) as RawSignedUrl
-      ).attributes.url,
-    );
+    return new URL(((await client.api({ url: endpoint.href })) as RawSignedUrl).attributes.url);
   }
 
   /**
@@ -76,7 +67,7 @@ export class File implements FileAttributes {
   public async downloadStream(): Promise<Buffer> {
     const downloadURL = await this.downloadUrl();
     const response = await axios.get(downloadURL.href, {
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     return Buffer.from(response.data);
   }
@@ -93,15 +84,10 @@ export class File implements FileAttributes {
    * When copied, 'copy' is appended to the file name.
    */
   public async copy(): Promise<void> {
-    const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parenServer.identifier +
-        "/files/copy",
-    );
+    const endpoint = new URL(client.panel + '/api/client/servers/' + this.parenServer.identifier + '/files/copy');
     await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
       data: { location: this.dir + this.name },
     });
   }
@@ -112,14 +98,14 @@ export class File implements FileAttributes {
   public async write(content: string): Promise<string> {
     const endpoint = new URL(
       client.panel +
-        "/api/client/servers/" +
+        '/api/client/servers/' +
         this.parenServer.identifier +
-        "/files/write?file=" +
+        '/files/write?file=' +
         encodeURIComponent(this.dir + this.name),
     );
     return await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
       data: content,
     });
   }

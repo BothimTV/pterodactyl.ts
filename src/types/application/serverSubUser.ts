@@ -1,12 +1,12 @@
-import { UserPermission } from "../base/userPermission";
+import { UserPermission } from '../base/userPermission';
 
 export interface RawServerSubUserList {
-  object: "list";
+  object: 'list';
   data: Array<RawServerSubUser>;
 }
 
 export interface RawServerSubUser {
-  object: "subuser";
+  object: 'subuser';
   attributes: ServerSubUserAttributes;
 }
 

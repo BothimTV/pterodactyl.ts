@@ -1,14 +1,14 @@
-import { ServerSignalOption } from "../types/base/serverStatus";
-import { ScheduleActionType } from "../types/user/scheduleTask";
+import { ServerSignalOption } from '../types/base/serverStatus';
+import { ScheduleActionType } from '../types/user/scheduleTask';
 
 export class ScheduleTaskBuilder {
-  action: ScheduleActionType = "command";
+  action: ScheduleActionType = 'command';
   continue_on_failure: boolean = false;
   payload: string | ServerSignalOption;
   time_offset: number = 0;
 
   constructor() {
-    this.payload = "";
+    this.payload = '';
   }
 
   /**

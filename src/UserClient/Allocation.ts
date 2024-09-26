@@ -1,6 +1,6 @@
-import { AllocationAttributes, RawAllocation } from "../types/user/allocation";
-import { Server } from "./Server";
-import { UserClient } from "./UserClient";
+import { AllocationAttributes, RawAllocation } from '../types/user/allocation';
+import { Server } from './Server';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 export class Allocation implements AllocationAttributes {
@@ -12,11 +12,7 @@ export class Allocation implements AllocationAttributes {
   is_default: boolean;
   readonly parentServer: Server;
 
-  constructor(
-    userClient: UserClient,
-    allocationProps: RawAllocation,
-    parentServer: Server,
-  ) {
+  constructor(userClient: UserClient, allocationProps: RawAllocation, parentServer: Server) {
     client = userClient;
     this.id = allocationProps.attributes.id;
     this.ip = allocationProps.attributes.ip;
@@ -32,16 +28,12 @@ export class Allocation implements AllocationAttributes {
    */
   public async setNotes(notes: string): Promise<void> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/network/allocations/" +
-        this.id,
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/network/allocations/' + this.id,
     );
     const data = { notes: notes };
     const res = (await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
       data: data,
     })) as RawAllocation;
     this.notes = res.attributes.notes;
@@ -52,16 +44,11 @@ export class Allocation implements AllocationAttributes {
    */
   public async setPrimary(): Promise<void> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/network/allocations/" +
-        this.id +
-        "/primary",
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/network/allocations/' + this.id + '/primary',
     );
     const res = (await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
     })) as RawAllocation;
     this.is_default = res.attributes.is_default;
   }
@@ -72,20 +59,14 @@ export class Allocation implements AllocationAttributes {
    */
   public async unassign(): Promise<void> {
     if (this.is_default)
-      console.warn(
-        "This allocation is locally set as primary location, this will most likely be rejected by the panel!",
-      );
+      console.warn('This allocation is locally set as primary location, this will most likely be rejected by the panel!');
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/network/allocations/" +
-        this.id,
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/network/allocations/' + this.id,
     );
-    await client.api({ url: endpoint.href, method: "DELETE" }, [
+    await client.api({ url: endpoint.href, method: 'DELETE' }, [
       {
         code: 400,
-        message: "Cannot delete the primary allocation for a server.",
+        message: 'Cannot delete the primary allocation for a server.',
       },
     ]);
   }

@@ -1,9 +1,9 @@
 export class DatabaseBuilder {
   private database: string;
-  private remote: string = "%";
+  private remote: string = '%';
 
   constructor() {
-    this.database = "";
+    this.database = '';
   }
 
   /**

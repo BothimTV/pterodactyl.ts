@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 export class ApiRequestHandler {
   private apikey: string;
@@ -12,7 +12,7 @@ export class ApiRequestHandler {
     ignoredErrors?: Array<string>,
   ): Promise<any> {
     config.headers = config.headers ? config.headers : {};
-    config.headers["Authorization"] = this.apikey;
+    config.headers['Authorization'] = this.apikey;
     return await axios
       .request(config)
       .then((res) => {
@@ -37,15 +37,15 @@ export class ApiRequestHandler {
             }
             msg.errors.forEach((err, i) => {
               if (msg.errors.length - 1 == i) {
-                throw new Error(err.code + ": " + err.detail);
+                throw new Error(err.code + ': ' + err.detail);
               } else {
-                console.error(err.code + ": " + err.detail);
+                console.error(err.code + ': ' + err.detail);
               }
             });
           } else {
             throw new Error(
-              error.response?.status + " - " + error.response?.statusText ||
-                "An error occurred while communicating with the API",
+              error.response?.status + ' - ' + error.response?.statusText ||
+                'An error occurred while communicating with the API',
             );
           }
           console.error(error.response?.data);

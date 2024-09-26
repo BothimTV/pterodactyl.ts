@@ -1,8 +1,8 @@
-import axios from "axios";
-import { BackupAttributes, RawBackup } from "../types/user/serverBackup";
-import { RawSignedUrl } from "../types/user/signedUrl";
-import { Server } from "./Server";
-import { UserClient } from "./UserClient";
+import axios from 'axios';
+import { BackupAttributes, RawBackup } from '../types/user/serverBackup';
+import { RawSignedUrl } from '../types/user/signedUrl';
+import { Server } from './Server';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 export class Backup implements BackupAttributes {
@@ -17,11 +17,7 @@ export class Backup implements BackupAttributes {
   readonly completed_at?: string | Date | undefined;
   readonly parentServer: Server;
 
-  constructor(
-    userClient: UserClient,
-    backupProps: RawBackup,
-    parentServer: Server,
-  ) {
+  constructor(userClient: UserClient, backupProps: RawBackup, parentServer: Server) {
     client = userClient;
     this.uuid = backupProps.attributes.uuid;
     this.is_successful = backupProps.attributes.is_successful;
@@ -31,9 +27,7 @@ export class Backup implements BackupAttributes {
     this.checksum = backupProps.attributes.checksum;
     this.bytes = backupProps.attributes.bytes;
     this.created_at = new Date(backupProps.attributes.created_at);
-    this.completed_at = backupProps.attributes.completed_at
-      ? new Date(backupProps.attributes.completed_at)
-      : undefined;
+    this.completed_at = backupProps.attributes.completed_at ? new Date(backupProps.attributes.completed_at) : undefined;
     this.parentServer = parentServer;
   }
 
@@ -42,18 +36,9 @@ export class Backup implements BackupAttributes {
    */
   public async downloadUrl(): Promise<URL> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/backups/" +
-        this.uuid +
-        "/download",
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/backups/' + this.uuid + '/download',
     );
-    return new URL(
-      (
-        (await client.api({ url: endpoint.href })) as RawSignedUrl
-      ).attributes.url,
-    );
+    return new URL(((await client.api({ url: endpoint.href })) as RawSignedUrl).attributes.url);
   }
 
   /**
@@ -62,7 +47,7 @@ export class Backup implements BackupAttributes {
   public async downloadStream(): Promise<Buffer> {
     const downloadURL = await this.downloadUrl();
     const response = await axios.get(downloadURL.href, {
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     return Buffer.from(response.data);
   }
@@ -72,32 +57,22 @@ export class Backup implements BackupAttributes {
    */
   public async restore(deleteFiles: boolean = false): Promise<void> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/backups/" +
-        this.uuid +
-        "/restore",
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/backups/' + this.uuid + '/restore',
     );
     await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
       data: { truncate: deleteFiles },
     });
   }
 
   private async lockRequest() {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/backups/" +
-        this.uuid +
-        "/lock",
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/backups/' + this.uuid + '/lock',
     );
     const res = (await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
     })) as RawBackup;
     this.is_locked = res.attributes.is_locked;
   }
@@ -106,7 +81,7 @@ export class Backup implements BackupAttributes {
    * Lock this backup
    */
   public async lock(): Promise<void> {
-    if (this.is_locked) return console.log("Backup is already locked");
+    if (this.is_locked) return console.log('Backup is already locked');
     await this.lockRequest();
   }
 
@@ -114,7 +89,7 @@ export class Backup implements BackupAttributes {
    * Unlock this backup
    */
   public async unlock(): Promise<void> {
-    if (!this.is_locked) return console.log("Backup is not locked");
+    if (!this.is_locked) return console.log('Backup is not locked');
     await this.lockRequest();
   }
 
@@ -122,13 +97,7 @@ export class Backup implements BackupAttributes {
    * Delete this backup
    */
   public async delete(): Promise<void> {
-    const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/backups/" +
-        this.uuid,
-    );
-    await client.api({ url: endpoint.href, method: "DELETE" });
+    const endpoint = new URL(client.panel + '/api/client/servers/' + this.parentServer.identifier + '/backups/' + this.uuid);
+    await client.api({ url: endpoint.href, method: 'DELETE' });
   }
 }

@@ -1,5 +1,5 @@
 export interface RawEggVariableList {
-  object: "list";
+  object: 'list';
   data: Array<RawEggVariable>;
   meta?: {
     startup_command: string;
@@ -9,7 +9,7 @@ export interface RawEggVariableList {
 }
 
 export interface RawEggVariable {
-  object: "egg_variable";
+  object: 'egg_variable';
   attributes: EggVariableAttributes;
 }
 

@@ -1,12 +1,12 @@
-import { RawServerList } from "./server";
+import { RawServerList } from './server';
 
 export interface RawUserList {
-  object: "list";
+  object: 'list';
   data: Array<RawUser>;
 }
 
 export interface RawUser {
-  object: "user";
+  object: 'user';
   attributes: UserAttributes;
 }
 
@@ -18,9 +18,9 @@ export interface UserAttributes {
   email: string;
   first_name: string;
   last_name: string;
-  language: "en" | string;
+  language: 'en' | string;
   root_admin: boolean;
-  readonly "2fa": boolean;
+  readonly '2fa': boolean;
   readonly created_at: string | Date;
   updated_at: string | Date;
   readonly relationships?: {

@@ -1,10 +1,10 @@
 export interface RawAllocationList {
-  object: "list";
+  object: 'list';
   data: Array<RawAllocation>;
 }
 
 export interface RawAllocation {
-  object: "allocation";
+  object: 'allocation';
   attributes: AllocationAttributes;
 }
 

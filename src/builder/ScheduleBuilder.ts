@@ -2,14 +2,14 @@ export class ScheduleBuilder {
   is_active: boolean = true;
   only_when_online: boolean = true;
   name: string;
-  minute: string = "*";
-  hour: string = "*";
-  day_of_month: string = "*";
-  month: string = "*";
-  day_of_week: string = "*";
+  minute: string = '*';
+  hour: string = '*';
+  day_of_month: string = '*';
+  month: string = '*';
+  day_of_week: string = '*';
 
   constructor() {
-    this.name = "";
+    this.name = '';
   }
 
   /**

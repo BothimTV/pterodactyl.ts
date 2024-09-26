@@ -3,7 +3,7 @@ export class ApiKeyBuilder {
   allowed_ips: Array<string> = [];
 
   constructor() {
-    this.description = "";
+    this.description = '';
   }
 
   /**

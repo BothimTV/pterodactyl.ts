@@ -1,13 +1,13 @@
-import { RawPanelNode } from "./panelNode";
-import { RawServer } from "./server";
+import { RawPanelNode } from './panelNode';
+import { RawServer } from './server';
 
 export interface RawNodeAllocationList {
-  object: "list";
+  object: 'list';
   data: Array<RawNodeAllocation>;
 }
 
 export interface RawNodeAllocation {
-  object: "allocation";
+  object: 'allocation';
   attributes: NodeAllocationAttributes;
 }
 

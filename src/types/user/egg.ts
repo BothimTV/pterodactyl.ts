@@ -4,7 +4,7 @@
 }*/
 
 export interface RawEgg {
-  object: "egg";
+  object: 'egg';
   attributes: EggAttributes;
 }
 

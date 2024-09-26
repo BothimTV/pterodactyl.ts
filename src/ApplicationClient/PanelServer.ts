@@ -1,28 +1,25 @@
-import { DatabaseBuilder } from "../builder/DatabaseBuilder";
-import {
-  RawServerDatabase,
-  RawServerDatabaseList,
-} from "../types/application/database";
-import { RawLocation } from "../types/application/location";
-import { RawNodeAllocationList } from "../types/application/nodeAllocation";
-import { RawPanelEgg } from "../types/application/panelEgg";
-import { RawPanelNest } from "../types/application/panelNest";
-import { RawPanelNode } from "../types/application/panelNode";
-import { RawServer, ServerAttributes } from "../types/application/server";
-import { RawServerSubUserList } from "../types/application/serverSubUser";
-import { RawServerVariableList } from "../types/application/serverVariable";
-import { RawUser } from "../types/application/user";
-import { ServerStatus } from "../types/base/serverStatus";
-import { ApplicationClient } from "./ApplicationClient";
-import { Egg } from "./Egg";
-import { Nest } from "./Nest";
-import { NodeAllocation } from "./NodeAllocation";
-import { PanelLocation } from "./PanelLocation";
-import { PanelNode } from "./PanelNode";
-import { PanelUser } from "./PanelUser";
-import { ServerDatabase } from "./ServerDatabase";
-import { ServerSubUser } from "./ServerSubUser";
-import { ServerVariable } from "./ServerVariable";
+import { DatabaseBuilder } from '../builder/DatabaseBuilder';
+import { RawServerDatabase, RawServerDatabaseList } from '../types/application/database';
+import { RawLocation } from '../types/application/location';
+import { RawNodeAllocationList } from '../types/application/nodeAllocation';
+import { RawPanelEgg } from '../types/application/panelEgg';
+import { RawPanelNest } from '../types/application/panelNest';
+import { RawPanelNode } from '../types/application/panelNode';
+import { RawServer, ServerAttributes } from '../types/application/server';
+import { RawServerSubUserList } from '../types/application/serverSubUser';
+import { RawServerVariableList } from '../types/application/serverVariable';
+import { RawUser } from '../types/application/user';
+import { ServerStatus } from '../types/base/serverStatus';
+import { ApplicationClient } from './ApplicationClient';
+import { Egg } from './Egg';
+import { Nest } from './Nest';
+import { NodeAllocation } from './NodeAllocation';
+import { PanelLocation } from './PanelLocation';
+import { PanelNode } from './PanelNode';
+import { PanelUser } from './PanelUser';
+import { ServerDatabase } from './ServerDatabase';
+import { ServerSubUser } from './ServerSubUser';
+import { ServerVariable } from './ServerVariable';
 
 var client: ApplicationClient;
 var relationships:
@@ -86,10 +83,7 @@ export class PanelServer implements ServerAttributes {
   public readonly associatedNode?: PanelNode;
   public readonly databases?: Array<ServerDatabase>;
 
-  constructor(
-    applicationClient: ApplicationClient,
-    serverProperties: RawServer,
-  ) {
+  constructor(applicationClient: ApplicationClient, serverProperties: RawServer) {
     client = applicationClient;
     this.id = serverProperties.attributes.id;
     this.external_id = serverProperties.attributes.external_id;
@@ -111,45 +105,25 @@ export class PanelServer implements ServerAttributes {
     this.created_at = new Date(serverProperties.attributes.created_at);
     this.updateEggData();
     relationships = serverProperties.attributes.relationships;
-    if (relationships?.node)
-      this.associatedNode = new PanelNode(client, relationships.node);
+    if (relationships?.node) this.associatedNode = new PanelNode(client, relationships.node);
     let nodeId = relationships?.node?.attributes.id;
     if (relationships?.allocations && nodeId)
-      this.allocations = relationships.allocations.data.map(
-        (allocation) => new NodeAllocation(client, allocation, nodeId),
-      );
+      this.allocations = relationships.allocations.data.map((allocation) => new NodeAllocation(client, allocation, nodeId));
     if (relationships?.databases)
-      this.databases = relationships.databases.data.map(
-        (database) => new ServerDatabase(client, database),
-      );
-    if (relationships?.nest)
-      this.associatedNest = new Nest(client, relationships.nest);
-    if (relationships?.egg)
-      this.associatedEgg = new Egg(client, relationships.egg);
-    if (relationships?.subusers)
-      this.subusers = relationships.subusers.data.map(
-        (subuser) => new ServerSubUser(subuser),
-      );
-    if (relationships?.user)
-      this.owner = new PanelUser(client, relationships.user);
+      this.databases = relationships.databases.data.map((database) => new ServerDatabase(client, database));
+    if (relationships?.nest) this.associatedNest = new Nest(client, relationships.nest);
+    if (relationships?.egg) this.associatedEgg = new Egg(client, relationships.egg);
+    if (relationships?.subusers) this.subusers = relationships.subusers.data.map((subuser) => new ServerSubUser(subuser));
+    if (relationships?.user) this.owner = new PanelUser(client, relationships.user);
     if (relationships?.variables)
-      this.variables = relationships.variables.data.map(
-        (variable) => new ServerVariable(variable),
-      );
-    if (relationships?.location)
-      this.location = new PanelLocation(client, relationships.location);
+      this.variables = relationships.variables.data.map((variable) => new ServerVariable(variable));
+    if (relationships?.location) this.location = new PanelLocation(client, relationships.location);
   }
 
   private async updateEggData() {
     this.eggData = (await client.api({
-      url:
-        client.panel +
-        "/nests/" +
-        this.nest +
-        "/eggs/" +
-        this.egg +
-        "?include=nest,servers,variables",
-      method: "GET",
+      url: client.panel + '/nests/' + this.nest + '/eggs/' + this.egg + '?include=nest,servers,variables',
+      method: 'GET',
     })) as RawPanelEgg;
   }
 
@@ -177,13 +151,11 @@ export class PanelServer implements ServerAttributes {
   public async setName(name: string): Promise<void> {
     var data = this.updateProps();
     data.name = name;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/details",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/details');
     this.updateThisProps(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -196,13 +168,11 @@ export class PanelServer implements ServerAttributes {
   public async setExternalId(externalId: string): Promise<void> {
     var data = this.updateProps();
     data.external_id = externalId;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/details",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/details');
     this.updateThisProps(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -214,14 +184,12 @@ export class PanelServer implements ServerAttributes {
    */
   public async setOwner(owner: number | PanelUser): Promise<void> {
     var data = this.updateProps();
-    data.owner_id = typeof owner === "number" ? owner : owner.id;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/details",
-    );
+    data.owner_id = typeof owner === 'number' ? owner : owner.id;
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/details');
     this.updateThisProps(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -234,13 +202,11 @@ export class PanelServer implements ServerAttributes {
   public async setDescription(description: string): Promise<void> {
     var data = this.updateProps();
     data.description = description;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/details",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/details');
     this.updateThisProps(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -282,13 +248,11 @@ export class PanelServer implements ServerAttributes {
   public async setCpuLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.cpu = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -299,18 +263,14 @@ export class PanelServer implements ServerAttributes {
    * Example: 0; 1-3; 4,5,6;
    * @param limit The new cpu limit in %
    */
-  public async setCpuPinning(
-    pinning: Array<string | number> | string,
-  ): Promise<void> {
+  public async setCpuPinning(pinning: Array<string | number> | string): Promise<void> {
     var data = this.updateBuild();
-    data.threads = typeof pinning === "string" ? pinning : pinning.join(",");
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    data.threads = typeof pinning === 'string' ? pinning : pinning.join(',');
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -323,13 +283,11 @@ export class PanelServer implements ServerAttributes {
   public async setMemoryLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.memory = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -342,13 +300,11 @@ export class PanelServer implements ServerAttributes {
   public async setSwapLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.swap = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -361,13 +317,11 @@ export class PanelServer implements ServerAttributes {
   public async setDiskLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.disk = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -382,13 +336,11 @@ export class PanelServer implements ServerAttributes {
   public async setIoLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.io = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -404,13 +356,11 @@ export class PanelServer implements ServerAttributes {
   public async setOomKillerState(active: boolean): Promise<void> {
     var data = this.updateBuild();
     data.oom_disabled = active ? 0 : 1;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -423,13 +373,11 @@ export class PanelServer implements ServerAttributes {
   public async setDatabaseLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.database_limit = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -442,13 +390,11 @@ export class PanelServer implements ServerAttributes {
   public async setBackupLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.backup_limit = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -461,13 +407,11 @@ export class PanelServer implements ServerAttributes {
   public async setAllocationLimit(limit: number): Promise<void> {
     var data = this.updateBuild();
     data.allocation_limit = limit;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -477,20 +421,15 @@ export class PanelServer implements ServerAttributes {
    * Add a allocation to this server
    * @param allocation The allocation id or the NodeAllocation object
    */
-  public async addAllocation(
-    allocation: number | NodeAllocation,
-  ): Promise<void> {
+  public async addAllocation(allocation: number | NodeAllocation): Promise<void> {
     var data = this.updateBuild() as any;
-    data.add_allocations[
-      typeof allocation == "number" ? allocation : allocation.id
-    ] = typeof allocation == "number" ? allocation : allocation.id;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    data.add_allocations[typeof allocation == 'number' ? allocation : allocation.id] =
+      typeof allocation == 'number' ? allocation : allocation.id;
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -500,53 +439,41 @@ export class PanelServer implements ServerAttributes {
    * Remove a allocation from this server
    * @param allocation The allocation id or the NodeAllocation object
    */
-  public async removeAllocation(
-    allocation: number | NodeAllocation,
-  ): Promise<void> {
+  public async removeAllocation(allocation: number | NodeAllocation): Promise<void> {
     var data = this.updateBuild() as any;
-    data.remove_allocations[
-      typeof allocation == "number" ? allocation : allocation.id
-    ] = typeof allocation == "number" ? allocation : allocation.id;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/build",
-    );
+    data.remove_allocations[typeof allocation == 'number' ? allocation : allocation.id] =
+      typeof allocation == 'number' ? allocation : allocation.id;
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/build');
     this.updateThisBuild(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
   }
 
   private async updateStartup() {
-    if (!this.eggData) throw new Error("Egg data not found");
+    if (!this.eggData) throw new Error('Egg data not found');
     return {
       startup: this.container.startup_command,
       nest_id: this.nest,
       egg_id: this.egg,
       skip_scripts: 0,
       docker_image: this.eggData.attributes.docker_image,
-      custom_docker_image:
-        this.container.image == this.eggData.attributes.docker_image
-          ? undefined
-          : this.container.image,
+      custom_docker_image: this.container.image == this.eggData.attributes.docker_image ? undefined : this.container.image,
       environment: this.container.environment ? this.container.environment : {},
     };
   }
 
   private async updateThisStartup(server: RawServer) {
-    this.container.startup_command =
-      server.attributes.container.startup_command;
+    this.container.startup_command = server.attributes.container.startup_command;
     this.nest = server.attributes.nest;
     this.egg = server.attributes.egg;
     this.container.image = server.attributes.container.image;
     this.updated_at = new Date(server.attributes.updated_at);
     this.container.environment = server.attributes.container.environment;
-    if (
-      this.egg != server.attributes.egg ||
-      this.nest != server.attributes.nest
-    ) {
+    if (this.egg != server.attributes.egg || this.nest != server.attributes.nest) {
       await this.updateEggData();
     }
   }
@@ -559,13 +486,11 @@ export class PanelServer implements ServerAttributes {
   public async setStartupCommand(startup: string) {
     var data = await this.updateStartup();
     data.startup = startup;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/startup",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/startup');
     await this.updateThisStartup(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -576,20 +501,15 @@ export class PanelServer implements ServerAttributes {
    * @param nest The new nest for this server
    * @param egg The new egg for this server
    */
-  public async setNestAndEgg(
-    nest: number | Nest,
-    egg: number | Egg,
-  ): Promise<void> {
+  public async setNestAndEgg(nest: number | Nest, egg: number | Egg): Promise<void> {
     var data = await this.updateStartup();
-    data.nest_id = typeof nest == "number" ? nest : nest.id;
-    data.egg_id = typeof egg == "number" ? egg : egg.id;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/startup",
-    );
+    data.nest_id = typeof nest == 'number' ? nest : nest.id;
+    data.egg_id = typeof egg == 'number' ? egg : egg.id;
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/startup');
     await this.updateThisStartup(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -602,13 +522,11 @@ export class PanelServer implements ServerAttributes {
   public async setSkipInstall(skip: boolean): Promise<void> {
     var data = await this.updateStartup();
     data.skip_scripts = skip ? 1 : 0;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/startup",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/startup');
     await this.updateThisStartup(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -621,13 +539,11 @@ export class PanelServer implements ServerAttributes {
   public async setDockerImage(image: string): Promise<void> {
     var data = await this.updateStartup();
     data.docker_image = image;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/startup",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/startup');
     await this.updateThisStartup(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -637,18 +553,14 @@ export class PanelServer implements ServerAttributes {
    * Set the environment vars with which the server will start
    * @param environment Overwrites all current variables
    */
-  public async setEnvironment(environment: {
-    [environment: string]: string;
-  }): Promise<void> {
+  public async setEnvironment(environment: { [environment: string]: string }): Promise<void> {
     var data = await this.updateStartup();
     data.environment = environment;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/startup",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/startup');
     await this.updateThisStartup(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -658,19 +570,14 @@ export class PanelServer implements ServerAttributes {
    * Add environment vars with which the server will start
    * @param environment Add a variable and value to the current variables
    */
-  public async addEnvironmentVariable(
-    key: string,
-    value: string,
-  ): Promise<void> {
+  public async addEnvironmentVariable(key: string, value: string): Promise<void> {
     var data = await this.updateStartup();
     data.environment[key] = value;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/startup",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/startup');
     await this.updateThisStartup(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -683,13 +590,11 @@ export class PanelServer implements ServerAttributes {
   public async setCustomDockerImage(image: string): Promise<void> {
     var data = await this.updateStartup();
     data.custom_docker_image = image;
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/startup",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/startup');
     await this.updateThisStartup(
       (await client.api({
         url: endpoint.href,
-        method: "PATCH",
+        method: 'PATCH',
         data: data,
       })) as RawServer,
     );
@@ -699,10 +604,8 @@ export class PanelServer implements ServerAttributes {
    * Suspend this server
    */
   public async suspend(): Promise<void> {
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/suspend",
-    );
-    await client.api({ url: endpoint.href, method: "POST" });
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/suspend');
+    await client.api({ url: endpoint.href, method: 'POST' });
     this.suspended = true;
   }
 
@@ -710,10 +613,8 @@ export class PanelServer implements ServerAttributes {
    * Unsuspend this server
    */
   public async unsuspend(): Promise<void> {
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/unsuspend",
-    );
-    await client.api({ url: endpoint.href, method: "POST" });
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/unsuspend');
+    await client.api({ url: endpoint.href, method: 'POST' });
     this.suspended = false;
   }
 
@@ -721,10 +622,8 @@ export class PanelServer implements ServerAttributes {
    * Reinstall this server
    */
   public async reinstall(): Promise<void> {
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + "/reinstall",
-    );
-    await client.api({ url: endpoint.href, method: "POST" });
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/reinstall');
+    await client.api({ url: endpoint.href, method: 'POST' });
   }
 
   /**
@@ -733,24 +632,15 @@ export class PanelServer implements ServerAttributes {
    */
   public async delete(force: boolean = false): Promise<void> {
     // deepcode ignore AmbiguousConditional
-    const endpoint = new URL(
-      client.panel + "/api/application/servers/" + this.id + force
-        ? "/force"
-        : "/",
-    );
-    await client.api({ url: endpoint.href, method: "DELETE" });
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + force ? '/force' : '/');
+    await client.api({ url: endpoint.href, method: 'DELETE' });
   }
 
   /**
    * Get the databases for this server
    */
   public async getDatabases(): Promise<Array<ServerDatabase>> {
-    const endpoint = new URL(
-      client.panel +
-        "/api/application/servers/" +
-        this.id +
-        "/databases?include=password,host",
-    );
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + '/databases?include=password,host');
     const res = (await client.api({
       url: endpoint.href,
     })) as RawServerDatabaseList;
@@ -762,30 +652,20 @@ export class PanelServer implements ServerAttributes {
    */
   public async getDatabase(databaseId: number): Promise<ServerDatabase> {
     const endpoint = new URL(
-      client.panel +
-        "/api/application/servers/" +
-        this.id +
-        "/databases/" +
-        databaseId +
-        "?include=password,host",
+      client.panel + '/api/application/servers/' + this.id + '/databases/' + databaseId + '?include=password,host',
     );
-    return new ServerDatabase(
-      client,
-      (await client.api({ url: endpoint.href })) as RawServerDatabase,
-    );
+    return new ServerDatabase(client, (await client.api({ url: endpoint.href })) as RawServerDatabase);
   }
 
   /**
    * Create a database for this server
    */
-  public async createDatabase(
-    databaseCreateProperties: DatabaseBuilder,
-  ): Promise<void> {
-    const endpoint = new URL(client.panel + "/api/application/endpoint");
+  public async createDatabase(databaseCreateProperties: DatabaseBuilder): Promise<void> {
+    const endpoint = new URL(client.panel + '/api/application/endpoint');
     await client.api({
       url: endpoint.href,
       data: databaseCreateProperties,
-      method: "POST",
+      method: 'POST',
     });
   }
 }

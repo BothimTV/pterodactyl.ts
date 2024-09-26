@@ -3,7 +3,7 @@ export class LocationBuilder {
   private long?: string;
 
   constructor() {
-    this.short = "";
+    this.short = '';
   }
 
   public setShort(short: string) {

@@ -19,21 +19,21 @@ export type WebsocketEvent =
  * Source: https://github.com/pterodactyl/panel/blob/1.0-develop/resources/scripts/components/server/events.ts
  */
 export enum SocketEvent {
-  AUTH_SUCCESS = "auth success",
-  DAEMON_MESSAGE = "daemon message",
-  DAEMON_ERROR = "daemon error",
-  INSTALL_OUTPUT = "install output",
-  INSTALL_STARTED = "install started",
-  INSTALL_COMPLETED = "install completed",
-  CONSOLE_OUTPUT = "console output",
-  STATUS = "status",
-  STATS = "stats",
-  TRANSFER_LOGS = "transfer logs",
-  TRANSFER_STATUS = "transfer status",
-  BACKUP_COMPLETED = "backup completed",
-  BACKUP_RESTORE_COMPLETED = "backup restore completed",
-  TOKEN_EXPIRING = "token expiring",
-  TOKEN_EXPIRED = "token expired",
+  AUTH_SUCCESS = 'auth success',
+  DAEMON_MESSAGE = 'daemon message',
+  DAEMON_ERROR = 'daemon error',
+  INSTALL_OUTPUT = 'install output',
+  INSTALL_STARTED = 'install started',
+  INSTALL_COMPLETED = 'install completed',
+  CONSOLE_OUTPUT = 'console output',
+  STATUS = 'status',
+  STATS = 'stats',
+  TRANSFER_LOGS = 'transfer logs',
+  TRANSFER_STATUS = 'transfer status',
+  BACKUP_COMPLETED = 'backup completed',
+  BACKUP_RESTORE_COMPLETED = 'backup restore completed',
+  TOKEN_EXPIRING = 'token expiring',
+  TOKEN_EXPIRED = 'token expired',
 }
 
 export type InstallOutputEvent = {
@@ -66,7 +66,7 @@ export type BackupCompletedEvent = {
 
 export type BackupCompletedJson = {
   checksum: string;
-  checksum_type: "sha1";
+  checksum_type: 'sha1';
   file_size: number;
   is_successful: boolean;
   uuid: string;
@@ -82,7 +82,7 @@ export type AuthSuccessWsEvent = {
 
 export type StatusWsEvent = { event: SocketEvent.STATUS; args: [PowerState] };
 
-export type PowerState = "starting" | "stopping" | "online" | "offline";
+export type PowerState = 'starting' | 'stopping' | 'online' | 'offline';
 
 export type ConsoleLogWsEvent = {
   event: SocketEvent.CONSOLE_OUTPUT;

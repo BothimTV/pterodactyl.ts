@@ -1,5 +1,5 @@
 export interface RawSignedUrl {
-  object: "signed_url";
+  object: 'signed_url';
   attributes: SignedUrlAttributes;
 }
 

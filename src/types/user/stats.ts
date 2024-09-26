@@ -1,7 +1,7 @@
-import { ServerStatus } from "../base/serverStatus";
+import { ServerStatus } from '../base/serverStatus';
 
 export interface RawStats {
-  object: "stats";
+  object: 'stats';
   attributes: StatsAttributes;
 }
 

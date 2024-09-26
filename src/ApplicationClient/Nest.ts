@@ -1,12 +1,9 @@
-import { RawPanelEggList } from "../types/application/panelEgg";
-import {
-  PanelNestAttributes,
-  RawPanelNest,
-} from "../types/application/panelNest";
-import { RawServerList } from "../types/application/server";
-import { ApplicationClient } from "./ApplicationClient";
-import { Egg } from "./Egg";
-import { PanelServer } from "./PanelServer";
+import { RawPanelEggList } from '../types/application/panelEgg';
+import { PanelNestAttributes, RawPanelNest } from '../types/application/panelNest';
+import { RawServerList } from '../types/application/server';
+import { ApplicationClient } from './ApplicationClient';
+import { Egg } from './Egg';
+import { PanelServer } from './PanelServer';
 
 var client: ApplicationClient;
 var relationships:
@@ -36,9 +33,7 @@ export class Nest implements PanelNestAttributes {
     this.updated_at = new Date(nestProps.attributes.updated_at);
     relationships = nestProps.attributes.relationships;
     if (relationships?.eggs)
-      this.associatedEggs = relationships.eggs.data.map(
-        (eggProps) => new Egg(applicationClient, eggProps),
-      );
+      this.associatedEggs = relationships.eggs.data.map((eggProps) => new Egg(applicationClient, eggProps));
     if (relationships?.servers)
       this.associatedServers = relationships.servers.data.map(
         (serverProps) => new PanelServer(applicationClient, serverProps),

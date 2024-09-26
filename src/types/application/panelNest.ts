@@ -1,13 +1,13 @@
-import { RawPanelEggList } from "./panelEgg";
-import { RawServerList } from "./server";
+import { RawPanelEggList } from './panelEgg';
+import { RawServerList } from './server';
 
 export interface RawPanelNestList {
-  object: "list";
+  object: 'list';
   data: Array<RawPanelNest>;
 }
 
 export interface RawPanelNest {
-  object: "nest";
+  object: 'nest';
   attributes: PanelNestAttributes;
 }
 

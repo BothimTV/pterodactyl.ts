@@ -1,13 +1,10 @@
-import { ApiKeyBuilder } from "../builder/ApiKeyBuilder";
-import { RawApiKey, RawApiKeyList } from "../types/user/apiKey";
-import {
-  RawRecoveryTokens,
-  RecoveryTokensAttributes,
-} from "../types/user/recoveryTokens";
-import { RawUser, UserAttributes } from "../types/user/user";
-import { RawUserMfa } from "../types/user/userMfa";
-import { ApiKey } from "./ApiKey";
-import { UserClient } from "./UserClient";
+import { ApiKeyBuilder } from '../builder/ApiKeyBuilder';
+import { RawApiKey, RawApiKeyList } from '../types/user/apiKey';
+import { RawRecoveryTokens, RecoveryTokensAttributes } from '../types/user/recoveryTokens';
+import { RawUser, UserAttributes } from '../types/user/user';
+import { RawUserMfa } from '../types/user/userMfa';
+import { ApiKey } from './ApiKey';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 export class User implements UserAttributes {
@@ -37,7 +34,7 @@ export class User implements UserAttributes {
     image_url_data: string;
     secret: string;
   }> {
-    const endpoint = new URL(client.panel + "/api/client/account/two-factor");
+    const endpoint = new URL(client.panel + '/api/client/account/two-factor');
     const res = (await client.api({ url: endpoint.href })) as RawUserMfa;
     return res.data;
   }
@@ -48,18 +45,15 @@ export class User implements UserAttributes {
    * @param password The account password
    * @throws Invalid code error
    */
-  public async enableMfa(
-    code: number,
-    password: string,
-  ): Promise<RecoveryTokensAttributes> {
-    const endpoint = new URL(client.panel + "/api/client/account/two-factor");
+  public async enableMfa(code: number, password: string): Promise<RecoveryTokensAttributes> {
+    const endpoint = new URL(client.panel + '/api/client/account/two-factor');
     const res = (await client.api(
       {
         url: endpoint.href,
-        method: "POST",
+        method: 'POST',
         data: { code: code, password: password },
       },
-      [{ code: 400, message: "Invalid code" }],
+      [{ code: 400, message: 'Invalid code' }],
     )) as RawRecoveryTokens;
     return res.attributes;
   }
@@ -70,11 +64,10 @@ export class User implements UserAttributes {
    * @throws Invalid password error
    */
   public async disableMfa(password: string): Promise<void> {
-    const endpoint = new URL(client.panel + "/api/client/account/two-factor");
-    await client.api(
-      { url: endpoint.href, method: "DELETE", data: { password: password } },
-      [{ code: 400, message: "Invalid password" }],
-    );
+    const endpoint = new URL(client.panel + '/api/client/account/two-factor');
+    await client.api({ url: endpoint.href, method: 'DELETE', data: { password: password } }, [
+      { code: 400, message: 'Invalid password' },
+    ]);
   }
 
   /**
@@ -84,14 +77,14 @@ export class User implements UserAttributes {
    * @throws Invalid email and/or password error
    */
   public async updateEmail(email: string, password: string): Promise<void> {
-    const endpoint = new URL(client.panel + "/api/client/account/email");
+    const endpoint = new URL(client.panel + '/api/client/account/email');
     await client.api(
       {
         url: endpoint.href,
-        method: "PUT",
+        method: 'PUT',
         data: { email: email, password: password },
       },
-      [{ code: 400, message: "Invalid email and/or password" }],
+      [{ code: 400, message: 'Invalid email and/or password' }],
     );
   }
 
@@ -99,15 +92,11 @@ export class User implements UserAttributes {
    * Updates this accounts password
    * @param oldPassword The old password for this account
    */
-  public async updatePassword(
-    oldPassword: string,
-    newPassword: string,
-    repeatPassword?: string,
-  ): Promise<void> {
-    const endpoint = new URL(client.panel + "/api/client/account/email");
+  public async updatePassword(oldPassword: string, newPassword: string, repeatPassword?: string): Promise<void> {
+    const endpoint = new URL(client.panel + '/api/client/account/email');
     await client.api({
       url: endpoint.href,
-      method: "PUT",
+      method: 'PUT',
       data: {
         current_password: oldPassword,
         password: newPassword,
@@ -120,22 +109,20 @@ export class User implements UserAttributes {
    * Get the api keys for this account
    */
   public async getApiKeys(): Promise<Array<ApiKey>> {
-    const endpoint = new URL(client.panel + "/api/client/account/api-keys");
-    return (
-      (await client.api({ url: endpoint.href })) as RawApiKeyList
-    ).data.map((key) => new ApiKey(client, key));
+    const endpoint = new URL(client.panel + '/api/client/account/api-keys');
+    return ((await client.api({ url: endpoint.href })) as RawApiKeyList).data.map((key) => new ApiKey(client, key));
   }
 
   /**
    * Create a new api key for this account
    */
   public async createApiKey(builder: ApiKeyBuilder): Promise<ApiKey> {
-    const endpoint = new URL(client.panel + "/api/client/account/api-keys");
+    const endpoint = new URL(client.panel + '/api/client/account/api-keys');
     return new ApiKey(
       client,
       (await client.api({
         url: endpoint.href,
-        method: "POST",
+        method: 'POST',
         data: builder,
       })) as RawApiKey,
     );

@@ -15,10 +15,10 @@ Most functions are tested, if something doesn't work please open an issue on git
 With the ApplicationClient you can manage servers, nodes, users, and more.
 
 ```ts
-import { ApplicationClient } from "pterodactyl.ts";
+import { ApplicationClient } from 'pterodactyl.ts';
 const applicationClient = new ApplicationClient({
-  apikey: "",
-  panel: "",
+  apikey: '',
+  panel: '',
 });
 ```
 
@@ -29,17 +29,17 @@ const applicationClient = new ApplicationClient({
 With the ApplicationClient you can manage servers, subusers, backups, files and more.
 
 ```ts
-import { UserClient } from "pterodactyl.ts";
+import { UserClient } from 'pterodactyl.ts';
 const userClient = new UserClient({
-  apikey: "",
-  panel: "",
+  apikey: '',
+  panel: '',
 });
 ```
 
 ```ts
 // Get a specific server from your account
-import { SocketEvent } from "pterodactyl.ts";
-const server = await userClient.getServer("someId");
+import { SocketEvent } from 'pterodactyl.ts';
+const server = await userClient.getServer('someId');
 
 /**
  * Console connection
@@ -62,7 +62,7 @@ socket.disconnect();
  * File management
  */
 // Accepts a filepath, buffer or blob
-await server.uploadFile("/", "hello.world", "hello.world");
+await server.uploadFile('/', 'hello.world', 'hello.world');
 ```
 
 [Documentation](https://pterots.bothimtv.com/classes/UserClient.html)

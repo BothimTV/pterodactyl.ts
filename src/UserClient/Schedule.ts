@@ -1,12 +1,9 @@
-import { ScheduleTaskBuilder } from "../builder/ScheduleTaskBuilder";
-import { RawScheduleTaskList } from "../types/user/scheduleTask";
-import {
-  RawServerSchedule,
-  ServerScheduleAttributes,
-} from "../types/user/serverSchedule";
-import { ScheduleTask } from "./ScheduleTask";
-import { Server } from "./Server";
-import { UserClient } from "./UserClient";
+import { ScheduleTaskBuilder } from '../builder/ScheduleTaskBuilder';
+import { RawScheduleTaskList } from '../types/user/scheduleTask';
+import { RawServerSchedule, ServerScheduleAttributes } from '../types/user/serverSchedule';
+import { ScheduleTask } from './ScheduleTask';
+import { Server } from './Server';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 export class Schedule implements ServerScheduleAttributes {
@@ -32,11 +29,7 @@ export class Schedule implements ServerScheduleAttributes {
   tasks: Array<ScheduleTask>;
   readonly parentServer: Server;
 
-  constructor(
-    userClient: UserClient,
-    scheduleProps: RawServerSchedule,
-    parentServer: Server,
-  ) {
+  constructor(userClient: UserClient, scheduleProps: RawServerSchedule, parentServer: Server) {
     client = userClient;
     this.id = scheduleProps.attributes.id;
     this.name = scheduleProps.attributes.name;
@@ -49,9 +42,7 @@ export class Schedule implements ServerScheduleAttributes {
     this.created_at = new Date(scheduleProps.attributes.created_at);
     this.updated_at = new Date(scheduleProps.attributes.updated_at);
     this.relationships = scheduleProps.attributes.relationships;
-    this.tasks = this.relationships.tasks.data.map(
-      (task) => new ScheduleTask(client, task, this),
-    );
+    this.tasks = this.relationships.tasks.data.map((task) => new ScheduleTask(client, task, this));
     this.parentServer = parentServer;
   }
 
@@ -69,16 +60,10 @@ export class Schedule implements ServerScheduleAttributes {
   }
 
   private async updateThis(data: any) {
-    const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/schedules/" +
-        this.id,
-    );
+    const endpoint = new URL(client.panel + '/api/client/servers/' + this.parentServer.identifier + '/schedules/' + this.id);
     const res = (await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
       data: data,
     })) as RawServerSchedule;
     this.is_active = res.attributes.is_active;
@@ -164,14 +149,8 @@ export class Schedule implements ServerScheduleAttributes {
    * Delete this schedule
    */
   public async delete(): Promise<void> {
-    const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/schedules/" +
-        this.id,
-    );
-    await client.api({ url: endpoint.href, method: "DELETE" });
+    const endpoint = new URL(client.panel + '/api/client/servers/' + this.parentServer.identifier + '/schedules/' + this.id);
+    await client.api({ url: endpoint.href, method: 'DELETE' });
   }
 
   /**
@@ -179,14 +158,9 @@ export class Schedule implements ServerScheduleAttributes {
    */
   public async createTask(task: ScheduleTaskBuilder): Promise<void> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/schedules/" +
-        this.id +
-        "/tasks",
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/schedules/' + this.id + '/tasks',
     );
-    await client.api({ url: endpoint.href, method: "POST", data: task });
+    await client.api({ url: endpoint.href, method: 'POST', data: task });
   }
 
   /**
@@ -194,13 +168,8 @@ export class Schedule implements ServerScheduleAttributes {
    */
   public async execute(): Promise<void> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/schedules/" +
-        this.id +
-        "/execute",
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/schedules/' + this.id + '/execute',
     );
-    await client.api({ url: endpoint.href, method: "POST" });
+    await client.api({ url: endpoint.href, method: 'POST' });
   }
 }

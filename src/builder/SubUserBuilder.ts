@@ -1,11 +1,11 @@
-import { UserPermission } from "../types/base/userPermission";
+import { UserPermission } from '../types/base/userPermission';
 
 export class SubUserBuilder {
   email: string;
   permissions: Array<UserPermission>;
 
   constructor() {
-    this.email = "";
+    this.email = '';
     this.permissions = [];
   }
 

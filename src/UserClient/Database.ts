@@ -1,10 +1,7 @@
-import { RawDatabasePassword } from "../types/user/databasePassword";
-import {
-  RawServerDatabase,
-  ServerDatabaseAttributes,
-} from "../types/user/serverDatabase";
-import { Server } from "./Server";
-import { UserClient } from "./UserClient";
+import { RawDatabasePassword } from '../types/user/databasePassword';
+import { RawServerDatabase, ServerDatabaseAttributes } from '../types/user/serverDatabase';
+import { Server } from './Server';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 var relationships:
@@ -25,11 +22,7 @@ export class Database implements ServerDatabaseAttributes {
   password?: string;
   readonly parentServer: Server;
 
-  constructor(
-    userClient: UserClient,
-    databaseProps: RawServerDatabase,
-    parentServer: Server,
-  ) {
+  constructor(userClient: UserClient, databaseProps: RawServerDatabase, parentServer: Server) {
     client = userClient;
     this.id = databaseProps.attributes.id;
     this.host = databaseProps.attributes.host;
@@ -39,8 +32,7 @@ export class Database implements ServerDatabaseAttributes {
     this.max_connections = databaseProps.attributes.max_connections;
     relationships = databaseProps.attributes.relationships;
     this.parentServer = parentServer;
-    this.password =
-      databaseProps.attributes.relationships?.password?.attributes.password;
+    this.password = databaseProps.attributes.relationships?.password?.attributes.password;
   }
 
   /**
@@ -49,16 +41,11 @@ export class Database implements ServerDatabaseAttributes {
    */
   public async rotatePassword(): Promise<string | undefined> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/databases/" +
-        this.id +
-        "/rotate-password",
+      client.panel + '/api/client/servers/' + this.parentServer.identifier + '/databases/' + this.id + '/rotate-password',
     );
     const res = (await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
     })) as RawServerDatabase;
     this.password = res.attributes.relationships?.password?.attributes.password;
     relationships = res.attributes.relationships;
@@ -69,13 +56,7 @@ export class Database implements ServerDatabaseAttributes {
    * Deletes this database
    */
   public async delete(): Promise<void> {
-    const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentServer.identifier +
-        "/databases/" +
-        this.id,
-    );
-    await client.api({ url: endpoint.href, method: "DELETE" });
+    const endpoint = new URL(client.panel + '/api/client/servers/' + this.parentServer.identifier + '/databases/' + this.id);
+    await client.api({ url: endpoint.href, method: 'DELETE' });
   }
 }

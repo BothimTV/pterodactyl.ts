@@ -1,5 +1,5 @@
-import { AxiosRequestConfig } from "axios";
-import { ApiRequestHandler } from "../functions/axois";
+import { AxiosRequestConfig } from 'axios';
+import { ApiRequestHandler } from '../functions/axois';
 
 export type ClientOptions = {
   apikey: string;
@@ -15,13 +15,13 @@ export class BaseClient {
     ignoredErrors?: Array<string>,
   ): Promise<any> {};
   constructor(options: ClientOptions) {
-    this.apikey = "Bearer " + options.apikey;
+    this.apikey = 'Bearer ' + options.apikey;
     this.panel = new URL(options.panel).origin;
     this.api = new ApiRequestHandler(this.apikey).axiosRequest;
     try {
       new URL(this.panel);
     } catch (error) {
-      throw new Error("Invalid panel url");
+      throw new Error('Invalid panel url');
     }
   }
 }

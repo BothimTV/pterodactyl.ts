@@ -1,12 +1,12 @@
-import { ServerSignalOption } from "../base/serverStatus";
+import { ServerSignalOption } from '../base/serverStatus';
 
 export interface RawScheduleTaskList {
-  object: "list";
+  object: 'list';
   data: Array<RawScheduleTask>;
 }
 
 export interface RawScheduleTask {
-  object: "schedule_task";
+  object: 'schedule_task';
   attributes: ScheduleTaskAttributes;
 }
 
@@ -22,4 +22,4 @@ export interface ScheduleTaskAttributes {
   updated_at: string | Date;
 }
 
-export type ScheduleActionType = "command" | "power" | "backup";
+export type ScheduleActionType = 'command' | 'power' | 'backup';

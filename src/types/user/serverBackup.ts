@@ -1,10 +1,10 @@
 export interface RawBackupList {
-  object: "list";
+  object: 'list';
   data: Array<RawBackup>;
 }
 
 export interface RawBackup {
-  object: "backup";
+  object: 'backup';
   attributes: BackupAttributes;
 }
 

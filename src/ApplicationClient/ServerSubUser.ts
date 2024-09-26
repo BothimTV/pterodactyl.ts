@@ -1,8 +1,5 @@
-import {
-  RawServerSubUser,
-  ServerSubUserAttributes,
-} from "../types/application/serverSubUser";
-import { UserPermission } from "../types/base/userPermission";
+import { RawServerSubUser, ServerSubUserAttributes } from '../types/application/serverSubUser';
+import { UserPermission } from '../types/base/userPermission';
 
 export class ServerSubUser implements ServerSubUserAttributes {
   id: number;

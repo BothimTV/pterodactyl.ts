@@ -1,6 +1,6 @@
-import { Egg } from "../ApplicationClient/Egg";
-import { NodeAllocation } from "../ApplicationClient/NodeAllocation";
-import { PanelUser } from "../ApplicationClient/PanelUser";
+import { Egg } from '../ApplicationClient/Egg';
+import { NodeAllocation } from '../ApplicationClient/NodeAllocation';
+import { PanelUser } from '../ApplicationClient/PanelUser';
 
 export class ServerBuilder {
   private name: string;
@@ -49,7 +49,7 @@ export class ServerBuilder {
     this.start_on_completion = true;
     this.limits = {
       cpu: 0,
-      threads: "",
+      threads: '',
       memory: 0,
       swap: 0,
       disk: 0,
@@ -59,12 +59,12 @@ export class ServerBuilder {
       default: 0,
       additional: {},
     };
-    this.name = "";
+    this.name = '';
     this.user = 0;
     this.node_id = 0;
     this.egg = 0;
-    this.docker_image = "";
-    this.startup = "";
+    this.docker_image = '';
+    this.startup = '';
   }
 
   /**
@@ -141,14 +141,9 @@ export class ServerBuilder {
    * Add additional allocations to this server
    * @optional
    */
-  public setAdditionalAllocations(
-    allocations: Array<NodeAllocation>,
-  ): ServerBuilder {
+  public setAdditionalAllocations(allocations: Array<NodeAllocation>): ServerBuilder {
     this.allocation.additional = {};
-    allocations.map(
-      (allocation) =>
-        (this.allocation.additional[allocation.id] = allocation.id),
-    );
+    allocations.map((allocation) => (this.allocation.additional[allocation.id] = allocation.id));
     return this;
   }
 
@@ -156,9 +151,7 @@ export class ServerBuilder {
    * Add additional allocation ids to this server
    * @optional
    */
-  public setAdditionalAllocationIds(
-    allocationIds: Array<number>,
-  ): ServerBuilder {
+  public setAdditionalAllocationIds(allocationIds: Array<number>): ServerBuilder {
     this.allocation.additional = {};
     allocationIds.map((id) => (this.allocation.additional[id] = id));
     return this;
@@ -230,11 +223,8 @@ export class ServerBuilder {
    * @optional
    * @default undefined
    */
-  public setCpuPinning(
-    pinning: Array<number | string> | string,
-  ): ServerBuilder {
-    this.limits.threads =
-      typeof pinning === "string" ? pinning : pinning.join(",");
+  public setCpuPinning(pinning: Array<number | string> | string): ServerBuilder {
+    this.limits.threads = typeof pinning === 'string' ? pinning : pinning.join(',');
     return this;
   }
 
@@ -307,8 +297,8 @@ export class ServerBuilder {
    * @param egg The egg id or the egg as object
    */
   public setEgg(egg: number | Egg): ServerBuilder {
-    this.egg = typeof egg == "number" ? egg : egg.id;
-    if (typeof egg != "number") {
+    this.egg = typeof egg == 'number' ? egg : egg.id;
+    if (typeof egg != 'number') {
       this.docker_image = egg.docker_image;
       this.startup = egg.startup;
       egg.associatedVariables?.forEach((variable) => {
@@ -368,9 +358,7 @@ export class ServerBuilder {
    * Set the environment vars with which the server will start
    * @default environment This will use the default environment if you set the egg via .setEgg(egg: PanelEgg)
    */
-  public setEnvironment(environment: {
-    [environment: string]: string;
-  }): ServerBuilder {
+  public setEnvironment(environment: { [environment: string]: string }): ServerBuilder {
     this.environment = environment;
     return this;
   }

@@ -1,11 +1,11 @@
-import { PanelEggAttributes, RawPanelEgg } from "../types/application/panelEgg";
-import { RawPanelNest } from "../types/application/panelNest";
-import { RawServerList } from "../types/application/server";
-import { RawServerVariableList } from "../types/application/serverVariable";
-import { ApplicationClient } from "./ApplicationClient";
-import { Nest } from "./Nest";
-import { PanelServer } from "./PanelServer";
-import { ServerVariable } from "./ServerVariable";
+import { PanelEggAttributes, RawPanelEgg } from '../types/application/panelEgg';
+import { RawPanelNest } from '../types/application/panelNest';
+import { RawServerList } from '../types/application/server';
+import { RawServerVariableList } from '../types/application/serverVariable';
+import { ApplicationClient } from './ApplicationClient';
+import { Nest } from './Nest';
+import { PanelServer } from './PanelServer';
+import { ServerVariable } from './ServerVariable';
 
 var client: ApplicationClient;
 var relationships:
@@ -63,16 +63,11 @@ export class Egg implements PanelEggAttributes {
     this.created_at = new Date(eggProps.attributes.created_at);
     this.updated_at = new Date(eggProps.attributes.updated_at);
     relationships = eggProps.attributes.relationships;
-    if (relationships?.nest)
-      this.parentNest = new Nest(applicationClient, relationships.nest);
+    if (relationships?.nest) this.parentNest = new Nest(applicationClient, relationships.nest);
     if (relationships?.servers)
-      this.associatedServers = relationships.servers.data.map(
-        (srv) => new PanelServer(applicationClient, srv),
-      );
+      this.associatedServers = relationships.servers.data.map((srv) => new PanelServer(applicationClient, srv));
     if (relationships?.variables)
-      this.associatedVariables = relationships.variables.data.map(
-        (variable) => new ServerVariable(variable),
-      );
+      this.associatedVariables = relationships.variables.data.map((variable) => new ServerVariable(variable));
     client = applicationClient;
   }
 

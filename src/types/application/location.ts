@@ -1,13 +1,13 @@
-import { RawPanelNodeList } from "./panelNode";
-import { RawServerList } from "./server";
+import { RawPanelNodeList } from './panelNode';
+import { RawServerList } from './server';
 
 export interface RawLocationList {
-  object: "list";
+  object: 'list';
   data: Array<RawLocation>;
 }
 
 export interface RawLocation {
-  object: "location";
+  object: 'location';
   attributes: LocationAttributes;
 }
 

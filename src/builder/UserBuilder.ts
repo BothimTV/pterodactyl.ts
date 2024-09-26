@@ -7,10 +7,10 @@ export class UserBuilder {
   private root_admin?: number;
 
   constructor() {
-    this.email = "";
-    this.username = "";
-    this.first_name = "";
-    this.last_name = "";
+    this.email = '';
+    this.username = '';
+    this.first_name = '';
+    this.last_name = '';
     this.root_admin = 0;
   }
 

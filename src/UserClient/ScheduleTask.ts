@@ -1,11 +1,7 @@
-import { ServerSignalOption } from "../types/base/serverStatus";
-import {
-  RawScheduleTask,
-  ScheduleActionType,
-  ScheduleTaskAttributes,
-} from "../types/user/scheduleTask";
-import { Schedule } from "./Schedule";
-import { UserClient } from "./UserClient";
+import { ServerSignalOption } from '../types/base/serverStatus';
+import { RawScheduleTask, ScheduleActionType, ScheduleTaskAttributes } from '../types/user/scheduleTask';
+import { Schedule } from './Schedule';
+import { UserClient } from './UserClient';
 
 let client: UserClient;
 export class ScheduleTask implements ScheduleTaskAttributes {
@@ -20,11 +16,7 @@ export class ScheduleTask implements ScheduleTaskAttributes {
   updated_at: Date;
   readonly parentSchedule: Schedule;
 
-  constructor(
-    userClient: UserClient,
-    taskProps: RawScheduleTask,
-    parentSchedule: Schedule,
-  ) {
+  constructor(userClient: UserClient, taskProps: RawScheduleTask, parentSchedule: Schedule) {
     client = userClient;
     this.id = taskProps.attributes.id;
     this.sequence_id = taskProps.attributes.sequence_id;
@@ -49,15 +41,11 @@ export class ScheduleTask implements ScheduleTaskAttributes {
 
   private async updateThis(data: any) {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentSchedule.parentServer.identifier +
-        "/schedules/" +
-        this.id,
+      client.panel + '/api/client/servers/' + this.parentSchedule.parentServer.identifier + '/schedules/' + this.id,
     );
     const res = (await client.api({
       url: endpoint.href,
-      method: "POST",
+      method: 'POST',
       data: data,
     })) as RawScheduleTask;
     this.action = res.attributes.action;
@@ -70,10 +58,7 @@ export class ScheduleTask implements ScheduleTaskAttributes {
   /**
    * Set the action type (and a new payload)
    */
-  public async setAction(
-    action: ScheduleActionType,
-    payload?: string | ServerSignalOption,
-  ): Promise<void> {
+  public async setAction(action: ScheduleActionType, payload?: string | ServerSignalOption): Promise<void> {
     var data = this.updateProps();
     data.action = action;
     if (payload) data.payload = payload;
@@ -115,12 +100,8 @@ export class ScheduleTask implements ScheduleTaskAttributes {
    */
   public async delete(): Promise<void> {
     const endpoint = new URL(
-      client.panel +
-        "/api/client/servers/" +
-        this.parentSchedule.parentServer.identifier +
-        "/schedules/" +
-        this.id,
+      client.panel + '/api/client/servers/' + this.parentSchedule.parentServer.identifier + '/schedules/' + this.id,
     );
-    await client.api({ url: endpoint.href, method: "DELETE" });
+    await client.api({ url: endpoint.href, method: 'DELETE' });
   }
 }

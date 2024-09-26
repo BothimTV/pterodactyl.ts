@@ -1,4 +1,4 @@
-import { PanelLocation } from "../ApplicationClient/PanelLocation";
+import { PanelLocation } from '../ApplicationClient/PanelLocation';
 
 export class NodeBuilder {
   private name: string;
@@ -6,9 +6,9 @@ export class NodeBuilder {
   private location_id: number;
   private public: number = 1;
   private fqdn: string;
-  private scheme: "https" | "http" = "https";
+  private scheme: 'https' | 'http' = 'https';
   private behind_proxy: number = 0;
-  private daemonBase: string = "/var/lib/pterodactyl/volumes";
+  private daemonBase: string = '/var/lib/pterodactyl/volumes';
   private memory: number;
   private memory_overallocate: number = 0;
   private disk: number;
@@ -17,9 +17,9 @@ export class NodeBuilder {
   private daemon_sftp: number = 2022;
 
   constructor() {
-    this.name = "";
+    this.name = '';
     this.location_id = 0;
-    this.fqdn = "";
+    this.fqdn = '';
     this.memory = 0;
     this.disk = 0;
   }
@@ -84,7 +84,7 @@ export class NodeBuilder {
    * If you use an ip-address you can only use http
    * @required
    */
-  public setScheme(scheme: "https" | "http"): NodeBuilder {
+  public setScheme(scheme: 'https' | 'http'): NodeBuilder {
     this.scheme = scheme;
     return this;
   }
@@ -124,9 +124,7 @@ export class NodeBuilder {
    * @default memoryOverallocate 0
    * @required
    */
-  public setMemoryOverallocate(
-    memoryOverallocate: -1 | 0 | number,
-  ): NodeBuilder {
+  public setMemoryOverallocate(memoryOverallocate: -1 | 0 | number): NodeBuilder {
     this.memory_overallocate = memoryOverallocate;
     return this;
   }

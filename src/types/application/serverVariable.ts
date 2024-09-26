@@ -1,10 +1,10 @@
 export interface RawServerVariableList {
-  object: "list";
+  object: 'list';
   data: Array<RawServerVariable>;
 }
 
 export interface RawServerVariable {
-  object: "server_variable";
+  object: 'server_variable';
   attributes: ServerVariableAttributes;
 }
 

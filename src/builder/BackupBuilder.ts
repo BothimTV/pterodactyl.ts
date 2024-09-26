@@ -1,11 +1,11 @@
 var ignoredArr: Array<string> = [];
 export class BackupBuilder {
   name: string;
-  ignored: string = "";
+  ignored: string = '';
   is_locked: boolean = false;
 
   constructor() {
-    this.name = "";
+    this.name = '';
   }
 
   /**
@@ -22,12 +22,12 @@ export class BackupBuilder {
    * @param ignored An array of strings or a single string representing the ignored files or directories.
    */
   public setIgnored(ignored: Array<string> | string): BackupBuilder {
-    if (typeof ignored === "string") {
+    if (typeof ignored === 'string') {
       ignoredArr = [ignored];
     } else {
       ignoredArr.push(...ignored);
     }
-    this.ignored = ignoredArr.join(", ");
+    this.ignored = ignoredArr.join(', ');
     return this;
   }
 
@@ -37,7 +37,7 @@ export class BackupBuilder {
    */
   public addIgnored(ignored: string): BackupBuilder {
     ignoredArr.push(ignored);
-    this.ignored = ignoredArr.join(", ");
+    this.ignored = ignoredArr.join(', ');
     return this;
   }
 

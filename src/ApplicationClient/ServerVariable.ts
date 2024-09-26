@@ -1,7 +1,4 @@
-import {
-  RawServerVariable,
-  ServerVariableAttributes,
-} from "../types/application/serverVariable";
+import { RawServerVariable, ServerVariableAttributes } from '../types/application/serverVariable';
 
 export class ServerVariable implements ServerVariableAttributes {
   readonly id: number;
