@@ -56,7 +56,6 @@ jobs:
           git config --local user.email "github-action[bot]@noreply.bothimtv.com"
           git config --local user.name "github-action[bot]"
           git commit -a -m "Lint: Fix"
-          - name: Push changes
 
       - name: Push changes
         uses: ad-m/github-push-action@master
