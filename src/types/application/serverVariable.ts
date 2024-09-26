@@ -17,7 +17,7 @@ export interface ServerVariableAttributes {
   readonly default_value: string;
   readonly user_viewable: boolean;
   readonly user_editable: boolean;
-  readonly rules: string
+  readonly rules: string;
   readonly created_at: string | Date;
   updated_at: string | Date;
   server_value: string;

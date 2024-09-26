@@ -8,10 +8,10 @@ export interface RawFile {
   attributes: FileAttributes;
 }
 
-export type MimeType = "text/plain; charset=utf-8"
+export type MimeType = "text/plain; charset=utf-8";
 
 export interface FileAttributes {
-  name: string
+  name: string;
   readonly mode: string;
   readonly mode_bits: string;
   readonly size: number;

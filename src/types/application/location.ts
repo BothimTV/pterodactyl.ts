@@ -19,6 +19,6 @@ export interface LocationAttributes {
   readonly created_at: string | Date;
   readonly relationships?: {
     nodes?: RawPanelNodeList;
-    servers?: RawServerList
-  }
+    servers?: RawServerList;
+  };
 }

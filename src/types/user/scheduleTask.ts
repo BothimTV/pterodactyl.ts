@@ -13,7 +13,7 @@ export interface RawScheduleTask {
 export interface ScheduleTaskAttributes {
   readonly id: number;
   readonly sequence_id: number;
-  action: ScheduleActionType
+  action: ScheduleActionType;
   payload: string | ServerSignalOption;
   time_offset: number;
   readonly is_queued: boolean;
@@ -22,4 +22,4 @@ export interface ScheduleTaskAttributes {
   updated_at: string | Date;
 }
 
-export type ScheduleActionType = "command" | "power" | "backup"
+export type ScheduleActionType = "command" | "power" | "backup";

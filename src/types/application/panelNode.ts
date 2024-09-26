@@ -32,7 +32,7 @@ export interface PanelNodeAttributes {
   daemon_sftp: 2022 | number;
   daemon_base: "/var/lib/pterodactyl/volumes" | string;
   readonly created_at: string | Date;
-  updated_at: string  | Date;
+  updated_at: string | Date;
   allocated_resources: {
     memory: number;
     disk: number;

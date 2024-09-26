@@ -7,8 +7,8 @@ export interface RawApiKey {
   object: "api_key";
   attributes: ApiKeyAttributes;
   meta?: {
-    secret_token: string
-  }
+    secret_token: string;
+  };
 }
 
 export interface ApiKeyAttributes {

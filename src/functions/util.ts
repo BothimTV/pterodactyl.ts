@@ -1,6 +1,6 @@
 export function smartConvert(
   bytes: number,
-  comma: number = 3
+  comma: number = 3,
 ): {
   value: number;
   unit: string;
@@ -14,11 +14,23 @@ export function smartConvert(
         // > 1KB
         return { value: bytes, unit: "Bytes", string: `${bytes} Bytes` };
       }
-      return { value: bytesToKilobytes(bytes, comma), unit: "KiB", string: `${bytesToKilobytes(bytes, comma)} KiB`  };
+      return {
+        value: bytesToKilobytes(bytes, comma),
+        unit: "KiB",
+        string: `${bytesToKilobytes(bytes, comma)} KiB`,
+      };
     }
-    return { value: bytesToMegabytes(bytes, comma), unit: "MiB", string: `${bytesToMegabytes(bytes, comma)} MiB`  };
+    return {
+      value: bytesToMegabytes(bytes, comma),
+      unit: "MiB",
+      string: `${bytesToMegabytes(bytes, comma)} MiB`,
+    };
   }
-  return { value: bytesToGigabytes(bytes, comma), unit: "GiB", string: `${bytesToGigabytes(bytes, comma)} GiB`  };
+  return {
+    value: bytesToGigabytes(bytes, comma),
+    unit: "GiB",
+    string: `${bytesToGigabytes(bytes, comma)} GiB`,
+  };
 }
 
 function bytesToGigabytes(bytes: number, comma: number = 3): number {

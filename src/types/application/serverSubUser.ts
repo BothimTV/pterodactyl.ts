@@ -11,10 +11,10 @@ export interface RawServerSubUser {
 }
 
 export interface ServerSubUserAttributes {
-    readonly id: number;
-    readonly user_id: number;
-    readonly server_id: number;
-    permissions: Array<UserPermission>
-    readonly created_at: string | Date;
-    updated_at: string | Date;
+  readonly id: number;
+  readonly user_id: number;
+  readonly server_id: number;
+  permissions: Array<UserPermission>;
+  readonly created_at: string | Date;
+  updated_at: string | Date;
 }

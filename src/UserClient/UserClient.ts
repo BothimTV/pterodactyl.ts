@@ -6,15 +6,15 @@ import { User } from "./User";
 
 export class UserClient extends BaseClient {
   constructor(options: ClientOptions) {
-    super(options)
+    super(options);
   }
 
-/**
- * Get the account this api key is assigned to
- */
+  /**
+   * Get the account this api key is assigned to
+   */
   public async getAccount() {
     const endpoint = new URL(this.panel + "/api/client/account");
-    return new User(this, await this.api({ url: endpoint.href }) as RawUser)
+    return new User(this, (await this.api({ url: endpoint.href })) as RawUser);
   }
 
   /**
@@ -22,7 +22,9 @@ export class UserClient extends BaseClient {
    */
   public async getServers(): Promise<Array<Server>> {
     const endpoint = new URL(this.panel + "/api/client");
-    return (await this.api({ url: endpoint.href }) as RawServerList).data.map(server => new Server(this, server));
+    return ((await this.api({ url: endpoint.href })) as RawServerList).data.map(
+      (server) => new Server(this, server),
+    );
   }
 
   /**
@@ -30,7 +32,9 @@ export class UserClient extends BaseClient {
    */
   public async getServer(id: string): Promise<Server> {
     const endpoint = new URL(this.panel + "/api/client/servers/" + id);
-    return new Server(this, await this.api({ url: endpoint.href }) as RawServer);
+    return new Server(
+      this,
+      (await this.api({ url: endpoint.href })) as RawServer,
+    );
   }
-
 }

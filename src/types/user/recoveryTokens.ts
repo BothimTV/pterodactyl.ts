@@ -14,6 +14,6 @@ export interface RecoveryTokensAttributes {
     string,
     string,
     string,
-    string
+    string,
   ];
 }

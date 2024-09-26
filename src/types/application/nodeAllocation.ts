@@ -22,5 +22,5 @@ export interface NodeAllocationAttributes {
   readonly relationships?: {
     node?: RawPanelNode;
     server?: RawServer;
-  }
+  };
 }

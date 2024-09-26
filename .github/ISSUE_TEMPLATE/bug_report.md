@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -12,13 +11,15 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Fetch a server
 2. Try suspending it
 
 **Code snippet**
 A short snippet in which the bug occurs:
+
 ```ts
-await server.suspend()
+await server.suspend();
 ```
 
 **Expected behavior**
