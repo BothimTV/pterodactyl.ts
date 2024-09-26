@@ -1,0 +1,45 @@
+name: Lint
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+  write:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: self-hosted
+    needs: check
+    if: ${{ always() && needs.check.result == 'failure' }}
+    steps:
+      - name: Fix lint errors
+        run: pnpm run lint:fix
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-action[bot]@noreply.bothimtv.com"
+          git config --local user.name "github-action[bot]"
+          git commit -a -m "Lint: Fix"
+          - name: Push changes
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
