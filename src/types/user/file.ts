@@ -1,17 +1,17 @@
 export interface RawFileList {
-  object: "list";
+  object: 'list';
   data: Array<RawFile>;
 }
 
 export interface RawFile {
-  object: "file_object";
+  object: 'file_object';
   attributes: FileAttributes;
 }
 
-export type MimeType = "text/plain; charset=utf-8"
+export type MimeType = 'text/plain; charset=utf-8';
 
 export interface FileAttributes {
-  name: string
+  name: string;
   readonly mode: string;
   readonly mode_bits: string;
   readonly size: number;

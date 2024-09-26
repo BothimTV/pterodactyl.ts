@@ -1,14 +1,14 @@
 export interface RawApiKeyList {
-  object: "list";
+  object: 'list';
   data: Array<RawApiKey>;
 }
 
 export interface RawApiKey {
-  object: "api_key";
+  object: 'api_key';
   attributes: ApiKeyAttributes;
   meta?: {
-    secret_token: string
-  }
+    secret_token: string;
+  };
 }
 
 export interface ApiKeyAttributes {

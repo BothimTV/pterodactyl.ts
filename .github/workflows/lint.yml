@@ -1,11 +1,12 @@
-name: Build
+name: Lint
 on:
   push:
     branches:
       - '**'
+  workflow_dispatch:
 
 jobs:
-  build:
+  check:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -18,4 +19,4 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+      - run: pnpm run lint

@@ -1,5 +1,5 @@
 export interface RawUser {
-  object: "user";
+  object: 'user';
   attributes: UserAttributes;
 }
 
@@ -10,5 +10,5 @@ export interface UserAttributes {
   email: string;
   readonly first_name: string;
   readonly last_name: string;
-  readonly language: "en" | string;
+  readonly language: 'en' | string;
 }

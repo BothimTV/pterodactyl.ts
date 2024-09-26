@@ -1,5 +1,5 @@
 export interface RawDatabasePassword {
-  object: "database_password";
+  object: 'database_password';
   attributes: DatabasePasswordAttributes;
 }
 

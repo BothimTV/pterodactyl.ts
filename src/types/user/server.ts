@@ -1,16 +1,16 @@
-import { ServerStatus } from "../base/serverStatus";
-import { RawAllocationList } from "./allocation";
-import { RawEgg } from "./egg";
-import { RawEggVariableList } from "./eggVariable";
-import { RawServerSubuserList } from "./serverSubuser";
+import { ServerStatus } from '../base/serverStatus';
+import { RawAllocationList } from './allocation';
+import { RawEgg } from './egg';
+import { RawEggVariableList } from './eggVariable';
+import { RawServerSubuserList } from './serverSubuser';
 
 export interface RawServerList {
-  object: "list";
+  object: 'list';
   data: Array<RawServer>;
 }
 
 export interface RawServer {
-  object: "server";
+  object: 'server';
   attributes: ServerAttributes;
 }
 
