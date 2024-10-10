@@ -7,7 +7,7 @@ import { ServerSignal, ServerStatus } from '../types/base/serverStatus';
 import { RawAllocation, RawAllocationList } from '../types/user/allocation';
 import { RawEgg } from '../types/user/egg';
 import { RawEggVariableList } from '../types/user/eggVariable';
-import { RawFileList } from '../types/user/file';
+import { RawFile, RawFileList } from '../types/user/file';
 import { RawServer, ServerAttributes } from '../types/user/server';
 import { RawBackup, RawBackupList } from '../types/user/serverBackup';
 import { RawServerDatabase, RawServerDatabaseList } from '../types/user/serverDatabase';
@@ -28,11 +28,11 @@ import { Variable } from './Variable';
 let client: UserClient;
 var relationships:
   | {
-      readonly allocations?: RawAllocationList;
-      readonly variable?: RawEggVariableList;
-      readonly egg?: RawEgg;
-      readonly subusers?: RawServerSubuserList;
-    }
+    readonly allocations?: RawAllocationList;
+    readonly variable?: RawEggVariableList;
+    readonly egg?: RawEgg;
+    readonly subusers?: RawServerSubuserList;
+  }
   | undefined;
 export class Server implements ServerAttributes {
   readonly server_owner: boolean;
@@ -235,14 +235,14 @@ export class Server implements ServerAttributes {
   /**
    * Compress files in a specific directory
    */
-  public async compressFiles(dir: string, files: Array<string | File>): Promise<void> {
+  public async compressFiles(dir: string, files: Array<string | File>): Promise<File> {
     const endpoint = new URL(client.panel + '/api/client/servers/' + this.identifier + '/files/compress');
     const targets = files.map((file) => (typeof file === 'string' ? file : file.name));
-    await client.api({
+    return new File(client, ((await client.api({
       url: endpoint.href,
       method: 'POST',
       data: { root: dir, files: targets },
-    });
+    })) as RawFile), this, dir);
   }
 
   /**
