@@ -1,5 +1,5 @@
 ![Known Vulnerabilities](https://snyk.io/test/github/BothimTV/PterodactykAPI/badge.svg)
-[![Build Status](https://github.com/BothimTV/PterodactylAPI/actions/workflows/build.yml/badge.svg)](https://github.com/BothimTV/PterodactylAPI/actions/workflows/main.yml)
+[![Build Status](https://github.com/BothimTV/PterodactylAPI/actions/workflows/build.yml/badge.svg)](https://github.com/BothimTV/PterodactylAPI/actions/workflows/build.yml)
 [![Publish Package to npm and github](https://github.com/BothimTV/PterodactylAPI/actions/workflows/publish.yml/badge.svg)](https://github.com/BothimTV/PterodactylAPI/actions/workflows/publish.yml)
 
 # Pterodactyl.ts
