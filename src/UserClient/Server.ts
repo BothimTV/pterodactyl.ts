@@ -28,11 +28,11 @@ import { Variable } from './Variable';
 let client: UserClient;
 var relationships:
   | {
-    readonly allocations?: RawAllocationList;
-    readonly variable?: RawEggVariableList;
-    readonly egg?: RawEgg;
-    readonly subusers?: RawServerSubuserList;
-  }
+      readonly allocations?: RawAllocationList;
+      readonly variable?: RawEggVariableList;
+      readonly egg?: RawEgg;
+      readonly subusers?: RawServerSubuserList;
+    }
   | undefined;
 export class Server implements ServerAttributes {
   readonly server_owner: boolean;
@@ -238,11 +238,16 @@ export class Server implements ServerAttributes {
   public async compressFiles(dir: string, files: Array<string | File>): Promise<File> {
     const endpoint = new URL(client.panel + '/api/client/servers/' + this.identifier + '/files/compress');
     const targets = files.map((file) => (typeof file === 'string' ? file : file.name));
-    return new File(client, ((await client.api({
-      url: endpoint.href,
-      method: 'POST',
-      data: { root: dir, files: targets },
-    })) as RawFile), this, dir);
+    return new File(
+      client,
+      (await client.api({
+        url: endpoint.href,
+        method: 'POST',
+        data: { root: dir, files: targets },
+      })) as RawFile,
+      this,
+      dir,
+    );
   }
 
   /**
