@@ -113,8 +113,8 @@ export class File implements FileAttributes {
   /**
    * Compress this file
    */
-  public async compress(): Promise<void> {
-    await this.parenServer.compressFiles(this.dir, [this]);
+  public async compress(): Promise<File> {
+    return await this.parenServer.compressFiles(this.dir, [this]);
   }
 
   /**
