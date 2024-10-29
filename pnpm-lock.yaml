@@ -38,7 +38,7 @@ importers:
         version: 29.7.0(@types/node@22.7.7)
       mariadb:
         specifier: ^3.3.2
-        version: 3.3.2
+        version: 3.4.0
       testcontainers:
         specifier: ^10.13.2
         version: 10.13.2
@@ -1515,8 +1515,8 @@ packages:
   makeerror@1.0.12:
     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
 
-  mariadb@3.3.2:
-    resolution: {integrity: sha512-kZvRy00thfFxEksfbDWq+77nB2M520PIZ26LLuHbOvyeZ5XQ3OCY/YsDDu+ifYNHIcs+7UCmjm50GiPdogc24w==}
+  mariadb@3.4.0:
+    resolution: {integrity: sha512-hdRPcAzs+MTxK5VG1thBW18gGTlw6yWBe9YnLB65GLo7q0fO5DWsgomIevV/pXSaWRmD3qi6ka4oSFRTExRiEQ==}
     engines: {node: '>= 14'}
 
   markdown-it@14.1.0:
@@ -3910,7 +3910,7 @@ snapshots:
     dependencies:
       tmpl: 1.0.5
 
-  mariadb@3.3.2:
+  mariadb@3.4.0:
     dependencies:
       '@types/geojson': 7946.0.14
       '@types/node': 22.7.7
