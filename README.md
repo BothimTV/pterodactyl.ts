@@ -161,7 +161,10 @@ server.getFiles('/').then((files) => {
 ### Create a server backup
 
 ```ts
-const newBackup = new BackupBuilder().setName('Backup of server').setLocked(true).setIgnored(['logs', 'cache']);
+const newBackup = new BackupBuilder()
+  .setName('Backup of server')
+  .setLocked(true)
+  .setIgnored(['logs', 'cache']);
 
 server.createBackup(newBackup);
 ```
