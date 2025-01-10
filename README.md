@@ -3,10 +3,13 @@
 [![Publish Package to npm and github](https://github.com/BothimTV/PterodactylAPI/actions/workflows/publish.yml/badge.svg)](https://github.com/BothimTV/PterodactylAPI/actions/workflows/publish.yml)
 
 # Pterodactyl.ts
+
 This is a easy to use typescript based api wrapper for the pterodactyl api.
 
-# Quick start  
-## ApplicationClient  
+# Quick start
+
+## ApplicationClient
+
 With the ApplicationClient you can manage servers, nodes, users, and more.  
 This requires an panel api key with the specific permissions.
 
@@ -17,18 +20,22 @@ const applicationClient = new ApplicationClient({
   panel: process.env.PTERODACTYL_PANEL,
 });
 ```
+
 ### Create a new user
+
 ```ts
 const newUser = new UserBuilder()
-  .setEmail("mail@example.de")
-  .setFirstName("Max")
-  .setLastName("Mustermann")
-  .setUsername("exampleGamer420")
+  .setEmail('mail@example.de')
+  .setFirstName('Max')
+  .setLastName('Mustermann')
+  .setUsername('exampleGamer420')
   .setPassword(process.env.MAX_PASSWORD);
 
-await applicationClient.createUser(newUser);  
+await applicationClient.createUser(newUser);
 ```
+
 ### Create a new server
+
 ```ts
 const newServer = new ServerBuilder()
   .setName('Hello world!')
@@ -54,7 +61,9 @@ await applicationClient.createServer(newServer).then((server) => {
   console.log('The server is currently ' + server.status);
 });
 ```
+
 ### Create new allocations
+
 ```ts
 const newAllocation = new AllocationBuilder()
   .setIp('1.2.3.4')
@@ -70,7 +79,8 @@ await applicationClient.getNode(0).then((node) => {
 
 [Documentation](https://pterots.bothimtv.com/classes/ApplicationClient.html)
 
-## UserClient  
+## UserClient
+
 With the ApplicationClient you can manage servers, subusers, backups, files and more.  
 This is from user perspective and you’ll need an api key from your user settings.
 
@@ -85,7 +95,9 @@ const userClient = new UserClient({
   panel: process.env.PTERODACTYL_PANEL,
 });
 ```
+
 ### Establish a server console connection
+
 ```ts
 // Get a specific server from your account
 import { SocketEvent } from 'pterodactyl.ts';
@@ -108,7 +120,9 @@ socket.on(SocketEvent.CONSOLE_OUTPUT, (log) => {
 
 socket.disconnect();
 ```
+
 ### Upload, read, download, compress a file on a server
+
 ```ts
 import fs from 'fs';
 
@@ -143,18 +157,19 @@ server.getFiles('/').then((files) => {
   });
 });
 ```
-### Create a server backup
-```ts
-const newBackup = new BackupBuilder()
-  .setName('Backup of server')
-  .setLocked(true)
-  .setIgnored(['logs', 'cache']);
 
-server.createBackup(newBackup);  
-```
-### Manage server subusers
+### Create a server backup
+
 ```ts
-import { USER_PERMISSION } from "pterodactyl.ts";
+const newBackup = new BackupBuilder().setName('Backup of server').setLocked(true).setIgnored(['logs', 'cache']);
+
+server.createBackup(newBackup);
+```
+
+### Manage server subusers
+
+```ts
+import { USER_PERMISSION } from 'pterodactyl.ts';
 
 const newSubUser = new SubUserBuilder()
   .setEmail('mail@example.de')
@@ -163,11 +178,13 @@ const newSubUser = new SubUserBuilder()
 
 await server.createSubuser(newSubUser).then(async (subUser) => {
   await subUser.updatePermissions([USER_PERMISSION.CONTROL_START, USER_PERMISSION.CONTROL_STOP]);
-  console.log("The user has " + subUser.permissions.length + " permissions");
+  console.log('The user has ' + subUser.permissions.length + ' permissions');
   await subUser.delete();
 });
 ```
+
 ### Create a server schedule with tasks
+
 ```ts
 const newTask = new ScheduleTaskBuilder()
   .setAction('backup')
