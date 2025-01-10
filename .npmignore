@@ -6,3 +6,5 @@
 jest.config.js
 tsconfig.json
 CNAME
+.prettierignore
+.prettierrc
