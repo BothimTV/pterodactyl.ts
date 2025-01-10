@@ -19,6 +19,7 @@ export class ServerBuilder {
     databases: number;
     allocations: number;
     backups: number;
+    [name: string]?: string | number
   };
 
   private limits: {
@@ -199,6 +200,14 @@ export class ServerBuilder {
    */
   public setBackupLimit(maxBackups: number): ServerBuilder {
     this.feature_limits.backups = maxBackups;
+    return this;
+  }
+
+  /**
+   * Set a custom limit, this is usually used for extension based limits
+   */
+  public setCustomLimit(name: string, value: string | number) {
+    this.feature_limits[name] = value;
     return this;
   }
 
