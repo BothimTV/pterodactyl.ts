@@ -19,7 +19,8 @@ export class ServerBuilder {
     databases: number;
     allocations: number;
     backups: number;
-    [name: string]?: string | number
+  } & {
+    [name: string]: string | number;
   };
 
   private limits: {
@@ -204,7 +205,8 @@ export class ServerBuilder {
   }
 
   /**
-   * Set a custom limit, this is usually used for extension based limits
+   * [Only for extensions]
+   * Set a custom limit for this server
    */
   public setCustomLimit(name: string, value: string | number) {
     this.feature_limits[name] = value;
