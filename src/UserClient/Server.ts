@@ -3,7 +3,7 @@ import { BackupBuilder } from '../builder/BackupBuilder';
 import { DatabaseBuilder } from '../builder/DatabaseBuilder';
 import { ScheduleBuilder } from '../builder/ScheduleBuilder';
 import { SubUserBuilder } from '../builder/SubUserBuilder';
-import { ServerSignal, ServerStatus } from '../types/base/serverStatus';
+import { SERVER_SIGNAL, ServerStatus } from '../types/base/serverStatus';
 import { RawAllocation, RawAllocationList } from '../types/user/allocation';
 import { RawEgg } from '../types/user/egg';
 import { RawEggVariableList } from '../types/user/eggVariable';
@@ -137,7 +137,7 @@ export class Server implements ServerAttributes {
     await client.api({
       url: endpoint.href,
       method: 'POST',
-      data: { signal: ServerSignal.START },
+      data: { signal: SERVER_SIGNAL.START },
     });
   }
 
@@ -149,7 +149,7 @@ export class Server implements ServerAttributes {
     await client.api({
       url: endpoint.href,
       method: 'POST',
-      data: { signal: ServerSignal.STOP },
+      data: { signal: SERVER_SIGNAL.STOP },
     });
   }
 
@@ -161,7 +161,7 @@ export class Server implements ServerAttributes {
     await client.api({
       url: endpoint.href,
       method: 'POST',
-      data: { signal: ServerSignal.RESTART },
+      data: { signal: SERVER_SIGNAL.RESTART },
     });
   }
 
@@ -174,7 +174,7 @@ export class Server implements ServerAttributes {
     await client.api({
       url: endpoint.href,
       method: 'POST',
-      data: { signal: ServerSignal.KILL },
+      data: { signal: SERVER_SIGNAL.KILL },
     });
   }
 

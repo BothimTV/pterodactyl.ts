@@ -286,6 +286,31 @@ export class ServerBuilder {
   }
 
   /**
+   * Set all limits for this server at once
+   * @param limits The Limits you want to set
+   */
+  public setLimits(limits: {
+    cpu: number;
+    threads: string | undefined;
+    memory: number;
+    swap: number;
+    disk: number;
+    io: number;
+  }): ServerBuilder {
+    this.limits = limits;
+    return this;
+  }
+
+  /**
+   * Set all feature limits for this server at once
+   * @param limits The Limits you want to set
+   */
+  public setFeatureLimits(limits: { databases: number; allocations: number; backups: number }): ServerBuilder {
+    this.feature_limits = limits;
+    return this;
+  }
+
+  /**
    * Enable the OOM killer
    * This will kill the server if it exceeds the memory limit
    * This may cause the server processes to exit unexpectedly
