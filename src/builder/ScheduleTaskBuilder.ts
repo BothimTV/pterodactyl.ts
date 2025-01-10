@@ -1,4 +1,4 @@
-import { ServerSignalOption } from '../types/base/serverStatus';
+import { SERVER_SIGNAL, ServerSignalOption } from '../types/base/serverStatus';
 import { ScheduleActionType } from '../types/user/scheduleTask';
 
 export class ScheduleTaskBuilder {
@@ -33,13 +33,13 @@ export class ScheduleTaskBuilder {
    * Sets the payload for the task.
    * --------------------------
    * Depending on the action type the payload is
-   * - the command that will be executed
-   * - a ServerSignal
-   * - a list of ignored files for a backup
+   * - the command that will be executed (e.g. "say Hello World!")
+   * - a SERVER_SIGNAL (e.g. SERVER_SIGNAL.START)
+   * - a list of ignored files for a backup (e.g. cache, logs)
    * --------------------------
    * @param payload The payload for the task.
    */
-  setPayload(payload: string | ServerSignalOption): ScheduleTaskBuilder {
+  setPayload(payload: string | SERVER_SIGNAL): ScheduleTaskBuilder {
     this.payload = payload;
     return this;
   }
