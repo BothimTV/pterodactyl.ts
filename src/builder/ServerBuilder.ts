@@ -205,8 +205,12 @@ export class ServerBuilder {
   }
 
   /**
-   * [Only for extensions]
+   * ------------------------
+   * ONLY used for extensions
+   * ------------------------
    * Set a custom limit for this server
+   * @param name The name of the limit, e.g. 'splits'
+   * @param value The value of the limit
    */
   public setCustomLimit(name: string, value: string | number) {
     this.feature_limits[name] = value;
