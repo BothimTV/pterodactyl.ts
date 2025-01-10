@@ -274,7 +274,14 @@ export class ServerBuilder {
    * Set all limits for this server at once
    * @param limits The Limits you want to set
    */
-  public setLimits(limits: typeof this.limits): ServerBuilder {
+  public setLimits(limits: {
+    cpu: number;
+    threads: string | undefined;
+    memory: number;
+    swap: number;
+    disk: number;
+    io: number;
+  }): ServerBuilder {
     this.limits = limits;
     return this;
   }
@@ -283,7 +290,7 @@ export class ServerBuilder {
    * Set all feature limits for this server at once
    * @param limits The Limits you want to set
    */
-  public setFeatureLimits(limits: typeof this.feature_limits): ServerBuilder {
+  public setFeatureLimits(limits: { databases: number; allocations: number; backups: number }): ServerBuilder {
     this.feature_limits = limits;
     return this;
   }
