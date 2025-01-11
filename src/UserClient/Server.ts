@@ -64,7 +64,10 @@ export class Server implements ServerAttributes {
     readonly allocations: number;
     readonly backups: number;
   };
-  status: ServerStatus | null;
+  /**
+   * @deprecated Use getStatus() or getUsage() instead, as the panel will always return null as status
+   */
+  status: null;
   readonly is_suspended: boolean;
   readonly is_installing: boolean;
   readonly is_transferring: boolean;
@@ -110,11 +113,17 @@ export class Server implements ServerAttributes {
   }
 
   /**
+   * Get the status of this server
+   */
+  public async getStatus(): Promise<ServerStatus> {
+    return await client.getServerStatus(this.identifier);
+  }
+
+  /**
    * Get the server resource usage
    */
   public async getUsage(): Promise<StatsAttributes> {
-    const endpoint = new URL(client.panel + '/api/client/servers/' + this.identifier + '/resources');
-    return ((await client.api({ url: endpoint.href })) as RawStats).attributes;
+    return await client.getServerUsage(this.identifier);
   }
 
   /**
