@@ -116,7 +116,7 @@ export class Server implements ServerAttributes {
    * Get the status of this server
    */
   public async getStatus(): Promise<ServerStatus> {
-    return (await this.getUsage()).current_state;
+    return await client.getServerStatus(this.identifier);
   }
 
   /**
