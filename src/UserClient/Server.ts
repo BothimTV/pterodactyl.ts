@@ -123,8 +123,7 @@ export class Server implements ServerAttributes {
    * Get the server resource usage
    */
   public async getUsage(): Promise<StatsAttributes> {
-    const endpoint = new URL(client.panel + '/api/client/servers/' + this.identifier + '/resources');
-    return ((await client.api({ url: endpoint.href })) as RawStats).attributes;
+    return await client.getServerUsage(this.identifier);
   }
 
   /**

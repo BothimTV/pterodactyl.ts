@@ -1,5 +1,6 @@
 import { BaseClient, ClientOptions } from '../BaseClient/BaseClient';
 import { RawServer, RawServerList } from '../types/user/server';
+import { RawStats, StatsAttributes } from '../types/user/stats';
 import { RawUser } from '../types/user/user';
 import { Server } from './Server';
 import { User } from './User';
@@ -31,5 +32,13 @@ export class UserClient extends BaseClient {
   public async getServer(id: string): Promise<Server> {
     const endpoint = new URL(this.panel + '/api/client/servers/' + id);
     return new Server(this, (await this.api({ url: endpoint.href })) as RawServer);
+  }
+
+  /**
+   * Get the usage for a specific server
+   */
+  public async getServerUsage(id: string): Promise<StatsAttributes> {
+    const endpoint = new URL(this.panel + '/api/client/servers/' + id + '/resources');
+    return ((await this.api({ url: endpoint.href })) as RawStats).attributes;
   }
 }
