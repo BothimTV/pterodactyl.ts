@@ -44,7 +44,7 @@ export interface ServerAttributes {
     readonly allocations: number;
     readonly backups: number;
   };
-  status: null | ServerStatus;
+  status: null;
   readonly is_suspended: boolean;
   readonly is_installing: boolean;
   readonly is_transferring: boolean;

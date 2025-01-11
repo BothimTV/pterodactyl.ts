@@ -64,7 +64,10 @@ export class Server implements ServerAttributes {
     readonly allocations: number;
     readonly backups: number;
   };
-  status: ServerStatus | null;
+  /**
+   * @deprecated Use getStatus() or getUsage() instead, as the panel will always return null as status
+   */
+  status: null;
   readonly is_suspended: boolean;
   readonly is_installing: boolean;
   readonly is_transferring: boolean;
@@ -107,6 +110,13 @@ export class Server implements ServerAttributes {
    */
   public async getConsoleSocket(prettyLogs: boolean = true): Promise<ServerConsoleConnection> {
     return new ServerConsoleConnection(this, client, prettyLogs);
+  }
+
+  /**
+   * Get the status of this server
+   */
+  public async getStatus(): Promise<ServerStatus> {
+    return (await this.getUsage()).current_state;
   }
 
   /**
