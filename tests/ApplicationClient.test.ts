@@ -50,7 +50,6 @@ describe('Test Location management', () => {
   test('Update a location', async () => {
     location.setShort('ni.hnvr2');
     location.setDescription('Example Location located in Lower Saxony, Germany 2');
-    location = await applicationClient.getLocation(location.id);
     expect(location.short).toBe('ni.hnvr2');
     expect(location.long).toBe('Example Location located in Lower Saxony, Germany 2');
   });
@@ -91,7 +90,6 @@ describe('Test user management', () => {
     await user.setLastName('User2');
     await user.setUsername('anotherUsr2');
     await user.setPanelAdmin(false);
-    //user = await applicationClient.getUser(user.id);
     expect(user.email).toBe('anotherUsr2@example.de');
     expect(user.first_name).toBe('Another2');
     expect(user.last_name).toBe('User2');
