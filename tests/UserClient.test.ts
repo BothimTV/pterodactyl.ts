@@ -24,6 +24,9 @@ describe('Test the UserClient', () => {
   });
 });
 
-afterAll(async () => {
-  console.log('Done');
-}, 2 * 60 * 1000);
+afterAll(
+  async () => {
+    console.log('Done');
+  },
+  2 * 60 * 1000,
+);

@@ -5,16 +5,16 @@ jobs:
   test:
     runs-on: vm-able
     steps:
-      - name: Clone vm
-        run: virt-clone --original pterodactylts-test-base --name pterodactylts-test --auto-clone
-      - name: Start vm
-        run: virsh start pterodactylts-test
-      - name: Wait for vm to boot
-        run: until virsh net-dhcp-leases default | grep debian | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}'; do sleep 1; done
-      - name: Store vm ip
-        run: export VM_IP=$(virsh net-dhcp-leases default | grep debian | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
+      # - name: Clone vm
+      #   run: virt-clone --original pterodactylts-test-base --name pterodactylts-test --auto-clone
+      # - name: Start vm
+      #   run: virsh start pterodactylts-test
+      # - name: Wait for vm to boot
+      #   run: until virsh net-dhcp-leases default | grep debian | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}'; do sleep 1; done
+      # - name: Store vm ip
+      #   run: export VM_IP=$(virsh net-dhcp-leases default | grep debian | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
 
-        # Do the testing
+      # Do the testing
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
@@ -27,7 +27,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run test $VM_IP
 
-      - name: Stop vm
-        run: virsh shutdown pterodactylts-test
-      - name: Delete vm
-        run: virsh undefine pterodactylts-test --remove-all-storage
+      # - name: Stop vm
+      #   run: virsh shutdown pterodactylts-test
+      # - name: Delete vm
+      #   run: virsh undefine pterodactylts-test --remove-all-storage
