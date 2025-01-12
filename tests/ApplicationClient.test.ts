@@ -5,6 +5,7 @@ import { PanelNode } from '../src/ApplicationClient/PanelNode';
 import { PanelUser } from '../src/ApplicationClient/PanelUser';
 import { LocationBuilder } from '../src/builder/LocationBuilder';
 import { UserBuilder } from '../src/builder/UserBuilder';
+import { NodeBuilder } from '../src/builder/NodeBuilder';
 
 import { config } from 'dotenv';
 config({ path: './tests/test.env' });
@@ -104,4 +105,67 @@ describe('Test user management', () => {
     await user.delete();
     expect(async () => await applicationClient.getUser(user.id)).rejects.toThrow();
   });
+});
+
+describe('Test node management', () => {
+  let node: PanelNode;
+  test(
+    'Create a node',
+    async () => {
+      const nodeBuilder = new NodeBuilder()
+        .setName('Test')
+        .setDescription('Test Node')
+        .setBehindProxy(false)
+        .setDaemonBase('/var/lib/pterodactyl/volumes')
+        .setFqdn('https://daemon.example.com')
+        .setDaemonPort(8080)
+        .setDaemonSftp(2022)
+        .setLocationId(1)
+        .setPublic(true)
+        .setScheme('https')
+        .setMemory(1024)
+        .setMemoryOverallocate(0)
+        .setDisk(10240)
+        .setDiskOverallocate(0);
+      node = await applicationClient.createNode(nodeBuilder);
+      expect(node).toBeInstanceOf(PanelNode);
+      expect(node.name).toBe('Test');
+      // expect(node.description).toBe('Test Node'); -> Bug: see issue #83
+      expect(node.behind_proxy).toBe(false);
+      expect(node.daemon_base).toBe('/var/lib/pterodactyl/volumes');
+      expect(node.fqdn).toBe('https://daemon.example.com');
+      expect(node.daemon_listen).toBe(8080);
+      expect(node.daemon_sftp).toBe(2022);
+      expect(node.location_id).toBe(1);
+      expect(node.public).toBe(true);
+      expect(node.scheme).toBe('https');
+      expect(node.memory).toBe(1024);
+      expect(node.memory_overallocate).toBe(0);
+      expect(node.disk).toBe(10240);
+      expect(node.disk_overallocate).toBe(0);
+    },
+    2 * 60 * 1000,
+  );
+
+  test(
+    'Get a node',
+    async () => {
+      const getNode = await applicationClient.getNode(node.id);
+      expect(getNode).toBeInstanceOf(PanelNode);
+      expect(getNode.name).toBe('Test');
+      expect(getNode.location_id).toBe(1);
+    },
+    2 * 60 * 1000,
+  );
+
+  // Cannot test update, as the panel is very likely to reject the request as it cannot deploy the configuration
+
+  test(
+    'Delete a node',
+    async () => {
+      await node.delete();
+      expect(async () => await applicationClient.getNode(node.id)).rejects.toThrow();
+    },
+    2 * 60 * 1000,
+  );
 });
