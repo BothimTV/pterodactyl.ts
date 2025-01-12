@@ -46,12 +46,12 @@ jobs:
       - name: Use File
         run: cat ip.env >> tests/test.env
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run test $VM_IP
-        continue-on-error: true
+      - run: pnpm run test
 
   cleanup-vm:
     name: 'Cleanup VM'
     runs-on: vm-able
+    if: always()
     needs: test
     steps:
       - name: Stop vm
