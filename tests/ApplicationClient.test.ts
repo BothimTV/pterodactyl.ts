@@ -15,19 +15,22 @@ let node: PanelNode;
 
 let panelIp: string;
 
-beforeAll(async () => {
-  if (!process.env.VM_IP) throw new Error('No panel ip provided');
-  panelIp = process.env.VM_IP ?? '';
+beforeAll(
+  async () => {
+    if (!process.env.VM_IP) throw new Error('No panel ip provided');
+    panelIp = process.env.VM_IP ?? '';
 
-  applicationClient = new ApplicationClient({
-    panel: 'http://' + panelIp,
-    apikey: process.env.APPLICATION_API_KEY ?? '',
-  });
+    applicationClient = new ApplicationClient({
+      panel: 'http://' + panelIp,
+      apikey: process.env.APPLICATION_API_KEY ?? '',
+    });
 
-  // Set the location ip in order to reach it as its default is localhost
-  location = await applicationClient.getLocation(1);
-  node = await applicationClient.getNode(1);
-}, 2 * 60 * 1000);
+    // Set the location ip in order to reach it as its default is localhost
+    location = await applicationClient.getLocation(1);
+    node = await applicationClient.getNode(1);
+  },
+  2 * 60 * 1000,
+);
 
 describe('Test Location management', () => {
   let location: PanelLocation;
@@ -48,8 +51,8 @@ describe('Test Location management', () => {
   });
 
   test('Update a location', async () => {
-    location.setShort('ni.hnvr2');
-    location.setDescription('Example Location located in Lower Saxony, Germany 2');
+    await location.setShort('ni.hnvr2');
+    await location.setDescription('Example Location located in Lower Saxony, Germany 2');
     expect(location.short).toBe('ni.hnvr2');
     expect(location.long).toBe('Example Location located in Lower Saxony, Germany 2');
   });
@@ -103,6 +106,9 @@ describe('Test user management', () => {
   });
 });
 
-afterAll(async () => {
-  console.log('Done');
-}, 2 * 60 * 1000);
+afterAll(
+  async () => {
+    console.log('Done');
+  },
+  2 * 60 * 1000,
+);
