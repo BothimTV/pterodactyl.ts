@@ -105,10 +105,3 @@ describe('Test user management', () => {
     expect(async () => await applicationClient.getUser(user.id)).rejects.toThrow();
   });
 });
-
-afterAll(
-  async () => {
-    console.log('Done');
-  },
-  2 * 60 * 1000,
-);

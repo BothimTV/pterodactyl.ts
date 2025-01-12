@@ -23,10 +23,3 @@ describe('Test the UserClient', () => {
     expect(1).toBe(1);
   });
 });
-
-afterAll(
-  async () => {
-    console.log('Done');
-  },
-  2 * 60 * 1000,
-);
