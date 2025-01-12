@@ -69,7 +69,7 @@ export class PanelLocation implements LocationAttributes {
    * Delete this location
    */
   public async delete(): Promise<void> {
-    const endpoint = new URL(client.panel + '/api/application/locations' + this.id);
+    const endpoint = new URL(client.panel + '/api/application/locations/' + this.id);
     await client.api({ url: endpoint.href, method: 'DELETE' });
   }
 }

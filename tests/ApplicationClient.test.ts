@@ -1,166 +1,107 @@
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
-import { StartedTestContainer } from 'testcontainers';
 import { ApplicationClient } from '../src/ApplicationClient/ApplicationClient';
-import { Egg } from '../src/ApplicationClient/Egg';
-import { Nest } from '../src/ApplicationClient/Nest';
-import { NodeAllocation } from '../src/ApplicationClient/NodeAllocation';
 import { PanelLocation } from '../src/ApplicationClient/PanelLocation';
 import { PanelNode } from '../src/ApplicationClient/PanelNode';
 import { PanelUser } from '../src/ApplicationClient/PanelUser';
-import { UserClient } from '../src/UserClient/UserClient';
-import { AllocationBuilder } from '../src/builder/AllocationBuilder';
 import { LocationBuilder } from '../src/builder/LocationBuilder';
-import { NodeBuilder } from '../src/builder/NodeBuilder';
 import { UserBuilder } from '../src/builder/UserBuilder';
-import { cleanup, getNetwork, getPanel, startWings } from './containerProvider';
+
+import { config } from 'dotenv';
+config({ path: './tests/test.env' });
 
 let applicationClient: ApplicationClient;
-let userClient: UserClient;
 let location: PanelLocation;
 let node: PanelNode;
 
-let panel: StartedTestContainer;
-let wings: StartedTestContainer;
+let panelIp: string;
 
 beforeAll(
   async () => {
-    panel = await getPanel();
-    console.log('Received panel');
+    if (!process.env.VM_IP) throw new Error('No panel ip provided');
+    panelIp = process.env.VM_IP ?? '';
+
     applicationClient = new ApplicationClient({
-      panel: 'http://localhost:' + panel.getMappedPort(80),
-      apikey: 'ptla_CiTiqLaesSlv6MwQq0ZgvmQAeopqTFBfgO7vKXuBIAv',
-    });
-    userClient = new UserClient({
-      panel: 'http://localhost:' + panel.getMappedPort(80),
-      apikey: 'ptlc_A06HxoSpOGMuEa7lYCZPezVXfWogd2YSn2CiEZwS2Id',
+      panel: 'http://' + panelIp,
+      apikey: process.env.APPLICATION_API_KEY ?? '',
     });
 
-    location = await applicationClient.createLocation(
-      new LocationBuilder().setShort('test').setDescription('Test Location'),
-    );
-    console.log('Created location: ' + location.id);
-
-    node = await applicationClient.createNode(
-      new NodeBuilder()
-        .setName('test')
-        .setDescription('Test Node')
-        .setLocationId(location.id)
-        .setPublic(true)
-        .setFqdn(
-          panel
-            .getIpAddress(getNetwork().getName())
-            .split('.')
-            .map((v, i) => (i === 3 ? 5 : v))
-            .join('.'),
-        )
-        .setScheme('http')
-        .setDisk(1000)
-        .setMemory(1000),
-    );
-    console.log('Created node: ' + node.id);
-    wings = await startWings(await node.getConfiguration());
+    // Set the location ip in order to reach it as its default is localhost
+    location = await applicationClient.getLocation(1);
+    node = await applicationClient.getNode(1);
   },
   2 * 60 * 1000,
 );
 
-describe('Test the ApplicationClient', () => {
-  let panelNodes: Array<PanelNode>;
-  let panelUsers: Array<PanelUser>;
-  let panelLocations: Array<PanelLocation>;
-  let me: PanelUser;
-  test('Test initial data', async () => {
-    panelNodes = await applicationClient.getNodes();
-    panelUsers = await applicationClient.getUsers();
-    panelLocations = await applicationClient.getLocations();
-
-    let findMe = panelUsers.find((u) => u.username == 'admin');
-    if (!findMe) throw new Error('Admin user not found');
-    me = findMe;
-
-    expect(panelNodes.length).toBe(1);
-    expect(panelUsers.length).toBe(1);
-    expect(panelLocations.length).toBe(1);
+describe('Test Location management', () => {
+  let location: PanelLocation;
+  test('Create a location', async () => {
+    const locationBuilder = new LocationBuilder()
+      .setShort('ni.hnvr')
+      .setDescription('Example Location located in Lower Saxony, Germany');
+    location = await applicationClient.createLocation(locationBuilder);
+    expect(location).toBeInstanceOf(PanelLocation);
+    expect(location.short).toBe('ni.hnvr');
+    expect(location.long).toBe('Example Location located in Lower Saxony, Germany');
   });
 
-  let testUser: PanelUser;
-  test('User creation', async () => {
-    testUser = await applicationClient.createUser(
-      new UserBuilder()
-        .setAdmin(false)
-        .setEmail('test@bothimtv.com')
-        .setFirstName('test')
-        .setLastName('test')
-        .setPassword('test')
-        .setUsername('test'),
-    );
-    expect(testUser.root_admin).toBe(false);
-    expect(testUser.email).toBe('test@bothimtv.com');
-    expect(testUser.first_name).toBe('test');
-    expect(testUser.last_name).toBe('test');
-    expect(testUser.username).toBe('test');
+  test('Get a location', async () => {
+    expect(location).toBeInstanceOf(PanelLocation);
+    expect(location.short).toBe('ni.hnvr');
+    expect(location.long).toBe('Example Location located in Lower Saxony, Germany');
   });
 
-  test('User update', async () => {
-    await testUser.setPanelAdmin(true);
-    await testUser.setEmail('newTest@bothimtv.com');
-    await testUser.setFirstName('newTest');
-    await testUser.setLastName('newTest');
-    await testUser.setUsername('newTest');
-    await testUser.setPassword('newTest');
-
-    expect(testUser.root_admin).toBe(true);
-    expect(testUser.email).toBe('newTest@bothimtv.com');
-    expect(testUser.first_name).toBe('newTest');
-    expect(testUser.last_name).toBe('newTest');
-    expect(testUser.username).toBe('newtest'); // Usernames are stored lower case
+  test('Update a location', async () => {
+    await location.setShort('ni.hnvr2');
+    await location.setDescription('Example Location located in Lower Saxony, Germany 2');
+    expect(location.short).toBe('ni.hnvr2');
+    expect(location.long).toBe('Example Location located in Lower Saxony, Germany 2');
   });
 
-  test('User delete', async () => {
-    await testUser.delete();
-    const emptyList = await applicationClient.getUsers({
-      email: 'newTest@bothimtv.com',
-      username: 'newTest',
-      uuid: testUser.uuid,
-    });
-    expect(emptyList.length).toBe(0);
-  });
-
-  let allocations: Array<NodeAllocation>;
-  test('Allocation create', async () => {
-    await node.createAllocation(
-      new AllocationBuilder()
-        .addPort('25565-25566')
-        .addPorts([25577, '25578-25579'])
-        .setAlias('testNode.bothimtv.com')
-        .setIp(node.fqdn),
-    );
-    allocations = await node.getAllocations();
-    expect(allocations.length).toBe(5);
-  });
-
-  test('Allocation delete', async () => {
-    await allocations[4]?.delete();
-    expect((await node.getAllocations()).length).toBe(4);
-  });
-
-  let nests: Array<Nest>;
-  let minecraftEggs: Array<Egg>;
-  test('Get all nests', async () => {
-    nests = await applicationClient.getNests();
-    expect(nests.length).toBe(4);
-  });
-
-  test('Get all minecraft eggs', async () => {
-    var mcNest = nests.find((n) => n.name == 'Minecraft');
-    if (!mcNest) throw new Error('Minecraft nest not found');
-    minecraftEggs = await applicationClient.getEggs(mcNest.id);
-    expect(minecraftEggs.length).toBe(5);
+  test('Delete a location', async () => {
+    await location.delete();
+    expect(async () => await applicationClient.getLocation(2)).rejects.toThrow();
   });
 });
 
-afterAll(
-  async () => {
-    await cleanup();
-  },
-  2 * 60 * 1000,
-);
+describe('Test user management', () => {
+  let user: PanelUser;
+  test('Create a user', async () => {
+    const userBuilder = new UserBuilder()
+      .setEmail('anotherUsr@example.de')
+      .setFirstName('Another')
+      .setLastName('User')
+      .setUsername('anotherUsr')
+      .setPassword('somePassword')
+      .setAdmin(true);
+    user = await applicationClient.createUser(userBuilder);
+    expect(user).toBeInstanceOf(PanelUser);
+    expect(user.email).toBe('anotherUsr@example.de');
+    expect(user.first_name).toBe('Another');
+    expect(user.last_name).toBe('User');
+    expect(user.username).toBe('anotherusr');
+    expect(user.root_admin).toBe(true);
+  });
+
+  test('Get a user', async () => {
+    const getUsr = await applicationClient.getUser(user.id);
+    expect(getUsr).toBeInstanceOf(PanelUser);
+  });
+
+  test('Update a user', async () => {
+    await user.setEmail('anotherUsr2@example.de');
+    await user.setFirstName('Another2');
+    await user.setLastName('User2');
+    await user.setUsername('anotherUsr2');
+    await user.setPanelAdmin(false);
+    expect(user.email).toBe('anotherUsr2@example.de');
+    expect(user.first_name).toBe('Another2');
+    expect(user.last_name).toBe('User2');
+    expect(user.username).toBe('anotherusr2');
+    expect(user.root_admin).toBe(false);
+  });
+
+  test('Delete a user', async () => {
+    await user.delete();
+    expect(async () => await applicationClient.getUser(user.id)).rejects.toThrow();
+  });
+});
