@@ -67,6 +67,50 @@ describe('Test Location management', () => {
   });
 });
 
+describe('Test user management', () => {
+  let user: PanelUser;
+  test('Create a user', async () => {
+    const userBuilder = new UserBuilder()
+      .setEmail('anotherUsr@example.de')
+      .setFirstName('Another')
+      .setLastName('User')
+      .setUsername('anotherUsr')
+      .setPassword('somePassword')
+      .setAdmin(true);
+    user = await applicationClient.createUser(userBuilder);
+    expect(user).toBeInstanceOf(PanelUser);
+    expect(user.email).toBe('anotherUsr@example.de');
+    expect(user.first_name).toBe('Another');
+    expect(user.last_name).toBe('User');
+    expect(user.username).toBe('anotherUsr');
+    expect(user.root_admin).toBe(true);
+  });
+
+  test('Get a user', async () => {
+    const getUsr = await applicationClient.getUser(user.id);
+    expect(getUsr).toBeInstanceOf(PanelUser);
+  });
+
+  test('Update a user', async () => {
+    await user.setEmail('anotherUsr2@example.de');
+    await user.setFirstName('Another2');
+    await user.setLastName('User2');
+    await user.setUsername('anotherUsr2');
+    await user.setPanelAdmin(false);
+    user = await applicationClient.getUser(user.id);
+    expect(user.email).toBe('anotherUsr2@example.de');
+    expect(user.first_name).toBe('Another2');
+    expect(user.last_name).toBe('User2');
+    expect(user.username).toBe('anotherUsr2');
+    expect(user.root_admin).toBe(false);
+  });
+
+  test('Delete a user', async () => {
+    await user.delete();
+    expect(async () => await applicationClient.getUser(user.id)).rejects.toThrow();
+  });
+});
+
 afterAll(async () => {
   console.log('Done');
 }, 2 * 60 * 1000);
