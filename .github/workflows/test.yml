@@ -5,6 +5,7 @@ jobs:
   test:
     runs-on: vm-able
     steps:
+      - run: whoami
       # - name: Clone vm
       #   run: virt-clone --original pterodactylts-test-base --name pterodactylts-test --auto-clone
       # - name: Start vm
