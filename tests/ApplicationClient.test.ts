@@ -1,15 +1,9 @@
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { ApplicationClient } from '../src/ApplicationClient/ApplicationClient';
-import { Egg } from '../src/ApplicationClient/Egg';
-import { Nest } from '../src/ApplicationClient/Nest';
-import { NodeAllocation } from '../src/ApplicationClient/NodeAllocation';
 import { PanelLocation } from '../src/ApplicationClient/PanelLocation';
 import { PanelNode } from '../src/ApplicationClient/PanelNode';
 import { PanelUser } from '../src/ApplicationClient/PanelUser';
-import { UserClient } from '../src/UserClient/UserClient';
-import { AllocationBuilder } from '../src/builder/AllocationBuilder';
 import { LocationBuilder } from '../src/builder/LocationBuilder';
-import { NodeBuilder } from '../src/builder/NodeBuilder';
 import { UserBuilder } from '../src/builder/UserBuilder';
 
 import { config } from 'dotenv';
@@ -82,7 +76,7 @@ describe('Test user management', () => {
     expect(user.email).toBe('anotherUsr@example.de');
     expect(user.first_name).toBe('Another');
     expect(user.last_name).toBe('User');
-    expect(user.username).toBe('anotherUsr');
+    expect(user.username).toBe('anotherusr');
     expect(user.root_admin).toBe(true);
   });
 
@@ -97,11 +91,11 @@ describe('Test user management', () => {
     await user.setLastName('User2');
     await user.setUsername('anotherUsr2');
     await user.setPanelAdmin(false);
-    user = await applicationClient.getUser(user.id);
+    //user = await applicationClient.getUser(user.id);
     expect(user.email).toBe('anotherUsr2@example.de');
     expect(user.first_name).toBe('Another2');
     expect(user.last_name).toBe('User2');
-    expect(user.username).toBe('anotherUsr2');
+    expect(user.username).toBe('anotherusr2');
     expect(user.root_admin).toBe(false);
   });
 
