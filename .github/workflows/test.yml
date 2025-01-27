@@ -6,6 +6,10 @@ jobs:
     name: 'Prepare VM'
     runs-on: vm-able
     steps:
+      - name: Check for dangling VM and stop it
+        run: if [[ -n "$(virsh --connect=qemu:///system list | grep "pterodactylts-test ")" ]]; then virsh --connect=qemu:///system shutdown pterodactylts-test; fi
+      - name: Check for dangling VM and delete it
+        run: if until virsh --connect=qemu:///system list --state-shutoff | grep "pterodactylts-test "; do sleep 1; done; then virsh --connect=qemu:///system undefine pterodactylts-test --remove-all-storage; fi
       - name: Clone vm
         run: virt-clone --connect=qemu:///system -o pterodactylts-test-base -n pterodactylts-test --auto-clone
         shell: bash
