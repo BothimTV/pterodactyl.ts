@@ -23,7 +23,7 @@ jobs:
         run: until virsh --connect=qemu:///system net-dhcp-leases default | grep $(cat mac.dump) | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}'; do sleep 1; done
         shell: bash
       - name: Store vm ip to file
-        run: printf "\nVM_IP=\"$(virsh --connect=qemu:///system net-dhcp-leases default | grep $VM_MAC | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')\"" >> ip.env
+        run: printf "\nVM_IP=\"$(virsh --connect=qemu:///system net-dhcp-leases default | grep $(cat mac.dump) | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')\"" >> ip.env
         shell: bash
       - name: Upload File
         uses: actions/upload-artifact@v4
