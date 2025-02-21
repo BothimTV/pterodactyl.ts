@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
+import { beforeAll, describe, expect, test } from '@jest/globals';
 import { ApplicationClient } from '../src/ApplicationClient/ApplicationClient';
 import { PanelLocation } from '../src/ApplicationClient/PanelLocation';
 import { PanelNode } from '../src/ApplicationClient/PanelNode';
@@ -6,6 +6,8 @@ import { PanelUser } from '../src/ApplicationClient/PanelUser';
 import { LocationBuilder } from '../src/builder/LocationBuilder';
 import { UserBuilder } from '../src/builder/UserBuilder';
 import { NodeBuilder } from '../src/builder/NodeBuilder';
+import { ServerBuilder } from '../src/builder/ServerBuilder';
+import { AllocationBuilder } from '../src/builder/AllocationBuilder';
 
 import { config } from 'dotenv';
 config({ path: './tests/test.env' });
@@ -13,6 +15,7 @@ config({ path: './tests/test.env' });
 let applicationClient: ApplicationClient;
 let location: PanelLocation;
 let node: PanelNode;
+let user: PanelUser;
 
 let panelIp: string;
 
@@ -29,6 +32,8 @@ beforeAll(
     // Set the location ip in order to reach it as its default is localhost
     location = await applicationClient.getLocation(1);
     node = await applicationClient.getNode(1);
+    await node.createAllocation(new AllocationBuilder().setIp(panelIp).addPorts(['25565', '3000-3010']));
+    user = await applicationClient.getUser(1);
   },
   2 * 60 * 1000,
 );
@@ -168,4 +173,32 @@ describe('Test node management', () => {
     },
     2 * 60 * 1000,
   );
+});
+
+describe('Test server management', () => {
+  test('Create a server', async () => {
+    const minecraftNest = (await applicationClient.getNests()).filter((n) => n.name === 'Minecraft')[0]!;
+    const paperEgg = (await applicationClient.getEggs(minecraftNest.id)).filter((e) => e.name === 'Paper')[0]!;
+    const serverBuilder = new ServerBuilder()
+      .setName('TestServer')
+      .setDescription('Test Server')
+      .setOwnerId(1)
+      .setAllocationId((await node.getAllocations()).filter((a) => !a.assigned)[0]?.id ?? 1)
+      .setLimits({
+        memory: 512,
+        swap: 0,
+        disk: 5120,
+        io: 500,
+        cpu: 100,
+        threads: undefined,
+      })
+      .setFeatureLimits({
+        databases: 1,
+        backups: 5,
+        allocations: 2,
+      })
+      // Using defaults for the paper egg
+      .setEgg(paperEgg);
+    await applicationClient.createServer(serverBuilder);
+  });
 });
