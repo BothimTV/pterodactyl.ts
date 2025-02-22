@@ -15,7 +15,7 @@ jobs:
           node-version: 20.x
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
       - run: pnpm run build
       - run: pnpm run npm-publish
       - run: npm publish --access public
@@ -38,7 +38,7 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@bothimtv'
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
       - run: pnpm run build
       - run: pnpm run gh-publish
       - run: npm publish
