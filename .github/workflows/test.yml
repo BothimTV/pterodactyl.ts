@@ -52,7 +52,7 @@ jobs:
           name: vm-ip
       - name: Use File
         run: cat ip.env >> tests/test.env
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
       - run: pnpm run test
 
   cleanup-vm:

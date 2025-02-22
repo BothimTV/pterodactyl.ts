@@ -1,10 +1,13 @@
-import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
+import { beforeAll, describe, expect, test } from '@jest/globals';
 import { ApplicationClient } from '../src/ApplicationClient/ApplicationClient';
 import { PanelLocation } from '../src/ApplicationClient/PanelLocation';
 import { PanelNode } from '../src/ApplicationClient/PanelNode';
 import { PanelUser } from '../src/ApplicationClient/PanelUser';
 import { LocationBuilder } from '../src/builder/LocationBuilder';
 import { UserBuilder } from '../src/builder/UserBuilder';
+import { NodeBuilder } from '../src/builder/NodeBuilder';
+import { ServerBuilder } from '../src/builder/ServerBuilder';
+import { AllocationBuilder } from '../src/builder/AllocationBuilder';
 
 import { config } from 'dotenv';
 config({ path: './tests/test.env' });
@@ -12,6 +15,7 @@ config({ path: './tests/test.env' });
 let applicationClient: ApplicationClient;
 let location: PanelLocation;
 let node: PanelNode;
+let user: PanelUser;
 
 let panelIp: string;
 
@@ -28,6 +32,8 @@ beforeAll(
     // Set the location ip in order to reach it as its default is localhost
     location = await applicationClient.getLocation(1);
     node = await applicationClient.getNode(1);
+    await node.createAllocation(new AllocationBuilder().setIp(panelIp).addPorts(['25565', '3000-3010']));
+    user = await applicationClient.getUser(1);
   },
   2 * 60 * 1000,
 );
@@ -103,5 +109,94 @@ describe('Test user management', () => {
   test('Delete a user', async () => {
     await user.delete();
     expect(async () => await applicationClient.getUser(user.id)).rejects.toThrow();
+  });
+});
+
+describe('Test node management', () => {
+  let node: PanelNode;
+  test(
+    'Create a node',
+    async () => {
+      const nodeBuilder = new NodeBuilder()
+        .setName('Test')
+        .setDescription('Test Node')
+        .setBehindProxy(false)
+        .setDaemonBase('/var/lib/pterodactyl/volumes')
+        .setFqdn('https://daemon.example.com')
+        .setDaemonPort(8080)
+        .setDaemonSftp(2022)
+        .setLocationId(1)
+        .setPublic(true)
+        .setScheme('https')
+        .setMemory(1024)
+        .setMemoryOverallocate(0)
+        .setDisk(10240)
+        .setDiskOverallocate(0);
+      node = await applicationClient.createNode(nodeBuilder);
+      expect(node).toBeInstanceOf(PanelNode);
+      expect(node.name).toBe('Test');
+      // expect(node.description).toBe('Test Node'); -> Bug: see issue #83
+      expect(node.behind_proxy).toBe(false);
+      expect(node.daemon_base).toBe('/var/lib/pterodactyl/volumes');
+      expect(node.fqdn).toBe('https://daemon.example.com');
+      expect(node.daemon_listen).toBe(8080);
+      expect(node.daemon_sftp).toBe(2022);
+      expect(node.location_id).toBe(1);
+      expect(node.public).toBe(true);
+      expect(node.scheme).toBe('https');
+      expect(node.memory).toBe(1024);
+      expect(node.memory_overallocate).toBe(0);
+      expect(node.disk).toBe(10240);
+      expect(node.disk_overallocate).toBe(0);
+    },
+    2 * 60 * 1000,
+  );
+
+  test(
+    'Get a node',
+    async () => {
+      const getNode = await applicationClient.getNode(node.id);
+      expect(getNode).toBeInstanceOf(PanelNode);
+      expect(getNode.name).toBe('Test');
+      expect(getNode.location_id).toBe(1);
+    },
+    2 * 60 * 1000,
+  );
+
+  // Cannot test update, as the panel is very likely to reject the request as it cannot deploy the configuration
+
+  test(
+    'Delete a node',
+    async () => {
+      await node.delete();
+      expect(async () => await applicationClient.getNode(node.id)).rejects.toThrow();
+    },
+    2 * 60 * 1000,
+  );
+});
+
+describe('Test server management', () => {
+  test('Create a server', async () => {
+    const serverBuilder = new ServerBuilder()
+      .setName('TestServer')
+      .setDescription('Test Server')
+      .setOwnerId(1)
+      .setAllocation((await node.getAllocations()).filter((a) => !a.assigned)[0]!)
+      .setLimits({
+        memory: 512,
+        swap: 0,
+        disk: 5120,
+        io: 500,
+        cpu: 100,
+        threads: undefined,
+      })
+      .setFeatureLimits({
+        databases: 1,
+        backups: 5,
+        allocations: 2,
+      })
+      // Using defaults for the paper egg
+      .setEgg(await applicationClient.getEgg(1, 1));
+    await applicationClient.createServer(serverBuilder);
   });
 });
