@@ -19,24 +19,21 @@ let user: PanelUser;
 
 let panelIp: string;
 
-beforeAll(
-  async () => {
-    if (!process.env.VM_IP) throw new Error('No panel ip provided');
-    panelIp = process.env.VM_IP ?? '';
+beforeAll(async () => {
+  if (!process.env.VM_IP) throw new Error('No panel ip provided');
+  panelIp = process.env.VM_IP ?? '';
 
-    applicationClient = new ApplicationClient({
-      panel: 'http://' + panelIp,
-      apikey: process.env.APPLICATION_API_KEY ?? '',
-    });
+  applicationClient = new ApplicationClient({
+    panel: 'http://' + panelIp,
+    apikey: process.env.APPLICATION_API_KEY ?? '',
+  });
 
-    // Set the location ip in order to reach it as its default is localhost
-    location = await applicationClient.getLocation(1);
-    node = await applicationClient.getNode(1);
-    await node.createAllocation(new AllocationBuilder().setIp(panelIp).addPorts(['25565', '3000-3010']));
-    user = await applicationClient.getUser(1);
-  },
-  2 * 60 * 1000,
-);
+  // Set the location ip in order to reach it as its default is localhost
+  location = await applicationClient.getLocation(1);
+  node = await applicationClient.getNode(1);
+  await node.createAllocation(new AllocationBuilder().setIp(panelIp).addPorts(['25565', '3000-3010']));
+  user = await applicationClient.getUser(1);
+}, 2 * 60 * 1000);
 
 describe('Test Location management', () => {
   let location: PanelLocation;
@@ -177,8 +174,6 @@ describe('Test node management', () => {
 
 describe('Test server management', () => {
   test('Create a server', async () => {
-    const minecraftNest = (await applicationClient.getNests()).filter((n) => n.name === 'Minecraft')[0]!;
-    const paperEgg = (await applicationClient.getEggs(minecraftNest.id)).filter((e) => e.name === 'Paper')[0]!;
     const serverBuilder = new ServerBuilder()
       .setName('TestServer')
       .setDescription('Test Server')
@@ -198,7 +193,7 @@ describe('Test server management', () => {
         allocations: 2,
       })
       // Using defaults for the paper egg
-      .setEgg(paperEgg);
+      .setEgg(await applicationClient.getEgg(1, 1));
     await applicationClient.createServer(serverBuilder);
   });
 });
