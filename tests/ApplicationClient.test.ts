@@ -178,7 +178,7 @@ describe('Test server management', () => {
       .setName('TestServer')
       .setDescription('Test Server')
       .setOwnerId(1)
-      .setAllocationId((await node.getAllocations()).filter((a) => !a.assigned)[0]?.id ?? 1)
+      .setAllocation((await node.getAllocations()).filter((a) => !a.assigned)[0]!)
       .setLimits({
         memory: 512,
         swap: 0,
