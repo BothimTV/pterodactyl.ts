@@ -2,3 +2,5 @@ node_modules
 dist
 src/index.ts
 docs
+pnpm-lock.yaml
+package-lock.json
