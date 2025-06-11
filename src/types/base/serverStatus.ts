@@ -1,4 +1,4 @@
-export type ServerStatus = 'starting' | 'stopping' | 'online' | 'offline';
+export type ServerStatus = 'starting' | 'stopping' | 'running' | 'offline';
 
 export enum SERVER_SIGNAL {
   'START' = 'start',
