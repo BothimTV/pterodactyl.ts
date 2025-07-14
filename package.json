@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.2.0",
     "fs": "^0.0.2",
     "strip-color": "^0.1.0",
     "ws": "^8.18.0"
