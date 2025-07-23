@@ -28,19 +28,19 @@
   },
   "homepage": "https://pterots.bothimtv.com",
   "devDependencies": {
-    "@jest/globals": "^30.0.2",
+    "@jest/globals": "^30.0.5",
     "@types/jest": "^30.0.0",
     "@types/strip-color": "^0.1.2",
     "@types/ws": "^8.5.13",
-    "jest": "^30.0.3",
-    "mariadb": "^3.4.0",
+    "jest": "^30.0.5",
+    "mariadb": "^3.4.5",
     "ts-jest": "^29.2.5",
     "tsup": "^8.3.5",
     "typedoc": "^0.28.0",
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "axios": "^1.7.9",
+    "axios": "^1.11.0",
     "dotenv": "^17.2.0",
     "fs": "^0.0.2",
     "strip-color": "^0.1.0",
