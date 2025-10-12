@@ -28,7 +28,7 @@
   },
   "homepage": "https://pterots.bothimtv.com",
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
+    "@jest/globals": "^30.2.0",
     "@types/jest": "^29.5.13",
     "@types/strip-color": "^0.1.2",
     "@types/ws": "^8.18.1",
