@@ -1,6 +1,6 @@
 {
   "name": "pterodactyl.ts",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -16,13 +16,7 @@
   "author": "Bothim_TV",
   "license": "MIT",
   "description": "Easily manage your panel and servers on a Pterodactyl panel",
-  "keywords": [
-    "pterodactyl",
-    "wrapper",
-    "api",
-    "panel",
-    "server"
-  ],
+  "keywords": ["pterodactyl", "wrapper", "api", "panel", "server"],
   "repository": {
     "url": "git+https://github.com/BothimTV/pterodactyl.ts.git"
   },
