@@ -314,7 +314,7 @@ export class Server implements ServerAttributes {
     await client.api({ url: uploadUrl.href, method: 'OPTIONS' });
     let blob;
     if (file instanceof Blob) blob = file;
-    else if (file instanceof Buffer) blob = new Blob([file]);
+    else if (file instanceof Buffer) blob = new Blob([new Uint8Array(file)]);
     else blob = new Blob([readFileSync(file)]);
     const formData = new FormData();
     formData.append('files', blob, filename);
