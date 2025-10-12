@@ -632,7 +632,7 @@ export class PanelServer implements ServerAttributes {
    */
   public async delete(force: boolean = false): Promise<void> {
     // deepcode ignore AmbiguousConditional
-    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + force ? '/force' : '/');
+    const endpoint = new URL(client.panel + '/api/application/servers/' + this.id + (force ? '/force' : '/'));
     await client.api({ url: endpoint.href, method: 'DELETE' });
   }
 
