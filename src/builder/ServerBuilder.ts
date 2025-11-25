@@ -40,7 +40,7 @@ export class ServerBuilder {
   private docker_image: string;
   private custom_image?: string;
   private startup: string;
-  private environment: { [environment: string]: string } = {};
+  private environment: { [environment: string]: string | number | boolean } = {};
 
   constructor() {
     this.feature_limits = {
@@ -398,7 +398,7 @@ export class ServerBuilder {
    * Set the environment vars with which the server will start
    * @default environment This will use the default environment if you set the egg via .setEgg(egg: PanelEgg)
    */
-  public setEnvironment(environment: { [environment: string]: string }): ServerBuilder {
+  public setEnvironment(environment: { [environment: string]: string | number | boolean }): ServerBuilder {
     this.environment = environment;
     return this;
   }
@@ -407,7 +407,7 @@ export class ServerBuilder {
    * Add environment vars with which the server will start
    * @default environment This will use the default environment if you set the egg via .setEgg(egg: PanelEgg)
    */
-  public addEnvironmentVariable(key: string, value: string): ServerBuilder {
+  public addEnvironmentVariable(key: string, value: string | number | boolean): ServerBuilder {
     this.environment[key] = value;
     return this;
   }
