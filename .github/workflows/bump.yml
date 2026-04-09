@@ -1,85 +1,87 @@
 name: Bump dependencies
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-    contents: write
-    pull-requests: write
+  contents: write
+  pull-requests: write
 
 jobs:
-    bump:
-        runs-on: ubuntu-latest
+  bump:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-            - name: Setup pnpm
-              uses: pnpm/action-setup@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-            - name: Determine branch name
-              id: branch
-              run: |
-                  branch_name="bump-$(date +'%Y-%m-%d-%H-%M-%S')"
-                  echo "branch_name=$branch_name" >> "$GITHUB_OUTPUT"
+      - name: Determine branch name
+        id: branch
+        run: |
+          branch_name="bump-$(date +'%Y-%m-%d-%H-%M-%S')"
+          echo "branch_name=$branch_name" >> "$GITHUB_OUTPUT"
 
-            - name: Create and checkout bump branch
-              run: git switch -c "${{ steps.branch.outputs.branch_name }}"
+      - name: Create and checkout bump branch
+        run: git switch -c "${{ steps.branch.outputs.branch_name }}"
 
-            - name: Update dependencies
-              run: pnpm update -L
+      - name: Update dependencies
+        run: pnpm update -L
 
-            - name: Commit dependency updates
-              id: commit
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Commit dependency updates
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-                  git add -A
-                  if git diff --cached --quiet; then
-                    echo "has_changes=false" >> "$GITHUB_OUTPUT"
-                    exit 0
-                  fi
+          git add -A
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
-                  git commit -m "chore: bump dependencies"
-                  echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          git commit -m "chore: bump dependencies"
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
 
-            - name: Push branch
-              if: steps.commit.outputs.has_changes == 'true'
-              run: git push --set-upstream origin "${{ steps.branch.outputs.branch_name }}"
+      - name: Push branch
+        if: steps.commit.outputs.has_changes == 'true'
+        run: git push --set-upstream origin "${{ steps.branch.outputs.branch_name }}"
 
-            - name: Open pull request
-              if: steps.commit.outputs.has_changes == 'true'
-              uses: actions/github-script@v7
-              with:
-                  script: |
-                      const head = '${{ steps.branch.outputs.branch_name }}';
-                      const base = '${{ github.event.repository.default_branch }}';
+      - name: Open pull request
+        if: steps.commit.outputs.has_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const head = '${{ steps.branch.outputs.branch_name }}';
+            const base = '${{ github.event.repository.default_branch }}';
 
-                      try {
-                        const { data: pr } = await github.rest.pulls.create({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          title: `chore: bump dependencies (${head})`,
-                          head,
-                          base,
-                          body: 'Automated dependency updates via `pnpm update -L`.'
-                        });
+            try {
+              const { data: pr } = await github.rest.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `chore: bump dependencies (${head})`,
+                head,
+                base,
+                body: 'Automated dependency updates via `pnpm update -L`.'
+              });
 
-                        core.info(`Created PR #${pr.number}: ${pr.html_url}`);
-                      } catch (error) {
-                        if (error.status === 422) {
-                          core.warning('A pull request may already exist for this branch.');
-                          return;
-                        }
+              core.info(`Created PR #${pr.number}: ${pr.html_url}`);
+            } catch (error) {
+              if (error.status === 422) {
+                core.warning('A pull request may already exist for this branch.');
+                return;
+              }
 
-                        throw error;
-                      }
+              throw error;
+            }
