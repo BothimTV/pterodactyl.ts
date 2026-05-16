@@ -122,7 +122,7 @@ export class PanelServer implements ServerAttributes {
 
   private async updateEggData() {
     this.eggData = (await client.api({
-      url: client.panel + '/nests/' + this.nest + '/eggs/' + this.egg + '?include=nest,servers,variables',
+      url: client.panel + '/api/application/nests/' + this.nest + '/eggs/' + this.egg + '?include=nest,servers,variables',
       method: 'GET',
     })) as RawPanelEgg;
   }
